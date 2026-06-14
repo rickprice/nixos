@@ -73,8 +73,6 @@
   # services.xserver.libinput.enable = true;
 
   # Enable ZSH
-  programs.zsh.enable = true;
-
   programs.zsh = {
   enable = true;
   enableCompletion = true;
