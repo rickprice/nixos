@@ -72,10 +72,26 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # Enable ZSH
+  programs.zsh.enable = true;
+
+  programs.zsh = {
+  enable = true;
+  enableCompletion = true;
+  autosuggestions.enable = true;
+  syntaxHighlighting.enable = true;
+  shellAliases = {
+      ll = "ls -lah";
+      update-nixos = "sudo nixos-rebuild switch";
+  };
+  histSize = 100000;
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."fprice" = {
     isNormalUser = true;
     description = "Frederick Price";
+    shell = pkgs.zsh
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
