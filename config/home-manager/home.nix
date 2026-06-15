@@ -40,8 +40,10 @@
     # Internet
     google-chrome
 
-    # Photography
+    # Graphics
     darktable
+    gimp
+    inkscape
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
