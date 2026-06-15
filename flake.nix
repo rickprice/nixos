@@ -23,6 +23,13 @@
         ./etc/nixos/configuration.nix
         home-manager.nixosModules.home-manager
         {
+          nixpkgs.overlays = [
+            (final: prev: {
+              midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
+            })
+          ];
+        }
+        {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.fprice = import ./config/home-manager/home.nix;
