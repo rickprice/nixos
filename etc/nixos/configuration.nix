@@ -88,7 +88,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."fprice" = {
     isNormalUser = true;
-    openssh.authorizedKeys.key = [
+    openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP4eQjR+UTyw5EC13J/7o8M5XGhiQaha6wx/HyfFzW2l rprice@pricemail.ca"
     ];
     description = "Frederick Price";
