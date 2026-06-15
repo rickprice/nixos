@@ -20,7 +20,7 @@ stdenv.mkDerivation {
     sed -i '/INSTALLS += desktop/d' src/src.pro
     # qmake doesn't pick up external headers via NIX_CFLAGS_COMPILE, so patch
     # the rtmidi include and library paths directly into the project file.
-    sed -i 's|LIBS += -lrtmidi|LIBS += -L${lib.getLib rtmidi}/lib -lrtmidi\nINCLUDEPATH += ${lib.getDev rtmidi}/include|' src/src.pro
+    sed -i 's|LIBS += -lrtmidi|LIBS += -L${lib.getLib rtmidi}/lib -lrtmidi\nINCLUDEPATH += ${lib.getDev rtmidi}/include/rtmidi|' src/src.pro
   '';
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
