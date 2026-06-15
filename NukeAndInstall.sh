@@ -23,4 +23,7 @@ rm -rf "$HM_DEST"
 echo "Symlinking $HM_SRC -> $HM_DEST..."
 ln -s "$HM_SRC" "$HM_DEST"
 
+nix-channel --add https://github.com/nix-community/plasma-manager/archive/trunk.tar.gz plasma-manager
+nix-channel --update
+
 echo "Done."
