@@ -27,7 +27,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.fprice = import ./config/home-manager/home.nix;
           home-manager.sharedModules = [
-            plasma-manager.homeManagerModules.plasma-manager
+            plasma-manager.homeModules.plasma-manager
           ];
         }
       ];
