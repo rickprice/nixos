@@ -1,99 +1,135 @@
 { config, pkgs, ... }:
 
 {
-  home.username = "fprice";
+  home.username = "Frederick Price";
   home.homeDirectory = "/home/fprice";
   home.stateVersion = "26.05";
 
-  programs.home-manager.enable = true;
-
+  # ── Packages ────────────────────────────────────────────────────────────────
   home.packages = with pkgs; [
+    # CLI essentials
+    ripgrep       # fast grep
+    fd            # fast find
+    bat           # cat with syntax highlighting
+    eza           # modern ls
+    fzf           # fuzzy finder
+    jq            # JSON processor
+    htop          # process viewer
+    curl
+    wget
+    unzip
+
+    # Dev tools
+    git
+    gh            # GitHub CLI
+
     # Audio production
     ardour
     calf
     guitarix
-    # hydrogen
     lsp-plugins
-    # musescore
     carla
     qpwgraph
     midisnoop
 
     # Media playback
     mpv
-
-    # Terminal utilities
-    bat
-    btop
-    eza
-    fd
-    fzf
-    ripgrep
-    unzip
-    wget
-
-    # Git utilities
-    lazygit
-
-    # Fonts
-    nerd-fonts.jetbrains-mono
   ];
 
-  programs.git = {
-    enable = true;
-    settings = {
-      user.name = "Frederick Price";
-      user.email = "fprice@pricemail.ca";
-      init.defaultBranch = "main";
-      pull.rebase = false;
-    };
-  };
-
+  # ── Shell ───────────────────────────────────────────────────────────────────
   programs.zsh = {
     enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+
     shellAliases = {
-      ls = "eza";
-      ll = "eza -lah";
+      ls  = "eza";
+      ll  = "eza -la";
+      lt  = "eza --tree";
       cat = "bat";
+      grep = "rg";
+
+      # NixOS shortcuts
+      rebuild = "sudo nixos-rebuild switch";
+      hms     = "home-manager switch";
+    };
+
+    history = {
+      size = 10000;
+      save = 10000;
+      ignoreDups = true;
+      share = true;      # share history across terminals
+    };
+
+    initContent = ''
+      # Vi mode
+      bindkey -e   # emacs keybindings (change to -v for vi)
+
+      # Better history search
+      bindkey '^R' history-incremental-search-backward
+
+      # fzf keybindings
+      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+      source ${pkgs.fzf}/share/fzf/completion.zsh
+    '';
+  };
+
+  # ── Prompt ──────────────────────────────────────────────────────────────────
+  programs.starship = {
+    enable = true;
+    settings = {
+      add_newline = true;
+      character = {
+        success_symbol = "[❯](green)";
+        error_symbol   = "[❯](red)";
+      };
+      directory.truncation_length = 4;
     };
   };
 
-  programs.starship = {
+  # ── Git ─────────────────────────────────────────────────────────────────────
+  programs.git = {
     enable = true;
-    enableZshIntegration = true;
+    userName  = "Your Name";
+    userEmail = "you@example.com";
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      core.editor = "nvim";
+    };
+    aliases = {
+      st = "status";
+      co = "checkout";
+      lg = "log --oneline --graph --decorate";
+    };
   };
 
-  programs.wezterm = {
+  # ── Editor ──────────────────────────────────────────────────────────────────
+  programs.neovim = {
     enable = true;
-    enableZshIntegration = true;
+    defaultEditor = true;
+    vimAlias = true;
+  };
+
+  # ── Terminal multiplexer ─────────────────────────────────────────────────────
+  programs.tmux = {
+    enable = true;
+    shortcut = "a";          # Ctrl-a prefix
+    escapeTime = 0;
+    historyLimit = 10000;
+    terminal = "screen-256color";
     extraConfig = ''
-      local wezterm = require 'wezterm'
-      local config = wezterm.config_builder()
-
-      config.colors = {
-        foreground = "#dedede",
-        background = "black",
-        cursor_bg = "#ffa560",
-        cursor_border = "#ffa560",
-        cursor_fg = "#ffffff",
-        selection_bg = "#474e91",
-        selection_fg = "#f4f4f4",
-        ansi = { "#929292", "#e27373", "#94b979", "#ffba7b", "#97bedc", "#e1c0fa", "#00988e", "#dedede" },
-        brights = { "#bdbdbd", "#ffa1a1", "#bddeab", "#ffdca0", "#b1d8f6", "#fbdaff", "#1ab2a8", "#ffffff" },
-      }
-      config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Regular' })
-      config.font_size = 12.0
-      config.hide_tab_bar_if_only_one_tab = true
-      config.window_decorations = 'RESIZE'
-      config.scrollback_lines = 10000
-      config.window_padding = {
-        left = 8,
-        right = 8,
-        top = 8,
-        bottom = 8,
-      }
-
-      return config
+      set -g mouse on
+      set -g base-index 1
     '';
+  };
+
+  # ── Environment variables ────────────────────────────────────────────────────
+  home.sessionVariables = {
+    EDITOR  = "nvim";
+    VISUAL  = "nvim";
+    PAGER   = "bat";
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 }
