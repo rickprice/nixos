@@ -34,6 +34,9 @@
 
     # Media playback
     mpv
+
+    # Internet
+    google-chrome
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
