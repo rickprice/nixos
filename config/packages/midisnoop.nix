@@ -14,10 +14,13 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ qmake wrapQtAppsHook ];
   buildInputs = [ qtbase qttools rtmidi ];
 
-  # Desktop file install runs a Python script that bakes in absolute paths at
-  # build time; skip it and only install the binary.
   postPatch = ''
+    # Desktop file install runs a Python script that bakes in absolute paths at
+    # build time; skip it and only install the binary.
     sed -i '/INSTALLS += desktop/d' src/src.pro
+    # qmake doesn't pick up external headers via NIX_CFLAGS_COMPILE, so patch
+    # the rtmidi include and library paths directly into the project file.
+    sed -i 's|LIBS += -lrtmidi|LIBS += -L${lib.getLib rtmidi}/lib -lrtmidi\nINCLUDEPATH += ${lib.getDev rtmidi}/include|' src/src.pro
   '';
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
