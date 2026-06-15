@@ -45,6 +45,9 @@
     darktable
     gimp
     inkscape
+
+    # SSH key management
+    keychain
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -73,6 +76,8 @@
     };
 
     initContent = ''
+      eval "$(keychain --quiet --eval ~/.ssh/id_ed25519)"
+
       # Vi mode
       bindkey -v   # emacs keybindings (change to -v for vi)
 
