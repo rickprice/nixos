@@ -26,6 +26,7 @@
     # Dev tools
     git
     gh            # GitHub CLI
+    lazygit
 
     # Audio production
     ardour
@@ -41,6 +42,9 @@
 
     # Internet
     google-chrome
+
+    # Photography
+    darktable
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
