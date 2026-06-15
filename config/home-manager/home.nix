@@ -78,13 +78,23 @@
   # ── Prompt ──────────────────────────────────────────────────────────────────
   programs.starship = {
     enable = true;
+    enableZshIntegration = true;
     settings = {
       add_newline = true;
       character = {
         success_symbol = "[❯](green)";
         error_symbol   = "[❯](red)";
       };
-      directory.truncation_length = 4;
+      directory = {
+        truncation_length = 3;
+        truncate_to_repo = true;
+      };
+
+      git_branch = {
+        symbol = " ";
+      };
+
+      package.disabled = true;
     };
   };
 
