@@ -88,6 +88,9 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."fprice" = {
     isNormalUser = true;
+    openssh.authorizedKeys.key = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP4eQjR+UTyw5EC13J/7o8M5XGhiQaha6wx/HyfFzW2l rprice@pricemail.ca"
+    ]
     description = "Frederick Price";
     shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "wheel" ];
@@ -110,6 +113,7 @@
   #  wget
   neovim
   git
+  gh
   home-manager
   google-chrome
   ];
@@ -125,7 +129,14 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      PasswordAuthentication = false;  # recommended: keys only
+      PermitRootLogin = "no";
+    };
+  };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 22 ];
