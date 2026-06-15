@@ -157,11 +157,9 @@
   programs.plasma = {
     enable = true;
 
-    kscreenlockerrc = {
-      Daemon = {
-        Autolock = true;
-        Timeout = 120;  # lock after 2 hours of inactivity (minutes)
-      };
+    kscreenlocker = {
+      autoLock = true;
+      timeout = 120;  # lock after 2 hours of inactivity (minutes)
     };
 
     powerdevil.AC = {
