@@ -23,6 +23,7 @@
     git
     gh            # GitHub CLI
     lazygit
+    claude-code
 
     # Audio production
     ardour
