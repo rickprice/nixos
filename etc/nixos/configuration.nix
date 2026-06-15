@@ -168,16 +168,7 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # ── midi-daemon ─────────────────────────────────────────────────────────────
-  systemd.packages = [ pkgs.midi-daemon ];
-  systemd.services.midi-daemon.wantedBy = [ "multi-user.target" ];
-
-  users.users.midi-daemon = {
-    isSystemUser = true;
-    group = "midi-daemon";
-    extraGroups = [ "audio" ];
-    description = "MIDI Lua Routing Daemon";
-  };
-  users.groups.midi-daemon = {};
+  services.midi-daemon.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
