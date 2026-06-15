@@ -8,7 +8,7 @@ stdenv.mkDerivation {
     owner = "surfacepatterns";
     repo = "midisnoop";
     rev = "bc30f600187e197457cc68f47f8e02cc80b5888c";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-XDpDfTq5sAHqeYk3j+HA9H0SGq5sawrLzdK2rqN9fv4=";
   };
 
   nativeBuildInputs = [ qmake wrapQtAppsHook ];
