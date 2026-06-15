@@ -26,6 +26,7 @@
           nixpkgs.overlays = [
             (final: prev: {
               midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
+              midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
             })
           ];
         }

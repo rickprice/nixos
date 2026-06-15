@@ -34,6 +34,7 @@
     carla
     qpwgraph
     midisnoop
+    midi-daemon
     touchosc
 
     # Media playback
