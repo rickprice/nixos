@@ -153,6 +153,21 @@
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 
+  # ── KDE Plasma ───────────────────────────────────────────────────────────────
+  programs.plasma = {
+    enable = true;
 
+    kscreenlockerrc = {
+      Daemon = {
+        Autolock = true;
+        Timeout = 120;  # lock after 2 hours of inactivity (minutes)
+      };
+    };
+
+    powerdevil.AC = {
+      turnOffDisplay.idleTimeout = 3600;  # turn off screen after 1 hour (seconds)
+      autoSuspend.action = "nothing";     # disable automatic sleep/hibernate
+    };
+  };
 
 }
