@@ -5,6 +5,10 @@
   home.homeDirectory = "/home/fprice";
   home.stateVersion = "26.05";
 
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+
   # ── Packages ────────────────────────────────────────────────────────────────
   home.packages = with pkgs; [
     # CLI essentials
@@ -104,17 +108,19 @@
   # ── Git ─────────────────────────────────────────────────────────────────────
   programs.git = {
     enable = true;
-    userName  = "Your Name";
-    userEmail = "you@example.com";
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      core.editor = "nvim";
-    };
-    aliases = {
-      st = "status";
-      co = "checkout";
-      lg = "log --oneline --graph --decorate";
+    settings = {
+      userName  = "Frederick Price";
+      userEmail = "fprice@pricemail.ca";
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        core.editor = "nvim";
+      };
+      aliases = {
+        st = "status";
+        co = "checkout";
+        lg = "log --oneline --graph --decorate";
+      };
     };
   };
 
