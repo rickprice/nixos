@@ -153,23 +153,6 @@
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 
-  # Delay screen locking etc
-  programs.plasma = {
-    enable = true;
-  
-    # Configure the screen locker behavior
-    kscreenlockerrc = {
-      Daemon = {
-        Autolock = true;      # Keep autolock enabled
-        Timeout = 120;        # Timeout duration set in minutes (2 hours)
-      };
-    };
-  };
-
-  programs.plasma.powerdevil.AC = {
-    turnOffDisplay.idleTimeout = 7200; # 2 hours in seconds
-  };
-
 
 
 }
