@@ -110,7 +110,7 @@
     enable = true;
     settings = {
       userName  = "Frederick Price";
-      userEmail = "fprice@pricemail.ca";
+      userEmail = [ "fprice@pricemail.ca" ];
       extraConfig = {
         init.defaultBranch = "main";
         pull.rebase = true;
