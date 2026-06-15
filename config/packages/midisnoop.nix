@@ -23,6 +23,8 @@ stdenv.mkDerivation {
     sed -i 's|LIBS += -lrtmidi|LIBS += -L${lib.getLib rtmidi}/lib -lrtmidi\nINCLUDEPATH += ${lib.getDev rtmidi}/include/rtmidi|' src/src.pro
     # RtError was renamed to RtMidiError in rtmidi 4.x
     sed -i 's/RtError/RtMidiError/g' src/engine.cpp
+    # WINDOWS_KS was removed from RtMidi::Api in rtmidi 6.x
+    sed -i '/case RtMidi::WINDOWS_KS:/,+2d' src/engine.cpp
   '';
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
