@@ -159,6 +159,11 @@
   };
 
   # Delay screen locking etc
+  # Import the channel directly into your Home Manager config
+  imports = [
+    <plasma-manager/home-manager-modules/plasma-manager>
+  ];
+
   programs.plasma = {
     enable = true;
   
