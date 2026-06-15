@@ -35,9 +35,9 @@
 
   programs.git = {
     enable = true;
-    userName = "Frederick Price";
-    userEmail = "fprice@pricemail.ca";
-    extraConfig = {
+    settings = {
+      user.name = "Frederick Price";
+      user.email = "fprice@pricemail.ca";
       init.defaultBranch = "main";
       pull.rebase = false;
     };
