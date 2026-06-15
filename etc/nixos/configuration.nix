@@ -114,7 +114,6 @@
   neovim
   git
   gh
-  home-manager
   google-chrome
   ];
 
