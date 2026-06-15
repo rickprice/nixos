@@ -90,7 +90,7 @@
     isNormalUser = true;
     openssh.authorizedKeys.key = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP4eQjR+UTyw5EC13J/7o8M5XGhiQaha6wx/HyfFzW2l rprice@pricemail.ca"
-    ]
+    ];
     description = "Frederick Price";
     shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "wheel" ];
