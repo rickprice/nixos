@@ -71,7 +71,7 @@
 
     initContent = ''
       # Vi mode
-      bindkey -e   # emacs keybindings (change to -v for vi)
+      bindkey -v   # emacs keybindings (change to -v for vi)
 
       # Better history search
       bindkey '^R' history-incremental-search-backward
