@@ -36,6 +36,19 @@ stdenv.mkDerivation {
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
 
+  postInstall = ''
+    mkdir -p $out/share/applications
+    cat > $out/share/applications/midisnoop.desktop <<'EOF'
+[Desktop Entry]
+Name=Midisnoop
+Comment=MIDI monitor and prober
+Exec=midisnoop
+Terminal=false
+Type=Application
+Categories=Audio;AudioVideo;Qt;
+EOF
+  '';
+
   meta = with lib; {
     description = "MIDI monitor for inspecting MIDI events";
     homepage = "https://github.com/surfacepatterns/midisnoop";
