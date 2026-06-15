@@ -30,7 +30,7 @@
     lsp-plugins
     carla
     qpwgraph
-    midisnoop
+    # midisnoop
 
     # Media playback
     mpv
