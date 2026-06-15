@@ -64,7 +64,17 @@
       local wezterm = require 'wezterm'
       local config = wezterm.config_builder()
 
-      config.color_scheme = 'Tokyo Night'
+      config.colors = {
+        foreground = "#dedede",
+        background = "black",
+        cursor_bg = "#ffa560",
+        cursor_border = "#ffa560",
+        cursor_fg = "#ffffff",
+        selection_bg = "#474e91",
+        selection_fg = "#f4f4f4",
+        ansi = { "#929292", "#e27373", "#94b979", "#ffba7b", "#97bedc", "#e1c0fa", "#00988e", "#dedede" },
+        brights = { "#bdbdbd", "#ffa1a1", "#bddeab", "#ffdca0", "#b1d8f6", "#fbdaff", "#1ab2a8", "#ffffff" },
+      }
       config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Regular' })
       config.font_size = 12.0
       config.hide_tab_bar_if_only_one_tab = true
