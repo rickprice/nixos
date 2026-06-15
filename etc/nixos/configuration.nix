@@ -80,7 +80,7 @@
   syntaxHighlighting.enable = true;
   shellAliases = {
       ll = "ls -lah";
-      update-nixos = "sudo nixos-rebuild switch";
+      update-nixos = "sudo nixos-rebuild switch --flake /etc/nixos#daw";
   };
   histSize = 100000;
   };
@@ -114,7 +114,6 @@
   neovim
   git
   gh
-  home-manager
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -164,6 +163,9 @@
     };
 };
 
+
+  # Enable flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -5,10 +5,6 @@
   home.homeDirectory = "/home/fprice";
   home.stateVersion = "26.05";
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-
   # ── Packages ────────────────────────────────────────────────────────────────
   home.packages = with pkgs; [
     # CLI essentials
@@ -62,8 +58,7 @@
       grep = "rg";
 
       # NixOS shortcuts
-      rebuild = "sudo nixos-rebuild switch";
-      hms     = "home-manager switch";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#daw";
     };
 
     history = {
@@ -159,11 +154,6 @@
   };
 
   # Delay screen locking etc
-  # Import the channel directly into your Home Manager config
-  imports = [
-    <plasma-manager/home-manager-modules/plasma-manager>
-  ];
-
   programs.plasma = {
     enable = true;
   

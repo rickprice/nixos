@@ -5,22 +5,17 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Repo root: $REPO_DIR"
 
-# /etc/nixos -> repo/etc/nixos
-NIXOS_SRC="$REPO_DIR/etc/nixos"
+# /etc/nixos -> repo root (so flake.nix is at /etc/nixos/flake.nix)
 NIXOS_DEST="/etc/nixos"
 
 echo "Removing $NIXOS_DEST..."
 sudo rm -rf "$NIXOS_DEST"
-echo "Symlinking $NIXOS_SRC -> $NIXOS_DEST..."
-sudo ln -s "$NIXOS_SRC" "$NIXOS_DEST"
+echo "Symlinking $REPO_DIR -> $NIXOS_DEST..."
+sudo ln -s "$REPO_DIR" "$NIXOS_DEST"
 
-# ~/.config/home-manager -> repo/config/home-manager
-HM_SRC="$REPO_DIR/config/home-manager"
-HM_DEST="$HOME/.config/home-manager"
-
-echo "Removing $HM_DEST..."
-rm -rf "$HM_DEST"
-echo "Symlinking $HM_SRC -> $HM_DEST..."
-ln -s "$HM_SRC" "$HM_DEST"
-
-echo "Done."
+echo ""
+echo "Done. To apply the configuration, run:"
+echo "  sudo nixos-rebuild switch --flake /etc/nixos#daw"
+echo ""
+echo "If flakes are not yet enabled on the system, use:"
+echo "  sudo nixos-rebuild switch --flake /etc/nixos#daw --extra-experimental-features 'nix-command flakes'"

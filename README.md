@@ -1,63 +1,74 @@
 # nixos
-My Nixos configuration
+My NixOS configuration (flake-based)
 
-## To setup
-Install Nixos on the machine using their USB installer
+## Structure
 
-Edit the initial Nixos configuration file to add git to the machine:
+```
+flake.nix                        # Flake entry point (nixpkgs, home-manager, plasma-manager)
+etc/nixos/
+  configuration.nix              # System configuration
+  hardware-configuration.nix     # Generated hardware config (do not edit)
+config/home-manager/
+  home.nix                       # Home Manager configuration for fprice
+NukeAndInstall.sh                # Bootstrap script
+```
 
-```sudo nano /etc/configuration.nix```
+## Initial setup
 
-Look for the following
+Install NixOS on the machine using the USB installer, then add git to the default config:
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  ];
+```
+sudo nano /etc/nixos/configuration.nix
+```
 
-And make it look like this:
+Add `git` to `environment.systemPackages`, then rebuild:
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  neovim
-  git
-  ];
+```
+sudo nixos-rebuild switch
+```
 
-This adds neovim and git to the machine
+Clone this repo:
 
-Run:
+```
+git clone https://github.com/rickprice/nixos.git
+cd nixos
+```
 
-```sudo nixos-rebuild switch```
+Run the bootstrap script to symlink the repo into place:
 
-Git will now be working on the machine
+```
+./NukeAndInstall.sh
+```
 
-Then run from the home directory:
+Apply the configuration. If flakes are not yet enabled on the fresh install:
 
-```git clone https://github.com/rickprice/nixos.git```
+```
+sudo nixos-rebuild switch --flake /etc/nixos#daw --extra-experimental-features 'nix-command flakes'
+```
 
-Go to the "nixos" directory and run:
+On subsequent rebuilds (flakes will be enabled after the first switch):
 
-```NukeAndInstall.sh```
+```
+sudo nixos-rebuild switch --flake /etc/nixos#daw
+```
 
-This will put the Nixos configurations in place, then run:
+Or use the shell alias:
 
-```sudo nixos-rebuild switch```
+```
+rebuild
+```
 
-The machine should now be configured. Then run:
+## How it works
 
-```gh repo clone rickprice/nixos .nixos```
+- `flake.nix` pins nixpkgs (`nixos-26.05`), home-manager (`release-26.05`), and plasma-manager.
+- Home Manager runs as a NixOS module — no separate `home-manager switch` needed.
+- `NukeAndInstall.sh` symlinks the repo root to `/etc/nixos` so `flake.nix` is available at `/etc/nixos/flake.nix`.
+- After setup, `sudo nixos-rebuild switch --flake /etc/nixos#daw` rebuilds both the system and the home environment in one step.
 
-Go to the ".nixos" directory and run:
+## Updating inputs
 
-```NukeAndInstall.sh```
-
-This will put the Nixos configurations in place, then run:
-
-```sudo nixos-rebuild switch```
-
-Then delete the nixos directory since it will now be a duplicate
+```
+nix flake update          # update all inputs
+nix flake update nixpkgs  # update only nixpkgs
+sudo nixos-rebuild switch --flake /etc/nixos#daw
+```
