@@ -12,9 +12,9 @@
     ardour
     calf
     guitarix
-    hydrogen
+    # hydrogen
     lsp-plugins
-    musescore
+    # musescore
 
     # Media playback
     mpv
