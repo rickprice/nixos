@@ -33,6 +33,7 @@
     carla
     qpwgraph
     midisnoop
+    touchosc
 
     # Media playback
     mpv
