@@ -43,7 +43,7 @@ Run the bootstrap script to symlink the repo into place:
 Apply the configuration. If flakes are not yet enabled on the fresh install:
 
 ```
-sudo nixos-rebuild switch --flake /etc/nixos#daw --extra-experimental-features 'nix-command flakes'
+sudo nixos-rebuild switch --flake /etc/nixos#daw --option extra-experimental-features 'nix-command flakes'
 ```
 
 On subsequent rebuilds (flakes will be enabled after the first switch):
