@@ -21,6 +21,8 @@ stdenv.mkDerivation {
     # qmake doesn't pick up external headers via NIX_CFLAGS_COMPILE, so patch
     # the rtmidi include and library paths directly into the project file.
     sed -i 's|LIBS += -lrtmidi|LIBS += -L${lib.getLib rtmidi}/lib -lrtmidi\nINCLUDEPATH += ${lib.getDev rtmidi}/include/rtmidi|' src/src.pro
+    # RtError was renamed to RtMidiError in rtmidi 4.x
+    sed -i 's/RtError/RtMidiError/g' src/engine.cpp
   '';
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
