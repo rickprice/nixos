@@ -137,6 +137,17 @@
     };
   };
 
+  # Tailscale
+  services.tailscale = {
+  enable = true;
+  useRoutingFeatures = "client";
+  };
+
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
