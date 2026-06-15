@@ -15,6 +15,9 @@
     # hydrogen
     lsp-plugins
     # musescore
+    carla
+    qpwgraph
+    midisnoop
 
     # Media playback
     mpv
@@ -28,6 +31,9 @@
     ripgrep
     unzip
     wget
+
+    # Git utilities
+    lazygit
 
     # Fonts
     nerd-fonts.jetbrains-mono
