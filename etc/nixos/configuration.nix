@@ -169,10 +169,7 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # ── midi-daemon ─────────────────────────────────────────────────────────────
-  environment.etc."midi-daemon" = {
-    source = ./files/midi-daemon;
-    mode = "0755";
-  };
+  environment.etc."midi-daemon".source = ./files/midi-daemon;
 
 
 
