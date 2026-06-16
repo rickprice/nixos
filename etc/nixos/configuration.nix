@@ -171,6 +171,12 @@
   # ── midi-daemon ─────────────────────────────────────────────────────────────
   environment.etc."midi-daemon".source = ./files/midi-daemon;
 
+  services.midi-daemon = {
+    enable = true;
+    configFile = "/etc/midi-daemon/config.toml";
+    routesDir  = "/etc/midi-daemon/routes.d";
+  };
+
 
 
   # This value determines the NixOS release from which the default
