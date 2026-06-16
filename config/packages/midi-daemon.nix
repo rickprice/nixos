@@ -2,26 +2,21 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-daemon";
-  version = "0.4.9";
+  version = "0.5.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-daemon";
-    rev = "v0.4.9";
-    hash = "sha256-+fAyRk0x585edgKg/yG24AVdHPEJW/2FqHY4klZjuJI=";
+    rev = "v0.5.0";
+    hash = "sha256-t+ti4jWYB/2Awv4OpmTt9p6zXjjF9JcEPzYYsfubpXQ=";
   };
 
-  cargoHash = "sha256-DsGHopJb/DieEXhPfXm3wGQb14zosY5jYetoDmOo4Uk=";
+  cargoHash = "sha256-xKKa2Srm8/AGGECTVvqnnyZ1NxKVIEUWWpxulakiHvg=";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ alsa-lib ];
 
   postInstall = ''
-    install -Dm644 systemd/midi-daemon-system.service \
-      $out/lib/systemd/system/midi-daemon.service
-    substituteInPlace $out/lib/systemd/system/midi-daemon.service \
-      --replace-fail /usr/local/bin/midi-daemon $out/bin/midi-daemon
-
     install -Dm644 config.toml $out/share/doc/midi-daemon/config.toml
 
     for lua in routes.d/*.lua; do
@@ -34,7 +29,7 @@ rustPlatform.buildRustPackage {
   '';
 
   meta = with lib; {
-    description = "A Lua-scriptable MIDI routing daemon";
+    description = "A Lua-scriptable MIDI routing daemon for Linux";
     homepage = "https://github.com/rickprice/midi-daemon";
     license = licenses.bsd3;
     mainProgram = "midi-daemon";
