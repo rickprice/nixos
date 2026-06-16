@@ -54,9 +54,6 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Realtime extensions
-  security.rtkit.enable = true;
-
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
