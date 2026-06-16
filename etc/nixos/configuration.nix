@@ -1,3 +1,4 @@
+# vim: set ts=2 sw=2 et:
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
@@ -168,11 +169,12 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # ── midi-daemon ─────────────────────────────────────────────────────────────
-  services.midi-daemon.enable = true;
   environment.etc."midi-daemon" = {
-  source = ./files/midi-daemon;  # a directory sitting next to your configuration.nix
-  mode = "0755";           # applied to the directory itself
+    source = ./files/midi-daemon;
+    mode = "0755";
   };
+
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
