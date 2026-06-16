@@ -1,3 +1,4 @@
+# vim: set ts=2 sw=2 et:
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
@@ -166,6 +167,17 @@
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # ── midi-daemon ─────────────────────────────────────────────────────────────
+  environment.etc."midi-daemon".source = ./files/midi-daemon;
+
+  services.midi-daemon = {
+    enable = true;
+    configFile = "/etc/midi-daemon/config.toml";
+    routesDir  = "/etc/midi-daemon/routes.d";
+  };
+
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

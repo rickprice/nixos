@@ -21,11 +21,13 @@
       system = "x86_64-linux";
       modules = [
         ./etc/nixos/configuration.nix
+        ./config/modules/midi-daemon.nix
         home-manager.nixosModules.home-manager
         {
           nixpkgs.overlays = [
             (final: prev: {
               midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
+              midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
             })
           ];
         }
