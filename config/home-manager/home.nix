@@ -30,12 +30,22 @@
     ardour
     calf
     guitarix
-    lsp-plugins
     carla
     qpwgraph
     midisnoop
-    midi-daemon
     touchosc
+
+    lsp-plugins
+    sfizz
+    sfizz-ui
+    x42-plugins
+    # x42-gmsynth
+    # x42-avldrums
+    dragonfly-reverb
+    caps # Tim Goetze PlateX2 and others
+
+    # My MIDI controller/OSC controller
+    midi-daemon
 
     # Media playback
     mpv
