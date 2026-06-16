@@ -169,6 +169,10 @@
 
   # ── midi-daemon ─────────────────────────────────────────────────────────────
   services.midi-daemon.enable = true;
+  environment.etc."midi-daemon" = {
+  source = ./files/midi-daemon;  # a directory sitting next to your configuration.nix
+  mode = "0755";           # applied to the directory itself
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
