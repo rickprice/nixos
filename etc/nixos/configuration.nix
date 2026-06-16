@@ -54,6 +54,9 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # Realtime extensions
+  security.rtkit.enable = true;
+
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -63,12 +66,27 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+    jack.enable = true;
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
+
+  services.pipewire.extraConfig.pipewire."92-low-latency" = {
+    "context.properties" = {
+      "default.clock.rate" = 48000;
+      "default.clock.quantum" = 128;
+      "default.clock.min-quantum" = 64;
+    };
+  };
+
+  security.pam.loginLimits = [
+    { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
+    { domain = "@audio"; item = "rtprio";  type = "-"; value = "99"; }
+    { domain = "@audio"; item = "nofile";  type = "soft"; value = "99999"; }
+    { domain = "@audio"; item = "nofile";  type = "hard"; value = "99999"; }
+  ];
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -94,7 +112,7 @@
     ];
     description = "Frederick Price";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
