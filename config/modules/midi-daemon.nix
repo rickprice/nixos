@@ -56,9 +56,17 @@ in {
       default = [ "audio" ];
       description = "Extra groups for the midi-daemon user. Keep 'audio' for ALSA access.";
     };
+
+    oscPort = lib.mkOption {
+      type = lib.types.port;
+      default = 9000;
+      description = "UDP port to open in the firewall for OSC messages.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    networking.firewall.allowedUDPPorts = [ cfg.oscPort ];
+
     users.users.${cfg.user} = {
       isSystemUser = true;
       group        = cfg.group;
