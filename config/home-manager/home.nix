@@ -18,6 +18,7 @@
     curl
     wget
     unzip
+    tree
 
     # Dev tools
     git
@@ -89,6 +90,13 @@
       source ${pkgs.fzf}/share/fzf/completion.zsh
     '';
   };
+
+  # ── ZOxide ──────────────────────────────────────────────────────────────────
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true; # Compiles hooks straight into Zsh
+  };
+
 
   # ── Prompt ──────────────────────────────────────────────────────────────────
   programs.starship = {
