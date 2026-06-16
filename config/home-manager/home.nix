@@ -37,7 +37,7 @@
 
     lsp-plugins
     sfizz
-    sfizz-ui
+    # sfizz-ui
     x42-plugins
     # x42-gmsynth
     # x42-avldrums
