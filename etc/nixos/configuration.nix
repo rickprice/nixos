@@ -119,7 +119,11 @@
 
   # Tell JACK clients (Carla, Ardour, etc.) to request 128 frames at 48 kHz.
   # Without this Carla falls back to its own default of 512.
-  environment.sessionVariables.PIPEWIRE_LATENCY = "128/48000";
+  environment.sessionVariables = {
+    PIPEWIRE_LATENCY = "128/48000";
+    LV2_PATH = "${pkgs.calf}/lib/lv2:${pkgs.guitarix}/lib/lv2:${pkgs.lsp-plugins}/lib/lv2:${pkgs.sfizz}/lib/lv2:${pkgs.x42-plugins}/lib/lv2:${pkgs.dragonfly-reverb}/lib/lv2";
+    LADSPA_PATH = "${pkgs.calf}/lib/ladspa:${pkgs.caps}/lib/ladspa:${pkgs.guitarix}/lib/ladspa";
+  };
 
   security.pam.loginLimits = [
     { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
