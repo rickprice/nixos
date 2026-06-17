@@ -525,7 +525,7 @@ myStartupHook hostname = do
     -- System services
     spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     spawnOnce "dunst"
-    spawnOnce "picom -b"
+    spawnOnce "picom --daemon --backend glx"
     spawnOnce "blueman-applet"
     spawn "killall pasystray; sleep 15; pasystray"
     spawnOnce "xfce4-power-manager"
