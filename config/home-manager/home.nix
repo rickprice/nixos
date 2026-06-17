@@ -62,6 +62,9 @@
 
     # SSH key management
     keychain
+
+    # Dropbox sync
+    maestral
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -183,6 +186,9 @@
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
+
+  # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
+  services.maestral.enable = true;
 
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {
