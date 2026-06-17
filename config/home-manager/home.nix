@@ -47,6 +47,8 @@
     # My MIDI controller/OSC controller
     midi-daemon
 
+    volumepanningstereo-lv2
+
     # Media playback
     mpv
 
