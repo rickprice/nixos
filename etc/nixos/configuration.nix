@@ -3,7 +3,20 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
+let
+  audioPlugins = [
+    pkgs.calf
+    pkgs.caps
+    pkgs.guitarix
+    pkgs.lsp-plugins
+    pkgs.sfizz
+    pkgs.x42-plugins
+    pkgs.dragonfly-reverb
+    pkgs.volumepanningstereo-lv2
+  ];
+in
 
 {
   imports =
@@ -121,8 +134,9 @@
   # Without this Carla falls back to its own default of 512.
   environment.sessionVariables = {
     PIPEWIRE_LATENCY = "128/48000";
-    LV2_PATH = "${pkgs.calf}/lib/lv2:${pkgs.guitarix}/lib/lv2:${pkgs.lsp-plugins}/lib/lv2:${pkgs.sfizz}/lib/lv2:${pkgs.x42-plugins}/lib/lv2:${pkgs.dragonfly-reverb}/lib/lv2";
-    LADSPA_PATH = "${pkgs.calf}/lib/ladspa:${pkgs.caps}/lib/ladspa:${pkgs.guitarix}/lib/ladspa";
+    LV2_PATH    = lib.makeSearchPath "lib/lv2"    audioPlugins;
+    LADSPA_PATH = lib.makeSearchPath "lib/ladspa" audioPlugins;
+    VST3_PATH   = lib.makeSearchPath "lib/vst3"   audioPlugins;
   };
 
   security.pam.loginLimits = [
