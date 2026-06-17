@@ -15,8 +15,32 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Use latest kernel.
+  # Mainline kernel — for hard real-time scheduling switch to pkgs.linuxPackages_rt_latest.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # threadirqs: force all IRQ handlers into schedulable threads so the RT
+  # audio thread can preempt them.  nosoftlockup silences the watchdog that
+  # would otherwise fire on long-running RT bursts.
+  boot.kernelParams = [ "threadirqs" "nosoftlockup" ];
+
+  # Remove the 95 % CPU-time cap on SCHED_FIFO/SCHED_RR tasks.  On a
+  # dedicated DAW there is no reason to throttle RT threads.
+  boot.kernel.sysctl = {
+    "kernel.sched_rt_runtime_us"    = -1;
+    # Keep swap out of the hot path; 10 means "swap only under real pressure".
+    "vm.swappiness"                 = 10;
+    # Reduce how aggressively the kernel flushes dirty pages — large flushes
+    # cause latency spikes while the disk is busy.
+    "vm.dirty_background_ratio"     = 20;
+    "vm.dirty_ratio"                = 40;
+    # Allow unprivileged perf usage for latency profiling tools.
+    "kernel.perf_event_paranoid"    = 1;
+  };
+
+  # Keep the CPU at full frequency so there are no scaling-induced latency
+  # spikes during a session.  The i3-1005G1 is fanless-class so thermals are
+  # fine under the light computational load of a DAW.
+  powerManagement.cpuFreqGovernor = "performance";
 
   networking.hostName = "daw"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -72,11 +96,30 @@
 
   services.pipewire.extraConfig.pipewire."92-low-latency" = {
     "context.properties" = {
-      "default.clock.rate" = 48000;
-      "default.clock.quantum" = 128;
+      "default.clock.rate"        = 48000;
+      "default.clock.quantum"     = 128;
       "default.clock.min-quantum" = 64;
+      "default.clock.max-quantum" = 128;
+      # Allow PipeWire itself to lock pages in RAM so the audio graph never
+      # takes a page-fault during processing.
+      "mem.allow-mlock"           = true;
     };
   };
+
+  # Expose the same quantum/rate constraints to JACK clients (Ardour, Carla,
+  # etc.) so they see a consistent period size and cannot negotiate a larger one.
+  services.pipewire.extraConfig.jack."92-low-latency" = {
+    "context.properties" = {
+      "default.clock.rate"        = 48000;
+      "default.clock.quantum"     = 128;
+      "default.clock.min-quantum" = 64;
+      "default.clock.max-quantum" = 128;
+    };
+  };
+
+  # Tell JACK clients (Carla, Ardour, etc.) to request 128 frames at 48 kHz.
+  # Without this Carla falls back to its own default of 512.
+  environment.sessionVariables.PIPEWIRE_LATENCY = "128/48000";
 
   security.pam.loginLimits = [
     { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
