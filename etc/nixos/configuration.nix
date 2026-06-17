@@ -202,16 +202,16 @@ in
   maestral-gui
   ];
 
-  # # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
-  # systemd.user.services.maestral = {
-  #   description = "Maestral Dropbox Client";
-  #   wantedBy = [ "default.target" ];
-  #   serviceConfig = {
-  #     Type = "exec";
-  #     ExecStart = "${pkgs.maestral}/bin/maestral start --foreground";
-  #     Restart = "on-failure";
-  #   };
-  # };
+  # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
+  systemd.user.services.maestral = {
+    description = "Maestral Dropbox Client";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "exec";
+      ExecStart = "${pkgs.maestral}/bin/maestral start --foreground";
+      Restart = "on-failure";
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
