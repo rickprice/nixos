@@ -98,6 +98,21 @@ in
     # SSH key management
     keychain
 
+    # XMonad window manager utilities
+    xmobar
+    wezterm
+    dunst
+    picom
+    trayer
+    networkmanagerapplet
+    xscreensaver
+    autorandr
+    udiskie
+    cbatticon
+    blueman
+    polkit_gnome
+    xfce.xfce4-power-manager
+    pasystray
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -220,11 +235,35 @@ in
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 
+
   # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
   xdg.dataFile = builtins.listToAttrs (map (status: {
     name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
     value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
   }) maestralStatuses);
+
+  # ── XMonad ───────────────────────────────────────────────────────────────────
+  home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
+  home.file.".xmobarrc".source = ../xmobar/xmobarrc;
+
+  # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
+  # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service
+  # starts the agent via systemd instead)
+  systemd.user.services.polkit-gnome-authentication-agent-1 = {
+    Unit = {
+      Description = "polkit-gnome-authentication-agent-1";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {

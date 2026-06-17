@@ -79,6 +79,13 @@ in
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+  # XMonad window manager (available alongside KDE in the SDDM session chooser)
+  services.xserver.windowManager.xmonad = {
+    enable = true;
+    enableContribAndExtras = true;
+    extraPackages = hpkgs: [ hpkgs.hostname ];
+  };
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
