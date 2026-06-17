@@ -111,7 +111,7 @@ in
     cbatticon
     blueman
     polkit_gnome
-    xfce.xfce4-power-manager
+    xfce4-power-manager
     pasystray
   ];
 
