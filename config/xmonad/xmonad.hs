@@ -523,7 +523,7 @@ myNewStyleKeys hostname =
 myStartupHook hostname = do
     setupWorkspaceGroups hostname
     -- System services
-    spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+    -- spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     spawnOnce "dunst"
     spawnOnce "picom --daemon --backend glx"
     spawnOnce "blueman-applet"
