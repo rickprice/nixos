@@ -42,6 +42,8 @@ in
     gh            # GitHub CLI
     lazygit
     claude-code
+    tree-sitter   # tree-sitter CLI (nvim-treesitter health check)
+    prettier      # JS/TS/CSS/HTML/Markdown formatter (conform.nvim)
 
     # Rust
     cargo
@@ -270,7 +272,6 @@ in
 
       # Editing
       nvim-autopairs
-      renamer-nvim
       toggleterm-nvim
       vim-fetch
 

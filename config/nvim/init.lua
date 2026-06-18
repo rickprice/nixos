@@ -226,9 +226,6 @@ vim.o.timeout    = true
 vim.o.timeoutlen = 500
 require("which-key").setup()
 
--- ── Renamer ───────────────────────────────────────────────────────────────
-require("renamer").setup()
-
 -- ── Toggleterm ────────────────────────────────────────────────────────────
 require("toggleterm").setup()
 
@@ -354,8 +351,8 @@ map("n", "<leader>xs", ":lua vim.diagnostic.show()<CR>",               { desc = 
 -- Toggleterm
 map("n", "<leader>T", "<cmd>ToggleTerm<cr>", { desc = "ToggleTerm" })
 
--- Renamer
-map({"n","v"}, "<leader>cn", '<cmd>lua require("renamer").rename()<cr>', { desc = "Rename" })
+-- Rename (LSP built-in)
+map({"n","v"}, "<leader>cn", vim.lsp.buf.rename, { desc = "Rename" })
 
 -- Symbols outline
 map("n", "<leader>cs", "<cmd>SymbolsOutline<cr>", { desc = "Symbols Outline" })
