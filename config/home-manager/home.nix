@@ -81,6 +81,7 @@ in
 
     # My MIDI controller/OSC controller
     midi-daemon
+    name-time-period
 
     volumepanningstereo-lv2
 
