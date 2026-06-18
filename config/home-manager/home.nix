@@ -95,9 +95,21 @@ in
     gimp
     inkscape
 
-    # SSH key management
-    keychain
-
+    # XMonad window manager utilities
+    xmobar
+    wezterm
+    dunst
+    trayer
+    networkmanagerapplet
+    xscreensaver
+    autorandr
+    udiskie
+    cbatticon
+    blueman
+    polkit_gnome
+    xfce4-power-manager
+    pasystray
+    syncthing
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -220,11 +232,156 @@ in
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 
+
   # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
   xdg.dataFile = builtins.listToAttrs (map (status: {
     name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
     value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
   }) maestralStatuses);
+
+  # ── XMonad ───────────────────────────────────────────────────────────────────
+  home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
+  home.file.".xmobarrc".source = ../xmobar/xmobarrc;
+
+  # Dunst notification daemon
+  systemd.user.services.dunst = {
+    Unit = {
+      Description = "Dunst notification daemon";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.dunst}/bin/dunst";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # XFCE power manager
+  systemd.user.services.xfce4-power-manager = {
+    Unit = {
+      Description = "XFCE4 Power Manager";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.xfce4-power-manager}/bin/xfce4-power-manager";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Syncthing file sync
+  systemd.user.services.syncthing = {
+    Unit = {
+      Description = "Syncthing file synchronization";
+      After = [ "graphical-session.target" "network.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.syncthing}/bin/syncthing serve --no-browser";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Picom compositor for XMonad
+  systemd.user.services.picom = {
+    Unit = {
+      Description = "Picom X compositor";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.picom}/bin/picom --backend glx";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Blueman Bluetooth applet — waits for the trayer systray before starting
+  systemd.user.services.blueman-applet = {
+    Unit = {
+      Description = "Blueman Bluetooth manager applet";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.blueman}/bin/blueman-applet";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Maestral Qt tray icon — waits for trayer before starting
+  systemd.user.services.maestral-qt = {
+    Unit = {
+      Description = "Maestral Qt system tray icon";
+      After = [ "graphical-session.target" "maestral.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # KWallet daemon — provides a secrets store for apps that use the KWallet API
+  systemd.user.services.kwalletd6 = {
+    Unit = {
+      Description = "KWallet password manager daemon";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.kdePackages.kwallet}/bin/kwalletd6";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
+  # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service
+  # starts the agent via systemd instead)
+  systemd.user.services.polkit-gnome-authentication-agent-1 = {
+    Unit = {
+      Description = "polkit-gnome-authentication-agent-1";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {

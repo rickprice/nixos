@@ -79,6 +79,13 @@ in
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+  # XMonad window manager (available alongside KDE in the SDDM session chooser)
+  services.xserver.windowManager.xmonad = {
+    enable = true;
+    enableContribAndExtras = true;
+    extraPackages = hpkgs: [ hpkgs.hostname ];
+  };
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -90,6 +97,11 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -193,18 +205,22 @@ in
   gh
   maestral
   maestral-gui
+  keychain
+  picom
   ];
 
-  # # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
-  # systemd.user.services.maestral = {
-  #   description = "Maestral Dropbox Client";
-  #   wantedBy = [ "default.target" ];
-  #   serviceConfig = {
-  #     Type = "exec";
-  #     ExecStart = "${pkgs.maestral}/bin/maestral start --foreground";
-  #     Restart = "on-failure";
-  #   };
-  # };
+  # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
+  systemd.user.services.maestral = {
+    description = "Maestral Dropbox Client";
+    after = [ "kwalletd6.service" ];
+    requires = [ "kwalletd6.service" ];
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "exec";
+      ExecStart = "${pkgs.maestral}/bin/maestral start --foreground";
+      Restart = "on-failure";
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
