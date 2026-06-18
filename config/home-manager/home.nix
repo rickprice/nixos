@@ -83,6 +83,7 @@ in
     midi-daemon
     name-time-period
     images-matching-subdirectories
+    background-picker
 
     volumepanningstereo-lv2
 
