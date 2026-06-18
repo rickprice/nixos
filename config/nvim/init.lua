@@ -249,31 +249,31 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-local lspconfig = require("lspconfig")
-
-lspconfig.tailwindcss.setup({
+vim.lsp.config('tailwindcss', {
   filetypes = {
     "css", "scss", "sass", "html",
     "javascript", "javascriptreact", "typescript", "typescriptreact",
   },
-  root_dir = lspconfig.util.root_pattern(
-    "tailwind.config.js", "tailwind.config.ts",
-    "tailwind.config.cjs", "tailwind.config.mjs"
-  ),
+  root_dir = function(bufnr)
+    return vim.fs.root(bufnr, {
+      "tailwind.config.js", "tailwind.config.ts",
+      "tailwind.config.cjs", "tailwind.config.mjs",
+    })
+  end,
 })
 
-lspconfig.cssls.setup({
+vim.lsp.config('cssls', {
   settings = {
     css  = { validate = true, lint = { unknownAtRules = "ignore" } },
     scss = { validate = true, lint = { unknownAtRules = "ignore" } },
   },
 })
 
-lspconfig.html.setup({
+vim.lsp.config('html', {
   filetypes = { "html", "javascriptreact", "typescriptreact" },
 })
 
-lspconfig.jsonls.setup({
+vim.lsp.config('jsonls', {
   settings = {
     json = {
       schemas = {
@@ -286,9 +286,11 @@ lspconfig.jsonls.setup({
   },
 })
 
-lspconfig.eslint.setup({
+vim.lsp.config('eslint', {
   settings = { workingDirectory = { mode = "auto" } },
 })
+
+vim.lsp.enable({ 'tailwindcss', 'cssls', 'html', 'jsonls', 'eslint' })
 
 require("typescript-tools").setup({
   settings = {
@@ -305,16 +307,18 @@ require("typescript-tools").setup({
 })
 
 -- ── Obsidian ──────────────────────────────────────────────────────────────
-require("obsidian").setup({
+-- pcall: vaults may not exist on this machine (e.g. Dropbox not synced)
+pcall(require("obsidian").setup, {
   workspaces = {
     { name = "personal", path = "~/Documents/Personal/Dropbox/FrederickDocuments/MarkDownDocuments.personal" },
     { name = "work",     path = "~/Documents/Personal/Dropbox/FrederickDocuments/MarkDownDocuments.work" },
   },
-  daily_notes  = { folder = "journal/daily",  date_format = "%Y-%m-%d", alias_format = "%B %-d, %Y",         template = "daily-note.md" },
-  weekly_notes = { folder = "journal/weekly", date_format = "%Y-W%V",   alias_format = "Week of %B %-d, %Y", template = "weekly-note.md" },
-  completion   = { nvim_cmp = false, min_chars = 2 },
-  templates    = { subdir = "templates", date_format = "%Y-%m-%d", time_format = "%H:%M" },
-  note_id_func = function(title)
+  daily_notes     = { folder = "journal/daily",  date_format = "%Y-%m-%d", alias_format = "%B %-d, %Y",         template = "daily-note.md" },
+  weekly_notes    = { folder = "journal/weekly", date_format = "%Y-W%V",   alias_format = "Week of %B %-d, %Y", template = "weekly-note.md" },
+  completion      = { nvim_cmp = false, min_chars = 2 },
+  templates       = { subdir = "templates", date_format = "%Y-%m-%d", time_format = "%H:%M" },
+  legacy_commands = false,
+  note_id_func    = function(title)
     local suffix = title and title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
       or (function()
            local s = ""
@@ -323,11 +327,6 @@ require("obsidian").setup({
          end)()
     return tostring(os.time()) .. "-" .. suffix
   end,
-  mappings = {
-    ["gf"]         = { action = function() return require("obsidian").util.gf_passthrough() end, opts = { noremap = false, expr = true, buffer = true } },
-    ["<leader>ch"] = { action = function() return require("obsidian").util.toggle_checkbox() end, opts = { buffer = true } },
-    ["<cr>"]       = { action = function() return require("obsidian").util.smart_action() end,    opts = { buffer = true, expr = true } },
-  },
 })
 
 -- ── Keymaps ───────────────────────────────────────────────────────────────
