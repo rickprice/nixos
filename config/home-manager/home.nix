@@ -82,6 +82,7 @@ in
     # My MIDI controller/OSC controller
     midi-daemon
     name-time-period
+    images-matching-subdirectories
 
     volumepanningstereo-lv2
 

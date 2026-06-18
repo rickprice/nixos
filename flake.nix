@@ -30,6 +30,7 @@
               midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
               volumepanningstereo-lv2 = prev.callPackage ./config/packages/volumepanningstereo-lv2.nix { };
               name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
+              images-matching-subdirectories = prev.callPackage ./config/packages/images-matching-subdirectories.nix { };
             })
           ];
         }
