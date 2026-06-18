@@ -8,6 +8,8 @@
   # ── Packages ────────────────────────────────────────────────────────────────
   home.packages = with pkgs; [
     # CLI essentials
+    wl-clipboard  # Wayland clipboard (wl-copy / wl-paste) for Neovim
+    xclip         # X11 clipboard for Neovim
     ripgrep       # fast grep
     fd            # fast find
     bat           # cat with syntax highlighting
@@ -25,6 +27,13 @@
     gh            # GitHub CLI
     lazygit
     claude-code
+
+    # Rust
+    cargo
+    rustc
+    rustfmt
+    clippy
+    rust-analyzer
 
     # Python
     (python3.withPackages (ps: with ps; [
