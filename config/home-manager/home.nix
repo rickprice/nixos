@@ -109,6 +109,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
+    syncthing
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -241,6 +242,74 @@ in
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
+
+  # Dunst notification daemon
+  systemd.user.services.dunst = {
+    Unit = {
+      Description = "Dunst notification daemon";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.dunst}/bin/dunst";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # XFCE power manager
+  systemd.user.services.xfce4-power-manager = {
+    Unit = {
+      Description = "XFCE4 Power Manager";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.xfce4-power-manager}/bin/xfce4-power-manager";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Syncthing file sync
+  systemd.user.services.syncthing = {
+    Unit = {
+      Description = "Syncthing file synchronization";
+      After = [ "graphical-session.target" "network.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.syncthing}/bin/syncthing serve --no-browser";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Picom compositor for XMonad
+  systemd.user.services.picom = {
+    Unit = {
+      Description = "Picom X compositor";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.picom}/bin/picom --backend glx";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
   # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service

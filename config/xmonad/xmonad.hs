@@ -524,11 +524,8 @@ myStartupHook hostname = do
     setupWorkspaceGroups hostname
     -- System services
     -- spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    spawnOnce "dunst"
-    spawnOnce "picom --daemon --backend glx"
     spawnOnce "blueman-applet"
     spawn "killall pasystray; sleep 15; pasystray"
-    spawnOnce "xfce4-power-manager"
     spawnOnce "killall udiskie; udiskie --tray"
     -- spawnOnce "easyeffects --service-mode --hide-window"
     spawn myFixScreens
@@ -547,7 +544,6 @@ myStartupHook hostname = do
             spawnOn "U11" myGuitarix
             spawnOn "U12" myQPWGraph
             spawnOn "U13" myTouchOSC
-            spawnOnce "syncthing serve"
         else do
             spawnOn "FP11" myArdour
             spawnOnce "cbatticon"
