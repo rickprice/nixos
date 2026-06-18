@@ -26,6 +26,17 @@
     lazygit
     claude-code
 
+    # Python
+    (python3.withPackages (ps: with ps; [
+      ipython       # enhanced REPL
+      requests      # HTTP client
+      httpx         # async HTTP client
+      black         # formatter
+      mypy          # type checker
+      pylint        # linter
+      rich          # terminal formatting
+    ]))
+
     # Audio production
     ardour
     calf
