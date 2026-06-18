@@ -32,6 +32,7 @@
               name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
               images-matching-subdirectories = prev.callPackage ./config/packages/images-matching-subdirectories.nix { };
               background-picker = prev.callPackage ./config/packages/background-picker.nix { };
+              md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
             })
           ];
         }

@@ -84,6 +84,7 @@ in
     name-time-period
     images-matching-subdirectories
     background-picker
+    md-to-svg
 
     volumepanningstereo-lv2
 
