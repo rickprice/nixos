@@ -89,6 +89,7 @@ in
 
     # Internet
     google-chrome
+    discord
 
     # Graphics
     darktable
