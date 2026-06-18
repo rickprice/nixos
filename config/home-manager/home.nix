@@ -96,6 +96,7 @@ in
     # Internet
     google-chrome
     discord
+    obsidian
 
     # Graphics
     darktable
