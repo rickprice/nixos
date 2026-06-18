@@ -18,7 +18,7 @@ opt.expandtab      = true
 opt.foldlevel      = 99
 opt.foldenable     = false
 opt.foldmethod     = "expr"
-opt.foldexpr       = "nvim_treesitter#foldexpr()"
+opt.foldexpr       = "v:lua.vim.treesitter.foldexpr()"
 opt.formatoptions  = "l"
 opt.guicursor      = "n-v-c-sm:block-blinkwait50-blinkon50-blinkoff50,i-ci-ve:ver25-Cursor-blinkon100-blinkoff100,r-cr-o:hor20"
 opt.hidden         = true
@@ -105,10 +105,10 @@ require("nightfox").setup({ options = { transparent = true } })
 vim.cmd.colorscheme("nightfox")
 
 -- ── Treesitter ────────────────────────────────────────────────────────────
-require("nvim-treesitter.configs").setup({
-  highlight    = { enable = true },
-  indent       = { enable = true },
-  auto_install = false, -- parsers are provided by Nix
+-- nvim-treesitter 0.10+ removed the configs module; highlight/indent are
+-- now built-in neovim features. Parsers are provided by Nix.
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function() pcall(vim.treesitter.start) end,
 })
 
 -- ── Completion ────────────────────────────────────────────────────────────
@@ -119,10 +119,10 @@ require("blink.cmp").setup({
   sources    = {
     default = { "lsp", "path", "snippets", "buffer" },
     providers = {
-      lsp      = { kind = "LSP",     fallbacks = { "buffer" } },
-      path     = { kind = "Path",    score_offset = -3 },
-      snippets = { kind = "Snippet", score_offset = -1 },
-      buffer   = { kind = "Text",    fallbacks = {} },
+      lsp      = { name = "LSP",     fallbacks = { "buffer" } },
+      path     = { name = "Path",    score_offset = -3 },
+      snippets = { name = "Snippet", score_offset = -1 },
+      buffer   = { name = "Text",    fallbacks = {} },
     },
   },
   fuzzy = { implementation = "prefer_rust_with_warning" },
