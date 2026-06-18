@@ -329,6 +329,24 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Maestral Qt tray icon — waits for trayer before starting
+  systemd.user.services.maestral-qt = {
+    Unit = {
+      Description = "Maestral Qt system tray icon";
+      After = [ "graphical-session.target" "maestral.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # KWallet daemon — provides a secrets store for apps that use the KWallet API
   systemd.user.services.kwalletd6 = {
     Unit = {
