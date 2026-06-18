@@ -97,6 +97,7 @@ in
     inkscape
 
     # XMonad window manager utilities
+    dmenu
     xmobar
     wezterm
     dunst

@@ -418,7 +418,8 @@ dynamicWorkspaceGroupKeys key viewGroup = [("M-" ++ key, addName ("View group " 
 viewGroupKeys keys viewGroup = [("M-s " ++ keys, addName ("View group " ++ viewGroup) $ ADWG.viewWSGroup viewGroup)]
 
 myCustomKeys hostname =
-    [ ("M-f", addName "Toggle fullscreen" $ sendMessage ToggleLayout)
+    [ ("M-p", addName "Run application (dmenu)" $ spawn "dmenu_run")
+    , ("M-f", addName "Toggle fullscreen" $ sendMessage ToggleLayout)
     , ("M-S-h", addName "Toggle hide empty workspaces" toggleHideEmptyWS)
     , ("M-S-<Enter>", addName "Open terminal" $ spawn myTerminal)
     , spawnKey "b" "Browser" myBrowser
