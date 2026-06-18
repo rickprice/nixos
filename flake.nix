@@ -34,6 +34,7 @@
               background-picker = prev.callPackage ./config/packages/background-picker.nix { };
               md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
               markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
+              csvargs = prev.callPackage ./config/packages/csvargs.nix { };
             })
           ];
         }

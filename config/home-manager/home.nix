@@ -86,6 +86,7 @@ in
     background-picker
     md-to-svg
     markdown-timesheet
+    csvargs
 
     volumepanningstereo-lv2
 
