@@ -98,6 +98,16 @@ in
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # Network scanning via SANE + airscan (eSCL / AirScan / WSD)
+  hardware.sane.enable = true;
+  hardware.sane.extraBackends = [ pkgs.sane-airscan ];
+
+  # Avahi (mDNS) — required for scanner auto-discovery on the local network
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+  };
+
   # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -182,7 +192,7 @@ in
     ];
     description = "Frederick Price";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "scanner" "lp" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
@@ -207,6 +217,7 @@ in
   maestral-gui
   keychain
   picom
+  simple-scan
   ];
 
   # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
