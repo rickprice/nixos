@@ -212,6 +212,8 @@ in
   # ── Maestral (Dropbox) ───────────────────────────────────────────────────────
   systemd.user.services.maestral = {
     description = "Maestral Dropbox Client";
+    after = [ "kwalletd6.service" ];
+    requires = [ "kwalletd6.service" ];
     wantedBy = [ "default.target" ];
     serviceConfig = {
       Type = "exec";
