@@ -200,6 +200,8 @@ in
   gh
   maestral
   maestral-gui
+  keychain
+  picom
   ];
 
   # ── Maestral (Dropbox) ───────────────────────────────────────────────────────

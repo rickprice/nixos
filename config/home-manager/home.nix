@@ -95,14 +95,10 @@ in
     gimp
     inkscape
 
-    # SSH key management
-    keychain
-
     # XMonad window manager utilities
     xmobar
     wezterm
     dunst
-    picom
     trayer
     networkmanagerapplet
     xscreensaver
