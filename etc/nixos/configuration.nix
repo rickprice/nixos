@@ -242,6 +242,69 @@ in
     };
   };
 
+  # ── keyd (keyboard remapping) ───────────────────────────────────────────────
+  services.keyd = {
+    enable = true;
+    keyboards = {
+      default = {
+        ids = [ "*" "-047d:1020" ];
+        settings = {
+          main = {
+            capslock = "overload(ctrl_vim, esc)";
+            "meta.c" = "C-c";
+            "meta.v" = "C-v";
+            "meta.x" = "C-x";
+            "meta.a" = "C-a";
+          };
+          fkey_remap = {
+            f1 = "f13";
+            f2 = "f14";
+            f3 = "f15";
+            f4 = "f16";
+            f5 = "f17";
+            f6 = "f18";
+            f7 = "f19";
+            f8 = "f20";
+            f9 = "f21";
+            f10 = "f22";
+            f11 = "f23";
+            f12 = "macro(S-f23)";
+          };
+          "ctrl_vim:C" = {
+            space = "toggle(fkey_remap)";
+          };
+          shift = {
+            leftshift = "timeout(leftshift, 1000, capslock)";
+            rightshift = "timeout(rightshift, 1000, capslock)";
+          };
+        };
+      };
+      "12keymini" = {
+        ids = [ "1189:8890" ];
+        settings = {
+          main = {
+            f1 = "f13";
+            f2 = "f14";
+            f3 = "f15";
+            f4 = "f16";
+            f5 = "f17";
+            f6 = "f18";
+            f7 = "f19";
+            f8 = "f20";
+            f9 = "f21";
+            f10 = "f22";
+            f11 = "f23";
+            f12 = "macro(S-f23)";
+          };
+        };
+      };
+      staplesmini = {
+        ids = [ "1c4f:0002" ];
+        settings = { };
+      };
+    };
+  };
+
   # Tailscale
   services.tailscale = {
   enable = true;
