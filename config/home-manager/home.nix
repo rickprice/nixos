@@ -329,6 +329,23 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # KWallet daemon — provides a secrets store for apps that use the KWallet API
+  systemd.user.services.kwalletd6 = {
+    Unit = {
+      Description = "KWallet password manager daemon";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.kdePackages.kwallet}/bin/kwalletd6";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
   # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service
   # starts the agent via systemd instead)
