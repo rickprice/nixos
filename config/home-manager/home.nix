@@ -104,6 +104,7 @@ in
     inkscape
 
     # XMonad window manager utilities
+    feh
     dmenu
     xmobar
     wezterm
@@ -111,7 +112,6 @@ in
     trayer
     networkmanagerapplet
     xscreensaver
-    autorandr
     udiskie
     cbatticon
     blueman
@@ -251,6 +251,137 @@ in
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
+
+  # ── Autorandr ────────────────────────────────────────────────────────────────
+  programs.autorandr = {
+    enable = true;
+
+    hooks.postswitch."10_setup_feh" = ''
+      #! /usr/bin/bash
+      set -e
+      trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+      trap 'echo "\"''${last_command}\" command failed with exit code $?."' EXIT
+      DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox)
+      BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
+      PERSON_SPECIFIC="''${USER}Specific"
+      THEME_DIRS="$PERSON_SPECIFIC Default $(name_time_period)"
+      echo "DROPBOX_LOCATION is: " $DROPBOX_LOCATION
+      echo "BACKGROUNDS_DIR is: " $BACKGROUNDS_DIR
+      echo "PERSON_SPECIFIC is: " $PERSON_SPECIFIC
+      echo "THEME_DIRS are: " $THEME_DIRS
+      feh --no-fehbg --bg-max $(images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
+    '';
+
+    profiles = {
+      docked = {
+        fingerprint = {
+          "DisplayPort-0" = "00ffffffffffff001e6d0c5cb326070003200103803c1978ea24e5ae5048a4240e5054256b007140818081c0a9c0b300d1c08100d1cfcd4600a0a0381f4030203a0059fe2000001a023a801871382d40582c450059fe2000001e000000fd00384b1e5a18010a202020202020000000fc004c4720554c545241574944450a0128020331f2230907074b100403011f1359125d5e5f830100006d030c001000b83c200060010203e305c000e60605014a4a56295900a0a038274030203a0059fe2000001a565e00a0a0a029503020350059fe2000001a000000ff003230334e54435a44533635390a000000000000000000000000000000000000000000000000bf";
+          "DisplayPort-1" = "00ffffffffffff0006b3d227827c0000311e0103803c22782ae925a4554f9a260e5054bfef00d1c0b30095008180814081c0714f0101023a801871382d40582c450056502100001e000000ff004c434c4d54463033313837340a000000fd00304b185412000a202020202020000000fc004153555520564132374548450a01e002032b714f0102031112130414050e0f1d1e1f90230917078301000065030c001000681a00000101304be66842806a703827400820980456502100001a011d007251d01e206e28550056502100001e011d00bc52d01e20b828554056502100001e8c0ad090204031200c405500565021000018000000000000000000000000b7";
+          "DisplayPort-2" = "00ffffffffffff0010ac15d04c30473206110103802f1e78ee8f30a355499827145054a54b00714f81800101010101010101010101017c2e90a0601a1e4030203600d9281100001a000000ff004b553331313732373247304c0a000000fd00384b1e530e000a202020202020000000fc0044454c4c20453232385746500a00d9";
+          "HDMI-A-0" = "00ffffffffffff004c2db571000e0001011f0103805f36780aa833ab5045a5270d4848bdef80714f81c0810081809500a9c0b300d1c008e80030f2705a80b0588a00501d7400001e565e00a0a0a0295030203500501d7400001a000000fd00184b0f873c000a202020202020000000fc0053414d53554e470a202020202001ed02035cf05661101f041305142021225d5e5f6065666264071603122f0f5707150750570700675400090707832f0000e2004fe305c3016e030c001000b83c2800800102030468d85dc40178800b02e3060d01e30f01e0e5018b849001023a801871382d40582c450000000000001e000000000000000000000000000000000077";
+        };
+        config = {
+          "HDMI-A-0" = {
+            crtc = 2;
+            mode = "3840x2160";
+            position = "4240x0";
+            rate = "60.00";
+          };
+          "DisplayPort-1" = {
+            crtc = 0;
+            mode = "1920x1080";
+            position = "2320x15";
+            primary = true;
+            rate = "60.00";
+          };
+          "DisplayPort-2" = {
+            crtc = 3;
+            mode = "1680x1050";
+            position = "0x1095";
+            rate = "59.88";
+          };
+          "DisplayPort-0" = {
+            crtc = 1;
+            mode = "2560x1080";
+            position = "1680x1095";
+            rate = "59.98";
+          };
+        };
+      };
+
+      mobile = {
+        fingerprint = {
+          "eDP-1" = "00ffffffffffff0009e5db0700000000011c0104a51f1178027d50a657529f27125054000000010101010101010101010101010101013a3880de703828403020360035ae1000001afb2c80de703828403020360035ae1000001a000000fe00424f452043510a202020202020000000fe004e4531343046484d2d4e36310a0043";
+        };
+        config = {
+          "DP-1" = { enable = false; };
+          "HDMI-1" = { enable = false; };
+          "DP-2" = { enable = false; };
+          "DP-2-1" = { enable = false; };
+          "DP-2-2" = { enable = false; };
+          "DP-2-3" = { enable = false; };
+          "DP-1-1" = { enable = false; };
+          "DP-1-2" = { enable = false; };
+          "DP-1-3" = { enable = false; };
+          "eDP-1" = {
+            crtc = 0;
+            mode = "1920x1080";
+            position = "0x0";
+            primary = true;
+            rate = "60.00";
+          };
+        };
+      };
+
+      "OneMonitor" = {
+        fingerprint = {
+          "DisplayPort-1" = "00ffffffffffff0010ac15d04c30473206110103802f1e78ee8f30a355499827145054a54b00714f81800101010101010101010101017c2e90a0601a1e4030203600d9281100001a000000ff004b553331313732373247304c0a000000fd00384b1e530e000a202020202020000000fc0044454c4c20453232385746500a00d9";
+        };
+        config = {
+          "DisplayPort-0" = { enable = false; };
+          "DisplayPort-2" = { enable = false; };
+          "HDMI-A-0" = { enable = false; };
+          "DisplayPort-1" = {
+            crtc = 0;
+            mode = "1680x1050";
+            position = "0x0";
+            primary = true;
+            rate = "59.88";
+          };
+        };
+      };
+
+      "ThreeMonitors" = {
+        fingerprint = {
+          "DisplayPort-0" = "00ffffffffffff001e6d0c5cb326070003200103803c1978ea24e5ae5048a4240e5054256b007140818081c0a9c0b300d1c08100d1cfcd4600a0a0381f4030203a0059fe2000001a023a801871382d40582c450059fe2000001e000000fd00384b1e5a18010a202020202020000000fc004c4720554c545241574944450a0128020331f2230907074b100403011f1359125d5e5f830100006d030c001000b83c200060010203e305c000e60605014a4a56295900a0a038274030203a0059fe2000001a565e00a0a0a029503020350059fe2000001a000000ff003230334e54435a44533635390a000000000000000000000000000000000000000000000000bf";
+          "DisplayPort-1" = "00ffffffffffff0010ac15d04c30473206110103802f1e78ee8f30a355499827145054a54b00714f81800101010101010101010101017c2e90a0601a1e4030203600d9281100001a000000ff004b553331313732373247304c0a000000fd00384b1e530e000a202020202020000000fc0044454c4c20453232385746500a00d9";
+          "HDMI-A-0" = "00ffffffffffff0006b3d227827c0000311e0103803c22782ae925a4554f9a260e5054bfef00d1c0b30095008180814081c0714f0101023a801871382d40582c450056502100001e000000ff004c434c4d54463033313837340a000000fd00304b185412000a202020202020000000fc004153555520564132374548450a01e002032b714f0102031112130414050e0f1d1e1f90230917078301000065030c001000681a00000101304be66842806a703827400820980456502100001a011d007251d01e206e28550056502100001e011d00bc52d01e20b828554056502100001e8c0ad090204031200c405500565021000018000000000000000000000000b7";
+        };
+        config = {
+          "DisplayPort-2" = { enable = false; };
+          "HDMI-A-0" = {
+            crtc = 0;
+            mode = "1920x1080";
+            position = "274x0";
+            primary = true;
+            rate = "60.00";
+          };
+          "DisplayPort-0" = {
+            crtc = 1;
+            mode = "2560x1080";
+            position = "0x1080";
+            rate = "59.98";
+          };
+          "DisplayPort-1" = {
+            crtc = 2;
+            mode = "1680x1050";
+            position = "2560x1095";
+            rate = "59.88";
+          };
+        };
+      };
+    };
+  };
 
   # Dunst notification daemon
   systemd.user.services.dunst = {
