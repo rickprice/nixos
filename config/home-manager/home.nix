@@ -104,6 +104,7 @@ in
     inkscape
 
     # XMonad window manager utilities
+    feh
     dmenu
     xmobar
     wezterm
