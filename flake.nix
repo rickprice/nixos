@@ -33,6 +33,7 @@
               images-matching-subdirectories = prev.callPackage ./config/packages/images-matching-subdirectories.nix { };
               background-picker = prev.callPackage ./config/packages/background-picker.nix { };
               md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
+              markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
             })
           ];
         }

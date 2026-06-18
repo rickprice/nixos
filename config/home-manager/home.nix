@@ -85,6 +85,7 @@ in
     images-matching-subdirectories
     background-picker
     md-to-svg
+    markdown-timesheet
 
     volumepanningstereo-lv2
 
