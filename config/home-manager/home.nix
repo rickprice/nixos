@@ -81,6 +81,12 @@ in
 
     # My MIDI controller/OSC controller
     midi-daemon
+    name-time-period
+    images-matching-subdirectories
+    background-picker
+    md-to-svg
+    markdown-timesheet
+    csvargs
 
     volumepanningstereo-lv2
 
