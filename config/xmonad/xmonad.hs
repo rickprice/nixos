@@ -524,7 +524,6 @@ myStartupHook hostname = do
     setupWorkspaceGroups hostname
     -- System services
     -- spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    spawnOnce "blueman-applet"
     spawn "killall pasystray; sleep 15; pasystray"
     spawnOnce "killall udiskie; udiskie --tray"
     -- spawnOnce "easyeffects --service-mode --hide-window"

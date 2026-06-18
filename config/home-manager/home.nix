@@ -311,6 +311,24 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Blueman Bluetooth applet — waits for the trayer systray before starting
+  systemd.user.services.blueman-applet = {
+    Unit = {
+      Description = "Blueman Bluetooth manager applet";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.blueman}/bin/blueman-applet";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
   # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service
   # starts the agent via systemd instead)
