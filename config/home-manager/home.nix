@@ -1,5 +1,20 @@
 { config, pkgs, ... }:
 
+let
+  # Extract the dark-variant tray SVGs from the maestral-gui package and install
+  # them as named hicolor theme icons so maestral_qt's QIcon::hasThemeIcon() finds
+  # them before falling back to screen pixel-sampling (which defaults to white
+  # icons on XMonad because Qt screenshots return all-black pixels there).
+  maestralIconsDark = pkgs.runCommand "maestral-tray-icons-dark" {} ''
+    resources=$(echo ${pkgs.maestral-gui}/lib/python*/site-packages/maestral_qt/resources)
+    mkdir -p $out
+    for status in idle syncing paused disconnected info error; do
+      cp "$resources/maestral_tray-$status-dark.svg" "$out/maestral_tray-$status.svg"
+    done
+  '';
+  maestralStatuses = [ "idle" "syncing" "paused" "disconnected" "info" "error" ];
+in
+
 {
   home.username = "fprice";
   home.homeDirectory = "/home/fprice";
@@ -204,6 +219,12 @@
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
+
+  # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
+  xdg.dataFile = builtins.listToAttrs (map (status: {
+    name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
+    value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
+  }) maestralStatuses);
 
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {
