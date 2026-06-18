@@ -316,6 +316,9 @@ in
     };
   };
 
+  # Autorandr — triggers autorandr on display hotplug via udev
+  services.autorandr.enable = true;
+
   # Tailscale
   services.tailscale = {
   enable = true;
