@@ -324,6 +324,31 @@ in
     value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
   }) maestralStatuses);
 
+  # ── meteo-qt ─────────────────────────────────────────────────────────────────
+  xdg.configFile."meteo-qt/meteo-qt.conf".text = ''
+    [General]
+    APPID=30139089f1f08b98e4c16ef46f884148
+    CitiesTranslation={}
+    City=Midland
+    CityList=['Midland_CA_6073363']
+    Country=CA
+    FontTray="Sans Serif,36,-1,5,50,0,0,0,0,0"
+    ID=6073363
+    IconsTheme=OpenWeatherMap
+    Interval=120
+    Proxy=False
+    SystemIcons=hicolor
+    Toggle_tray_interval=0
+    Tray=Temperature
+    TrayColor=#000000
+    TrayType=temp
+    Unit=metric
+    Wind_unit=df
+
+    [Logging]
+    Level=INFO
+  '';
+
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
