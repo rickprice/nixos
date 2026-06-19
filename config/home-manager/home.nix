@@ -127,6 +127,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
+    meteo-qt
     syncthing
   ];
 
