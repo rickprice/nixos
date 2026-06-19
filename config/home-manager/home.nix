@@ -81,6 +81,13 @@ in
     dragonfly-reverb
     caps # Tim Goetze PlateX2 and others
 
+    # Music notation
+    musescore
+    lilypond
+    frescobaldi
+    denemo
+    rosegarden
+
     # My MIDI controller/OSC controller
     midi-daemon
     name-time-period
