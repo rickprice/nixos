@@ -99,6 +99,16 @@ in
 
     volumepanningstereo-lv2
 
+    # File manager
+    pcmanfm
+    gvfs              # trash, network shares, MTP device support for pcmanfm
+    lxmenu-data       # applications menu in pcmanfm sidebar
+    tumbler           # D-Bus thumbnail service (images, fonts, PDF)
+    ffmpegthumbnailer # video thumbnails via tumbler
+
+    # Document viewer
+    atril
+
     # Media playback
     mpv
 
