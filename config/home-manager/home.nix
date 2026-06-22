@@ -109,6 +109,9 @@ in
     # Document viewer
     atril
 
+    # Diff and merge tool
+    meld
+
     # Media playback
     mpv
 
