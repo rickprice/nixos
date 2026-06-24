@@ -357,6 +357,12 @@ in
 };
 
 
+  # Unlock KWallet automatically on SDDM login (applies to all users)
+  security.pam.services.sddm.kwallet = {
+    enable = true;
+    package = pkgs.kdePackages.kwallet-pam;
+  };
+
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
