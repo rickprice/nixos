@@ -58,8 +58,8 @@ rightScreen = 1
 -- Tamara workspace dimensions
 tWorkspaceDisplayPrefix = "TP"
 tWorkspaceKeyPrefix     = Just "t"
-tDesktops               = 2
-tDesktopPanes           = 3
+tDesktops               = 7
+tDesktopPanes           = 1
 
 -- =============================================================================
 -- WORKSPACE MANAGEMENT
@@ -299,6 +299,7 @@ myStartupHook = do
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
     spawnOnce "trayer --monitor primary --edge top --align right --SetDockType true --SetPartialStrut true --expand true --widthtype request --transparent true --alpha 0 --tint 0xffffff --height 21 --iconspacing 2"
+    spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 
 -- =============================================================================
