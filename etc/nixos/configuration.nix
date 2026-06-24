@@ -184,7 +184,14 @@ in
   histSize = 100000;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don’t forget to set a password with ‘passwd’.
+  users.users."tprice" = {
+    isNormalUser = true;
+    description = "Tamara Price";
+    shell = pkgs.zsh;
+    extraGroups = [ "networkmanager" "audio" "scanner" "lp" ];
+  };
+
   users.users."fprice" = {
     isNormalUser = true;
     openssh.authorizedKeys.keys = [

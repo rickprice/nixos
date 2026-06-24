@@ -42,6 +42,7 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.fprice = import ./config/home-manager/home.nix;
+          home-manager.users.tprice = import ./config/home-manager/tprice.nix;
           home-manager.sharedModules = [
             plasma-manager.homeModules.plasma-manager
           ];
