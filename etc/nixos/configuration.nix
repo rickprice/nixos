@@ -343,6 +343,9 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+# Power button → clean shutdown
+  services.logind.powerKey = "poweroff";
+
 # Disable automatic hibernation
   systemd.sleep.settings = {
     Sleep = {

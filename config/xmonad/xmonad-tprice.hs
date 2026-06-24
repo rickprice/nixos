@@ -255,8 +255,10 @@ myCustomKeys =
     , spawnKey "f" "File manager"   myFileManager
     , spawnKey "p" "System monitor" mySystemMonitor
     , spawnKey "c" "Calculator"     myCalculator
-    , ("<XF86Calculator>", addName "Calculator"  $ spawn myCalculator)
-    , ("C-M-'",            addName "Screen lock" $ spawn myScreenLock)
+    , ("<XF86Calculator>", addName "Calculator"    $ spawn myCalculator)
+    , ("M-<F2>",           addName "Browser"       $ spawn myBrowser)
+    , ("M-<F3>",           addName "File manager"  $ spawn myFileManager)
+    , ("C-M-'",            addName "Screen lock"   $ spawn myScreenLock)
     , spawnKey "l" "Screen lock" myScreenLock
     , spawnKey "z" "Fix screens" myFixScreens
 
