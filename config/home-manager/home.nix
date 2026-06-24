@@ -121,6 +121,12 @@ in
     # Media playback
     mpv
 
+    # Office
+    libreoffice
+    hunspell
+    hunspellDicts.en_CA
+    _1password-gui
+
     # Internet
     google-chrome
     discord
