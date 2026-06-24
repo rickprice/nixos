@@ -88,6 +88,12 @@ in
     denemo
     rosegarden
 
+    # nvim-lilypond-suite dependencies
+    zathura          # PDF viewer with auto-reload for the compile-view cycle
+    fluidsynth       # MIDI synthesizer (nvls player)
+    soundfont-fluid  # GM soundfont for fluidsynth
+    ffmpeg           # converts fluidsynth raw PCM output to mp3
+
     # My MIDI controller/OSC controller
     midi-daemon
     name-time-period
@@ -241,7 +247,24 @@ in
     defaultEditor = true;
     vimAlias = true;
     viAlias = true;
-    initLua = builtins.readFile ../nvim/init.lua;
+    initLua = (builtins.readFile ../nvim/init.lua) + ''
+
+      -- ── nvim-lilypond-suite ───────────────────────────────────────────────────
+      require("nvls").setup({
+        lilypond = {
+          options = {
+            pdf_viewer = "zathura",
+          },
+        },
+        player = {
+          options = {
+            midi_synth       = "fluidsynth",
+            audio_format     = "mp3",
+            fluidsynth_flags = { "${pkgs.soundfont-fluid}/share/soundfonts/FluidR3_GM2-2.sf2" },
+          },
+        },
+      })
+    '';
     plugins = with pkgs.vimPlugins; [
       # Completion
       blink-cmp
@@ -303,6 +326,9 @@ in
 
       # Notes
       obsidian-nvim
+
+      # LilyPond
+      nvim-lilypond-suite
 
       # Shared dependencies
       plenary-nvim
