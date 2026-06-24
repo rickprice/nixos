@@ -1,5 +1,16 @@
 { config, pkgs, ... }:
 
+let
+  maestralIconsDark = pkgs.runCommand "maestral-tray-icons-dark" {} ''
+    resources=$(echo ${pkgs.maestral-gui}/lib/python*/site-packages/maestral_qt/resources)
+    mkdir -p $out
+    for status in idle syncing paused disconnected info error; do
+      cp "$resources/maestral_tray-$status-dark.svg" "$out/maestral_tray-$status.svg"
+    done
+  '';
+  maestralStatuses = [ "idle" "syncing" "paused" "disconnected" "info" "error" ];
+in
+
 {
   home.username = "tprice";
   home.homeDirectory = "/home/tprice";
@@ -433,6 +444,29 @@
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "on-failure";
       RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
+  xdg.dataFile = builtins.listToAttrs (map (status: {
+    name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
+    value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
+  }) maestralStatuses);
+
+  systemd.user.services.maestral-qt = {
+    Unit = {
+      Description = "Maestral Qt system tray icon";
+      After = [ "graphical-session.target" "maestral.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
+      Restart = "on-failure";
+      RestartSec = 5;
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
