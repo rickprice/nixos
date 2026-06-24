@@ -432,6 +432,7 @@ myCustomKeys hostname =
     , spawnKey "s" "Scanner" myScanner
     , spawnKey "c" "Calculator" myCalculator
     , ("<XF86Calculator>", addName "Calculator" $ spawn myCalculator)
+    , ("<XF86PowerOff>",  addName "Shutdown"   $ spawn "systemctl poweroff")
     , ("C-M-'", addName "Screen lock" $ spawn myScreenLock)
     , ("calc", addName "Calculator" $ spawn myCalculator)
     , spawnKey "r" "RDP client" myRDPClient

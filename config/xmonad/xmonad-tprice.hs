@@ -256,6 +256,7 @@ myCustomKeys =
     , spawnKey "p" "System monitor" mySystemMonitor
     , spawnKey "c" "Calculator"     myCalculator
     , ("<XF86Calculator>", addName "Calculator"    $ spawn myCalculator)
+    , ("<XF86PowerOff>",  addName "Shutdown"      $ spawn "systemctl poweroff")
     , ("M-<F2>",           addName "Browser"       $ spawn myBrowser)
     , ("M-<F3>",           addName "File manager"  $ spawn myFileManager)
     , ("C-M-'",            addName "Screen lock"   $ spawn myScreenLock)

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   # Extract the dark-variant tray SVGs from the maestral-gui package and install
@@ -397,6 +397,14 @@ in
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
+
+  # Nix store files have epoch timestamps, so XMonad's mtime check thinks the
+  # source is always older than the binary and skips recompilation. Deleting the
+  # binary after each apply forces XMonad to recompile from the updated source on
+  # the next login or Mod+Q restart.
+  home.activation.forceXmonadRecompile = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
+  '';
 
   # ── Autorandr ────────────────────────────────────────────────────────────────
   programs.autorandr = {
