@@ -432,11 +432,27 @@ in
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
-      Type = "simple";
+      Type = "dbus";
+      BusName = "org.kde.kwalletd6";
       ExecStart = "${pkgs.kdePackages.kwallet}/bin/kwalletd6";
       Restart = "on-failure";
       RestartSec = 1;
       TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.kwallet-pam-unlock = {
+    Unit = {
+      Description = "Unlock KWallet from PAM credentials";
+      After = [ "kwalletd6.service" ];
+      Requires = [ "kwalletd6.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
+      RemainAfterExit = false;
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };
