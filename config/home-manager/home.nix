@@ -138,6 +138,7 @@ in
     inkscape
 
     # XMonad window manager utilities
+    arandr
     feh
     dmenu
     xmobar
