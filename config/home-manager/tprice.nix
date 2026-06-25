@@ -71,6 +71,7 @@ in
     ffmpeg
 
     # Internet
+    _1password-gui
     google-chrome
     discord
     obsidian
