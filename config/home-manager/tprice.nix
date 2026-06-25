@@ -101,6 +101,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
+    gxkb
     meteo-qt
     syncthing
   ];
@@ -414,6 +415,39 @@ in
     	],
     )
   '';
+
+  # ── gxkb ─────────────────────────────────────────────────────────────────────
+  xdg.configFile."gxkb/gxkb.cfg".text = ''
+    [xkb]
+    model=pc105
+    layouts=us,us
+    variants=,dvorak
+    toggle_option=
+    group_policy=global
+    default_group=0
+    skip_taskbar=false
+    show_tooltip=true
+    show_flag=true
+    flag_theme=default
+    flag_size=32
+  '';
+
+  systemd.user.services.gxkb = {
+    Unit = {
+      Description = "gxkb keyboard layout switcher";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.gxkb}/bin/gxkb";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   # ── meteo-qt ─────────────────────────────────────────────────────────────────
   xdg.configFile."meteo-qt/meteo-qt.conf".text = ''
