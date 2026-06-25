@@ -101,7 +101,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
-    gxkb
+    xxkb
     meteo-qt
     syncthing
   ];
@@ -416,32 +416,40 @@ in
     )
   '';
 
-  # ── gxkb ─────────────────────────────────────────────────────────────────────
-  xdg.configFile."gxkb/gxkb.cfg".text = ''
-    [xkb]
-    model=pc105
-    layouts=us,us
-    variants=,dvorak
-    toggle_option=
-    group_policy=global
-    default_group=0
-    skip_taskbar=false
-    show_tooltip=true
-    show_flag=true
-    flag_theme=default
-    flag_size=32
-  '';
+  # ── xxkb ─────────────────────────────────────────────────────────────────────
+  # xxkb uses X resources for config; uses XEmbed tray protocol (trayer-compatible)
+  xresources.properties = {
+    "XXkb.image.path"              = "${pkgs.xxkb}/share/xxkb";
+    "XXkb.group.base"              = 1;
+    "XXkb.group.alt"               = 2;
+    "XXkb.mainwindow.type"         = "tray";
+    "XXkb.mainwindow.geometry"     = "48x48";
+    "XXkb.mainwindow.image.1"      = "en48.xpm";
+    "XXkb.mainwindow.image.2"      = "en48.xpm";
+    "XXkb.mainwindow.label.enable" = "yes";
+    "XXkb.mainwindow.label.1"      = "US";
+    "XXkb.mainwindow.label.2"      = "DV";
+    "XXkb.*.label.foreground"      = "white";
+    "XXkb.*.label.background"      = "blue4";
+    "XXkb.controls.add_when_start" = "yes";
+    "XXkb.controls.two_state"      = "yes";
+  };
 
-  systemd.user.services.gxkb = {
+  systemd.user.services.xxkb = {
     Unit = {
-      Description = "gxkb keyboard layout switcher";
+      Description = "xxkb keyboard layout switcher";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
-      ExecStart = "${pkgs.gxkb}/bin/gxkb";
+      ExecStartPre = [
+        "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'"
+        # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
+        # Dvorak for fprice's login/console, so tprice's session must override.
+        "${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
+      ];
+      ExecStart = "${pkgs.xxkb}/bin/xxkb";
       Restart = "on-failure";
       RestartSec = 5;
       TimeoutStopSec = 10;
