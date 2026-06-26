@@ -154,7 +154,7 @@ myManageHook =
         [ manageSpawn
         , manageDocks
         , customInsertPosition
-        , resource  =? "trayer"    --> doIgnore
+        , resource  =? "stalonetray" --> doIgnore
         , className =? "meteo-qt"  --> doFloat
         , className =? "discord"   --> doShift "IM"
         , className =? "Slack"     --> doShift "IM"
@@ -298,7 +298,7 @@ myStartupHook = do
     spawn myFixScreens
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --monitor primary --edge top --align right --SetDockType true --SetPartialStrut true --expand true --widthtype request --transparent true --alpha 0 --tint 0xffffff --height 21 --iconspacing 2"
+    spawnOnce "stalonetray --dockapp-mode simple --geometry 1x1-0+0 --max-geometry 30x1-0+0 --background \"#ffffff\" --skip-taskbar --icon-size 21 --slot-size 21 --window-strut top --window-type dock"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 

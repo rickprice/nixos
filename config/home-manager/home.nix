@@ -152,7 +152,7 @@ in
     xmobar
     wezterm
     dunst
-    trayer
+    stalonetray
     networkmanagerapplet
     xscreensaver
     udiskie
@@ -746,7 +746,7 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Printer configuration applet — waits for the trayer systray before starting
+  # Printer configuration applet — waits for the stalonetray systray before starting
   systemd.user.services.system-config-printer-applet = {
     Unit = {
       Description = "system-config-printer tray applet";
@@ -755,7 +755,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.system-config-printer}/bin/system-config-printer-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -764,7 +764,7 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Blueman Bluetooth applet — waits for the trayer systray before starting
+  # Blueman Bluetooth applet — waits for the stalonetray systray before starting
   systemd.user.services.blueman-applet = {
     Unit = {
       Description = "Blueman Bluetooth manager applet";
@@ -773,7 +773,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.blueman}/bin/blueman-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -782,7 +782,7 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Maestral Qt tray icon — waits for trayer before starting
+  # Maestral Qt tray icon — waits for stalonetray before starting
   systemd.user.services.maestral-qt = {
     Unit = {
       Description = "Maestral Qt system tray icon";
@@ -791,7 +791,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
       Restart = "on-failure";
       RestartSec = 5;

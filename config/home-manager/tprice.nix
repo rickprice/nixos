@@ -92,7 +92,7 @@ in
     xmobar
     wezterm
     dunst
-    trayer
+    stalonetray
     networkmanagerapplet
     xscreensaver
     udiskie
@@ -101,7 +101,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
-    xxkb
+    gxkb
     system-config-printer
     meteo-qt
     syncthing
@@ -284,7 +284,6 @@ in
     VISUAL  = "nvim";
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-    XFILESEARCHPATH = "${config.xdg.configHome}/X11/app-defaults/XXkb";
   };
 
   # ── Wired ────────────────────────────────────────────────────────────────────
@@ -418,76 +417,31 @@ in
     )
   '';
 
-  # ── xxkb ─────────────────────────────────────────────────────────────────────
-  # xxkb validates required resources directly from the XFILESEARCHPATH app-defaults
-  # file before merging xrdb or $HOME/%N fallbacks. mainwindow.type is commented out
-  # in the upstream file but treated as required, so we supply our own app-defaults
-  # file and point XFILESEARCHPATH at it.
-  xdg.configFile."X11/app-defaults/XXkb".text = ''
-    XXkb.image.path:                      ${pkgs.xxkb}/share/xxkb
-
-    XXkb.group.base:                      1
-    XXkb.group.alt:                       2
-
-    XXkb.mainwindow.enable:               yes
-    XXkb.mainwindow.type:                 tray
-    XXkb.mainwindow.geometry:             48x48+0+0
-    XXkb.mainwindow.image.1:              en48.xpm
-    XXkb.mainwindow.image.2:              en48.xpm
-    XXkb.mainwindow.image.3:              en48.xpm
-    XXkb.mainwindow.image.4:              en48.xpm
-    XXkb.mainwindow.label.font:           fixed
-    XXkb.mainwindow.label.enable:         yes
-    XXkb.mainwindow.label.foreground:     black
-    XXkb.mainwindow.label.background:     white
-    XXkb.mainwindow.label.1:              US
-    XXkb.mainwindow.label.2:              DV
-
-    XXkb.*.border.color:                  black
-    XXkb.*.border.width:                  0
-    XXkb.*.label.foreground:              black
-    XXkb.*.label.background:              white
-    XXkb.button.enable:                   yes
-    XXkb.button.geometry:                 15x15-60+7
-    XXkb.button.image.1:                  en15.xpm
-    XXkb.button.image.2:                  en15.xpm
-    XXkb.button.image.3:                  en15.xpm
-    XXkb.button.image.4:                  en15.xpm
-    XXkb.button.label.enable:             no
-    XXkb.controls.add_when_start:         yes
-    XXkb.controls.add_when_create:        yes
-    XXkb.controls.add_when_change:        no
-    XXkb.controls.focusout:               no
-    XXkb.controls.two_state:              yes
-    XXkb.controls.button_delete:          yes
-    XXkb.controls.button_delete_and_forget: yes
-    XXkb.controls.mainwindow_delete:      yes
-
-    XXkb.mousebutton.1.reverse:           no
-    XXkb.mousebutton.3.reverse:           no
-
-    XXkb.bell.enable:                     no
-    XXkb.bell.percent:                    -50
-
-    XXkb.ignore.reverse:                  no
+  # ── gxkb ─────────────────────────────────────────────────────────────────────
+  xdg.configFile."gxkb/gxkb.cfg".text = ''
+    [xkb]
+    model=pc105
+    layouts=us,us
+    variants=,dvorak
+    toggle_option=
+    compose_key_position=
   '';
 
-  systemd.user.services.xxkb = {
+  systemd.user.services.gxkb = {
     Unit = {
-      Description = "xxkb keyboard layout switcher";
+      Description = "gxkb keyboard layout indicator";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      Environment = "XFILESEARCHPATH=${config.xdg.configHome}/X11/app-defaults/XXkb";
       ExecStartPre = [
-        "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'"
+        "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'"
         # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
         # Dvorak for fprice's login/console, so tprice's session must override.
         "${pkgs.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
       ];
-      ExecStart = "${pkgs.xxkb}/bin/xxkb";
+      ExecStart = "${pkgs.gxkb}/bin/gxkb";
       Restart = "on-failure";
       RestartSec = 5;
       TimeoutStopSec = 10;
@@ -629,7 +583,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.system-config-printer}/bin/system-config-printer-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -646,7 +600,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.blueman}/bin/blueman-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -717,7 +671,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
       Restart = "on-failure";
       RestartSec = 5;
