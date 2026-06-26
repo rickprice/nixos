@@ -138,7 +138,7 @@ in
     inkscape
 
     # Video editing
-    kdenlive
+    kdePackages.kdenlive
     mediainfo      # media info panel
     frei0r         # video effects plugins
     glaxnimate     # vector animation editor (title/animation tool)
