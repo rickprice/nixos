@@ -102,6 +102,7 @@ in
     xfce4-power-manager
     pasystray
     xxkb
+    system-config-printer
     meteo-qt
     syncthing
   ];
@@ -283,6 +284,7 @@ in
     VISUAL  = "nvim";
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    XFILESEARCHPATH = "${config.xdg.configHome}/X11/app-defaults/XXkb";
   };
 
   # ── Wired ────────────────────────────────────────────────────────────────────
@@ -417,23 +419,58 @@ in
   '';
 
   # ── xxkb ─────────────────────────────────────────────────────────────────────
-  # xxkb uses X resources for config; uses XEmbed tray protocol (trayer-compatible)
-  xresources.properties = {
-    "XXkb.image.path"              = "${pkgs.xxkb}/share/xxkb";
-    "XXkb.group.base"              = 1;
-    "XXkb.group.alt"               = 2;
-    "XXkb.mainwindow.type"         = "tray";
-    "XXkb.mainwindow.geometry"     = "48x48";
-    "XXkb.mainwindow.image.1"      = "en48.xpm";
-    "XXkb.mainwindow.image.2"      = "en48.xpm";
-    "XXkb.mainwindow.label.enable" = "yes";
-    "XXkb.mainwindow.label.1"      = "US";
-    "XXkb.mainwindow.label.2"      = "DV";
-    "XXkb.*.label.foreground"      = "white";
-    "XXkb.*.label.background"      = "blue4";
-    "XXkb.controls.add_when_start" = "yes";
-    "XXkb.controls.two_state"      = "yes";
-  };
+  # xxkb validates required resources directly from the XFILESEARCHPATH app-defaults
+  # file before merging xrdb or $HOME/%N fallbacks. mainwindow.type is commented out
+  # in the upstream file but treated as required, so we supply our own app-defaults
+  # file and point XFILESEARCHPATH at it.
+  xdg.configFile."X11/app-defaults/XXkb".text = ''
+    XXkb.image.path:                      ${pkgs.xxkb}/share/xxkb
+
+    XXkb.group.base:                      1
+    XXkb.group.alt:                       2
+
+    XXkb.mainwindow.enable:               yes
+    XXkb.mainwindow.type:                 tray
+    XXkb.mainwindow.geometry:             48x48+0+0
+    XXkb.mainwindow.image.1:              en48.xpm
+    XXkb.mainwindow.image.2:              en48.xpm
+    XXkb.mainwindow.image.3:              en48.xpm
+    XXkb.mainwindow.image.4:              en48.xpm
+    XXkb.mainwindow.label.font:           fixed
+    XXkb.mainwindow.label.enable:         yes
+    XXkb.mainwindow.label.foreground:     black
+    XXkb.mainwindow.label.background:     white
+    XXkb.mainwindow.label.1:              US
+    XXkb.mainwindow.label.2:              DV
+
+    XXkb.*.border.color:                  black
+    XXkb.*.border.width:                  0
+    XXkb.*.label.foreground:              black
+    XXkb.*.label.background:              white
+    XXkb.button.enable:                   yes
+    XXkb.button.geometry:                 15x15-60+7
+    XXkb.button.image.1:                  en15.xpm
+    XXkb.button.image.2:                  en15.xpm
+    XXkb.button.image.3:                  en15.xpm
+    XXkb.button.image.4:                  en15.xpm
+    XXkb.button.label.enable:             no
+    XXkb.controls.add_when_start:         yes
+    XXkb.controls.add_when_create:        yes
+    XXkb.controls.add_when_change:        no
+    XXkb.controls.focusout:               no
+    XXkb.controls.two_state:              yes
+    XXkb.controls.button_delete:          yes
+    XXkb.controls.button_delete_and_forget: yes
+    XXkb.controls.mainwindow_delete:      yes
+
+    XXkb.mousebutton.1.reverse:           no
+    XXkb.mousebutton.3.reverse:           no
+
+    XXkb.bell.enable:                     no
+    XXkb.bell.percent:                    -50
+
+    XXkb.ignore.reverse:                  no
+  '';
 
   systemd.user.services.xxkb = {
     Unit = {
@@ -443,13 +480,12 @@ in
     };
     Service = {
       Type = "simple";
+      Environment = "XFILESEARCHPATH=${config.xdg.configHome}/X11/app-defaults/XXkb";
       ExecStartPre = [
         "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'"
         # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
         # Dvorak for fprice's login/console, so tprice's session must override.
         "${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
-        # Load Xresources into the X server so xxkb can find its configuration.
-        "${pkgs.xorg.xrdb}/bin/xrdb -merge %h/.Xresources"
       ];
       ExecStart = "${pkgs.xxkb}/bin/xxkb";
       Restart = "on-failure";

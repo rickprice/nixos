@@ -161,6 +161,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
+    system-config-printer
     meteo-qt
     syncthing
   ];
