@@ -448,6 +448,8 @@ in
         # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
         # Dvorak for fprice's login/console, so tprice's session must override.
         "${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
+        # Load Xresources into the X server so xxkb can find its configuration.
+        "${pkgs.xorg.xrdb}/bin/xrdb -merge %h/.Xresources"
       ];
       ExecStart = "${pkgs.xxkb}/bin/xxkb";
       Restart = "on-failure";
