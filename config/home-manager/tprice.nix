@@ -485,7 +485,7 @@ in
         "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'"
         # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
         # Dvorak for fprice's login/console, so tprice's session must override.
-        "${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
+        "${pkgs.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
       ];
       ExecStart = "${pkgs.xxkb}/bin/xxkb";
       Restart = "on-failure";

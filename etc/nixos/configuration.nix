@@ -344,7 +344,7 @@ in
   # networking.firewall.enable = false;
 
 # Power button → clean shutdown
-  services.logind.powerKey = "poweroff";
+  services.logind.settings.Login.HandlePowerKey = "poweroff";
 
 # Disable automatic hibernation
   systemd.sleep.settings = {
