@@ -746,6 +746,24 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Printer configuration applet — waits for the trayer systray before starting
+  systemd.user.services.system-config-printer-applet = {
+    Unit = {
+      Description = "system-config-printer tray applet";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStart = "${pkgs.system-config-printer}/bin/system-config-printer-applet";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # Blueman Bluetooth applet — waits for the trayer systray before starting
   systemd.user.services.blueman-applet = {
     Unit = {
