@@ -137,6 +137,14 @@ in
     gimp
     inkscape
 
+    # Video editing
+    kdenlive
+    mediainfo      # media info panel
+    frei0r         # video effects plugins
+    glaxnimate     # vector animation editor (title/animation tool)
+    v4l-utils      # webcam / capture card support
+    opencv         # motion tracking
+
     # XMonad window manager utilities
     arandr
     feh
