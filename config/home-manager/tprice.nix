@@ -417,6 +417,21 @@ in
     )
   '';
 
+  # ── stalonetray ──────────────────────────────────────────────────────────────
+  # grow_gravity W is required: starting from the right edge (-0+0), growth must
+  # go westward or icons pile up off-screen and the tray appears blank.
+  xdg.configFile."stalonetray/stalonetrayrc".text = ''
+    background "#ffffff"
+    icon_size 21
+    slot_size 21
+    geometry 1x1-0+0
+    max_geometry 30x1-0+0
+    grow_gravity W
+    window_type dock
+    window_strut top
+    skip_taskbar true
+  '';
+
   # ── gxkb ─────────────────────────────────────────────────────────────────────
   xdg.configFile."gxkb/gxkb.cfg".text = ''
     [xkb]

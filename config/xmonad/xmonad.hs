@@ -317,7 +317,7 @@ myManageHook =
         [ manageSpawn
         , manageDocks
         , customInsertPosition
-        , resource =? "trayer" --> doIgnore
+        , resource =? "stalonetray" --> doIgnore
         , className =? "simple-scan" --> doSink
         , className =? "zoom" --> doShift "ZM"
         -- , className =? "Gimp" --> doFloat
@@ -552,7 +552,7 @@ myStartupHook hostname = do
     -- System tray and utilities
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --monitor primary --edge top --align right --SetDockType true --SetPartialStrut true --expand true --widthtype request --transparent true --alpha 0 --tint 0xffffff --height 21 --iconspacing 2"
+    spawnOnce "stalonetray"
     setWMName "LG3D"
 
 -- =============================================================================

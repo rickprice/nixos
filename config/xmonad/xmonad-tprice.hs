@@ -298,7 +298,7 @@ myStartupHook = do
     spawn myFixScreens
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "stalonetray --dockapp-mode simple --geometry 1x1-0+0 --max-geometry 30x1-0+0 --background \"#ffffff\" --skip-taskbar --icon-size 21 --slot-size 21 --window-strut top --window-type dock"
+    spawnOnce "stalonetray"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 
