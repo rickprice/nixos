@@ -301,7 +301,7 @@ myStartupHook = do
     spawn myFixScreens
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent false --tint 0xFFFFFF --height 22"
+    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent false --tint 0xFFFFFF --height 29"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 

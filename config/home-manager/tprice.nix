@@ -284,6 +284,12 @@ in
     VISUAL  = "nvim";
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    GDK_DPI_SCALE = "1.3";
+    QT_SCALE_FACTOR = "1.3";
+  };
+
+  programs.xresources.properties = {
+    "Xft.dpi" = "125";
   };
 
   # ── Wired ────────────────────────────────────────────────────────────────────
