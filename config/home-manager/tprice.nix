@@ -288,7 +288,7 @@ in
     QT_SCALE_FACTOR = "1.3";
   };
 
-  programs.xresources.properties = {
+  xresources.properties = {
     "Xft.dpi" = "125";
   };
 
