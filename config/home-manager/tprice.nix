@@ -637,6 +637,25 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  systemd.user.services.xscreensaver-keyboard-fix = {
+    Unit = {
+      Description = "Re-apply keyboard layout after xscreensaver deactivates";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      # Wait for xscreensaver to start, then watch for UNBLANK/AUTH events and
+      # re-apply the layout because xscreensaver resets the active XKB group when
+      # it releases the keyboard grab.
+      ExecStart = "${pkgs.bash}/bin/bash -c 'until ${pkgs.xscreensaver}/bin/xscreensaver-command -version &>/dev/null; do sleep 2; done; ${pkgs.xscreensaver}/bin/xscreensaver-command -watch | while read event; do case \"$event\" in UNBLANK*|AUTH*) ${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak ;; esac; done'";
+      Restart = "on-failure";
+      RestartSec = 3;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     Unit = {
       Description = "polkit-gnome-authentication-agent-1";
