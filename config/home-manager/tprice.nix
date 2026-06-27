@@ -464,6 +464,11 @@ in
   programs.autorandr = {
     enable = true;
 
+    hooks.postswitch."05_set_keyboard" = ''
+      #! /usr/bin/bash
+      setxkbmap -layout us,us -variant ,dvorak
+    '';
+
     hooks.postswitch."10_setup_feh" = ''
       #! /usr/bin/bash
       set -e
