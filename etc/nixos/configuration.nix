@@ -86,10 +86,10 @@ in
     extraPackages = hpkgs: [ hpkgs.hostname ];
   };
 
-  # Configure keymap in X11
+  # Configure keymap in X11 with two groups: dvorak (default) and QWERTY
   services.xserver.xkb = {
-    layout = "us";
-    variant = "dvorak";
+    layout = "us,us";
+    variant = "dvorak,";
   };
 
   # Configure console keymap

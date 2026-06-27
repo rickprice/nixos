@@ -92,7 +92,7 @@ in
     xmobar
     wezterm
     dunst
-    stalonetray
+    trayer
     networkmanagerapplet
     xscreensaver
     udiskie
@@ -101,7 +101,7 @@ in
     polkit_gnome
     xfce4-power-manager
     pasystray
-    gxkb
+    xkb-switch
     system-config-printer
     meteo-qt
     syncthing
@@ -417,53 +417,6 @@ in
     )
   '';
 
-  # ── stalonetray ──────────────────────────────────────────────────────────────
-  # grow_gravity W is required: starting from the right edge (-0+0), growth must
-  # go westward or icons pile up off-screen and the tray appears blank.
-  xdg.configFile."stalonetray/stalonetrayrc".text = ''
-    background "#ffffff"
-    icon_size 21
-    slot_size 21
-    geometry 1x1-0+0
-    max_geometry 30x1-0+0
-    grow_gravity W
-    window_type dock
-    window_strut top
-    skip_taskbar true
-  '';
-
-  # ── gxkb ─────────────────────────────────────────────────────────────────────
-  xdg.configFile."gxkb/gxkb.cfg".text = ''
-    [xkb]
-    model=pc105
-    layouts=us,us
-    variants=,dvorak
-    toggle_option=
-    compose_key_position=
-  '';
-
-  systemd.user.services.gxkb = {
-    Unit = {
-      Description = "gxkb keyboard layout indicator";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStartPre = [
-        "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'"
-        # Set up two XKB groups: QWERTY (default) then Dvorak. System defaults to
-        # Dvorak for fprice's login/console, so tprice's session must override.
-        "${pkgs.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak"
-      ];
-      ExecStart = "${pkgs.gxkb}/bin/gxkb";
-      Restart = "on-failure";
-      RestartSec = 5;
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
-
   # ── meteo-qt ─────────────────────────────────────────────────────────────────
   xdg.configFile."meteo-qt/meteo-qt.conf".text = ''
     [General]
@@ -598,7 +551,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.system-config-printer}/bin/system-config-printer-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -615,7 +568,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.blueman}/bin/blueman-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -686,7 +639,7 @@ in
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x stalonetray > /dev/null; do sleep 1; done; sleep 2'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
       Restart = "on-failure";
       RestartSec = 5;

@@ -11,9 +11,10 @@ Config { overrideRedirect = False
                     , Run XMonadLog
                     , Run Com "markdown_timesheet" ["/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/MarkDownDocuments.work/work-vault/journal/daily", "--summarize"] "timesheet" 180
 --                    , Run Com "sprint" [] "sprint" 36000
+                    , Run Kbd [("us(dvorak)", "DV"), ("us", "US")]
                     ]
        , sepChar  = "%"
        , alignSep = "}{"
-       , template = " %XMonadLog% | %date% | %timesheet% }{%cpu% "
+       , template = " %XMonadLog% | %date% | %timesheet% }{%cpu% | <action=`xkb-switch -n` button=1>%kbd%</action>"
        }
 

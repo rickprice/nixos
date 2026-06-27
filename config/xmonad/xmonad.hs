@@ -317,7 +317,7 @@ myManageHook =
         [ manageSpawn
         , manageDocks
         , customInsertPosition
-        , resource =? "stalonetray" --> doIgnore
+        , className =? "trayer" --> doIgnore
         , className =? "simple-scan" --> doSink
         , className =? "zoom" --> doShift "ZM"
         -- , className =? "Gimp" --> doFloat
@@ -524,6 +524,9 @@ myNewStyleKeys hostname =
 
 myStartupHook hostname = do
     setupWorkspaceGroups hostname
+    -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
+    -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
+    spawn "setxkbmap -layout us,us -variant dvorak, && xkb-switch -n && xkb-switch -n"
     -- System services
     -- spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     spawn "killall pasystray; sleep 15; pasystray"
@@ -552,7 +555,7 @@ myStartupHook hostname = do
     -- System tray and utilities
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "stalonetray"
+    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent false --tint 0xFFFFFF --height 22"
     setWMName "LG3D"
 
 -- =============================================================================

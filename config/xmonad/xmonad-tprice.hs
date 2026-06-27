@@ -154,7 +154,7 @@ myManageHook =
         [ manageSpawn
         , manageDocks
         , customInsertPosition
-        , resource  =? "stalonetray" --> doIgnore
+        , className =? "trayer" --> doIgnore
         , className =? "meteo-qt"  --> doFloat
         , className =? "discord"   --> doShift "IM"
         , className =? "Slack"     --> doShift "IM"
@@ -293,12 +293,15 @@ myNewStyleKeys = tWorkspaceKeys ++ myCustomKeys ++ warpMouseKeys
 myStartupHook :: X ()
 myStartupHook = do
     setupWorkspaceGroups
+    -- System defaults to Dvorak for fprice's login/console; override with two
+    -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
+    spawn "setxkbmap -layout us,us -variant ,dvorak"
     spawn "killall pasystray; sleep 15; pasystray"
     spawnOnce "killall udiskie; udiskie --tray"
     spawn myFixScreens
     spawnOnce "nm-applet"
     spawnOnce "xscreensaver --no-splash"
-    spawnOnce "stalonetray"
+    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent false --tint 0xFFFFFF --height 22"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 
