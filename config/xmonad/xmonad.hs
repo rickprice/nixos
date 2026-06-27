@@ -550,7 +550,6 @@ myStartupHook hostname = do
             spawnOn "U13" myTouchOSC
         else do
             spawnOn "FP11" myArdour
-            spawnOnce "cbatticon"
 
     -- System tray and utilities
     spawnOnce "nm-applet"
