@@ -29,6 +29,7 @@
     claude-code
     tree-sitter   # tree-sitter CLI (nvim-treesitter health check)
     prettier      # JS/TS/CSS/HTML/Markdown formatter (conform.nvim)
+    gcc
 
     # Rust
     cargo
