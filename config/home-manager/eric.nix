@@ -50,10 +50,6 @@
     # Internet
     google-chrome
 
-    # Autorandr background selection helpers
-    name-time-period
-    images-matching-subdirectories
-
     # XMonad window manager utilities
     arandr
     feh
@@ -429,22 +425,6 @@
     hooks.postswitch."05_set_keyboard" = ''
       #! /usr/bin/bash
       setxkbmap -layout us,us -variant ,dvorak
-    '';
-
-    hooks.postswitch."10_setup_feh" = ''
-      #! /usr/bin/bash
-      set -e
-      trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-      trap 'echo "\"''${last_command}\" command failed with exit code $?."' EXIT
-      DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox)
-      BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
-      PERSON_SPECIFIC="''${USER}Specific"
-      THEME_DIRS="$PERSON_SPECIFIC Default $(name_time_period)"
-      echo "DROPBOX_LOCATION is: " $DROPBOX_LOCATION
-      echo "BACKGROUNDS_DIR is: " $BACKGROUNDS_DIR
-      echo "PERSON_SPECIFIC is: " $PERSON_SPECIFIC
-      echo "THEME_DIRS are: " $THEME_DIRS
-      feh --no-fehbg --bg-max $(images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
     '';
 
     # Add profiles here after running: autorandr --save <profile-name>
