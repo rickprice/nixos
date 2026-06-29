@@ -1,8 +1,8 @@
 Config { overrideRedirect = False
        , font = "xft:Sans-20"
-       , bgColor = "#1c1c1c"
+       , bgColor = "#000000"
        , fgColor = "#ffffff"
-       , position = TopW L 90
+       , position = TopSize L 90 36
        , lowerOnStart = True
        , hideOnStart = False
        , persistent = True

@@ -1,6 +1,6 @@
 Config { overrideRedirect = False
          font = "xft:Sans-12"
-       , bgColor = "#1c1c1c"
+       , bgColor = "#000000"
        , fgColor = "#ffffff"
        , position = TopW L 90
        , lowerOnStart = True
