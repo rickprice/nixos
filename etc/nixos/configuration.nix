@@ -192,6 +192,14 @@ in
     extraGroups = [ "networkmanager" "audio" "scanner" "lp" ];
   };
 
+  users.users."eric" = {
+    isNormalUser = true;
+    description = "Eric Price";
+    shell = pkgs.zsh;
+    extraGroups = [ "networkmanager" "audio" ];
+    hashedPassword = "";
+  };
+
   users.users."fprice" = {
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
