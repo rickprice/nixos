@@ -93,7 +93,6 @@
     xkb-switch
     system-config-printer
     meteo-qt
-    syncthing
     rclone
   ];
 
@@ -511,22 +510,6 @@
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.xfce4-power-manager}/bin/xfce4-power-manager";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
-
-  systemd.user.services.syncthing = {
-    Unit = {
-      Description = "Syncthing file synchronization";
-      After = [ "graphical-session.target" "network.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.syncthing}/bin/syncthing serve --no-browser";
       Restart = "on-failure";
       RestartSec = 1;
       TimeoutStopSec = 10;
