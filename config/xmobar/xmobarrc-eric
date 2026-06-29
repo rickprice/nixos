@@ -1,0 +1,16 @@
+Config { overrideRedirect = False
+       , font = "xft:Sans-20"
+       , bgColor = "#000000"
+       , fgColor = "#ffffff"
+       , position = TopSize L 90 36
+       , lowerOnStart = True
+       , hideOnStart = False
+       , persistent = True
+       , commands = [ Run Cpu [ "--template", "Cpu: <total>%" , "-L", "5" , "-H", "50" , "--high", "red" , "--low", "white" , "--normal", "white" ] 10
+                    , Run Date "<fc=#FFB53A>%a %b</fc> %Y-%m-%d <fc=#FFB53A>%H:%M</fc>" "date" 10
+                    , Run XMonadLog
+                    ]
+       , sepChar  = "%"
+       , alignSep = "}{"
+       , template = " %XMonadLog% | %date% }{%cpu%"
+       }

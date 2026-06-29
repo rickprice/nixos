@@ -414,12 +414,12 @@
   '';
 
   # ── XMonad ───────────────────────────────────────────────────────────────────
-  home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad-tprice.hs;
+  home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad-eric.hs;
 
   home.activation.forceXmonadRecompile = lib.hm.dag.entryAfter ["linkGeneration"] ''
     $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
   '';
-  home.file.".xmobarrc".source = ../xmobar/xmobarrc-tprice;
+  home.file.".xmobarrc".source = ../xmobar/xmobarrc-eric;
 
   # ── Autorandr ────────────────────────────────────────────────────────────────
   programs.autorandr = {
