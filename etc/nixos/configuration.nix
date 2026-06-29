@@ -194,10 +194,10 @@ in
 
   users.users."eric" = {
     isNormalUser = true;
-    description = "Eric Price";
+    description = "Eric MacDonald";
     shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "audio" ];
-    hashedPassword = "";
+    hashedPassword = "$y$j9T$05tWRp6MgavEVRBqtKdb9/$6XnVZyqOWOA7OiQHYLzEDtq1yHRamP0mMxWaO5o/mx1";
   };
 
   users.users."fprice" = {
