@@ -70,6 +70,7 @@
     pasystray
     xkb-switch
     system-config-printer
+    inappropriate-video-handler
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -565,6 +566,22 @@
       ExecStart = "${pkgs.bash}/bin/bash -c 'until ${pkgs.xscreensaver}/bin/xscreensaver-command -version &>/dev/null; do sleep 2; done; ${pkgs.xscreensaver}/bin/xscreensaver-command -watch | while read event; do case \"$event\" in UNBLANK*|AUTH*) ${pkgs.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak ;; esac; done'";
       Restart = "on-failure";
       RestartSec = 3;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.inappropriate-video-handler = {
+    Unit = {
+      Description = "Inappropriate Video Handler daemon";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.inappropriate-video-handler}/bin/inappropriate-video-handler --daemon";
+      Restart = "on-failure";
+      RestartSec = 5;
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];

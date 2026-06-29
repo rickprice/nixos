@@ -35,6 +35,7 @@
               md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
               markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
               csvargs = prev.callPackage ./config/packages/csvargs.nix { };
+              inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
             })
           ];
         }
