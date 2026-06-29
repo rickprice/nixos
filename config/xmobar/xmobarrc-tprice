@@ -1,5 +1,5 @@
 Config { overrideRedirect = False
-       , font = "xft:Sans-16"
+       , font = "xft:Sans-20"
        , bgColor = "#1c1c1c"
        , fgColor = "#ffffff"
        , position = TopW L 90
