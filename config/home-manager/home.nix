@@ -1,20 +1,5 @@
 { config, pkgs, lib, ... }:
 
-let
-  # Extract the dark-variant tray SVGs from the maestral-gui package and install
-  # them as named hicolor theme icons so maestral_qt's QIcon::hasThemeIcon() finds
-  # them before falling back to screen pixel-sampling (which defaults to white
-  # icons on XMonad because Qt screenshots return all-black pixels there).
-  maestralIconsDark = pkgs.runCommand "maestral-tray-icons-dark" {} ''
-    resources=$(echo ${pkgs.maestral-gui}/lib/python*/site-packages/maestral_qt/resources)
-    mkdir -p $out
-    for status in idle syncing paused disconnected info error; do
-      cp "$resources/maestral_tray-$status-dark.svg" "$out/maestral_tray-$status.svg"
-    done
-  '';
-  maestralStatuses = [ "idle" "syncing" "paused" "disconnected" "info" "error" ];
-in
-
 {
   home.username = "fprice";
   home.homeDirectory = "/home/fprice";
@@ -165,6 +150,7 @@ in
     system-config-printer
     meteo-qt
     syncthing
+    rclone
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -373,12 +359,6 @@ in
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   };
 
-
-  # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
-  xdg.dataFile = builtins.listToAttrs (map (status: {
-    name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
-    value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
-  }) maestralStatuses);
 
   # ── Wired ────────────────────────────────────────────────────────────────────
   xdg.configFile."wired/wired.ron".text = ''
@@ -800,22 +780,23 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Maestral Qt tray icon — waits for trayer before starting
-  systemd.user.services.maestral-qt = {
+  # Rclone Dropbox FUSE mount
+  systemd.user.services.rclone-dropbox = {
     Unit = {
-      Description = "Maestral Qt system tray icon";
-      After = [ "graphical-session.target" "maestral.service" ];
-      PartOf = [ "graphical-session.target" ];
+      Description = "Rclone Dropbox FUSE mount";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
     };
     Service = {
-      Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
-      ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
+      Type = "notify";
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /home/fprice/Documents/Personal/Dropbox";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount Dropbox: /home/fprice/Documents/Personal/Dropbox --vfs-cache-mode full --vfs-cache-max-size 100G";
+      ExecStop = "${pkgs.fuse3}/bin/fusermount3 -u /home/fprice/Documents/Personal/Dropbox";
       Restart = "on-failure";
       RestartSec = 5;
-      TimeoutStopSec = 10;
+      TimeoutStopSec = 15;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = [ "default.target" ];
   };
 
   # KWallet daemon — provides a secrets store for apps that use the KWallet API

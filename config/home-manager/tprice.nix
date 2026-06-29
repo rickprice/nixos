@@ -1,16 +1,5 @@
 { config, pkgs, lib, ... }:
 
-let
-  maestralIconsDark = pkgs.runCommand "maestral-tray-icons-dark" {} ''
-    resources=$(echo ${pkgs.maestral-gui}/lib/python*/site-packages/maestral_qt/resources)
-    mkdir -p $out
-    for status in idle syncing paused disconnected info error; do
-      cp "$resources/maestral_tray-$status-dark.svg" "$out/maestral_tray-$status.svg"
-    done
-  '';
-  maestralStatuses = [ "idle" "syncing" "paused" "disconnected" "info" "error" ];
-in
-
 {
   home.username = "tprice";
   home.homeDirectory = "/home/tprice";
@@ -105,6 +94,7 @@ in
     system-config-printer
     meteo-qt
     syncthing
+    rclone
   ];
 
   # ── Shell ───────────────────────────────────────────────────────────────────
@@ -605,6 +595,25 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Rclone Dropbox FUSE mount
+  systemd.user.services.rclone-dropbox = {
+    Unit = {
+      Description = "Rclone Dropbox FUSE mount";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service = {
+      Type = "notify";
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /home/tprice/Documents/Dropbox";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount Dropbox: /home/tprice/Documents/Dropbox --vfs-cache-mode full --vfs-cache-max-size 50G";
+      ExecStop = "${pkgs.fuse3}/bin/fusermount3 -u /home/tprice/Documents/Dropbox";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 15;
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
   systemd.user.services.kwalletd6 = {
     Unit = {
       Description = "KWallet password manager daemon";
@@ -667,29 +676,6 @@ in
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "on-failure";
       RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
-
-  # ── Maestral Qt tray icons (light theme / dark icons) ───────────────────────
-  xdg.dataFile = builtins.listToAttrs (map (status: {
-    name = "icons/hicolor/scalable/status/maestral_tray-${status}.svg";
-    value.source = "${maestralIconsDark}/maestral_tray-${status}.svg";
-  }) maestralStatuses);
-
-  systemd.user.services.maestral-qt = {
-    Unit = {
-      Description = "Maestral Qt system tray icon";
-      After = [ "graphical-session.target" "maestral.service" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
-      ExecStart = "${pkgs.maestral-gui}/bin/maestral_qt";
-      Restart = "on-failure";
-      RestartSec = 5;
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
