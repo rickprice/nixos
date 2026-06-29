@@ -37,7 +37,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 myModMask = mod4Mask
 
 myTerminal    = "wezterm"
-myBrowser     = "google-chrome-stable --new-window https://www.google.com"
+myBrowser     = "inappropriate-video-handler --start-browser"
 myFileManager = "pcmanfm"
 
 mySystemMonitor = "gnome-system-monitor"
