@@ -30,6 +30,11 @@
     tree-sitter   # tree-sitter CLI (nvim-treesitter health check)
     prettier      # JS/TS/CSS/HTML/Markdown formatter (conform.nvim)
     gcc
+    gnumake
+    cmake
+    pkg-config
+    gdb
+    clang-tools  # clangd, clang-format, clang-tidy
 
     # Rust
     cargo
