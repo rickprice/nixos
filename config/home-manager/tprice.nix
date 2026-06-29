@@ -478,6 +478,12 @@
     # Add profiles here after running: autorandr --save <profile-name>
   };
 
+  # ── Dunst ────────────────────────────────────────────────────────────────────
+  xdg.configFile."dunst/dunstrc".text = ''
+    [global]
+    font = DejaVu Sans 18
+  '';
+
   # ── Systemd user services ────────────────────────────────────────────────────
 
   systemd.user.services.dunst = {
