@@ -36,6 +36,21 @@
     gdb
     clang-tools  # clangd, clang-format, clang-tidy
 
+    # X11 development libraries
+    libx11
+    libxext
+    libxrender
+    libxrandr
+    libxcursor
+    libxi
+    libxinerama
+    libxfixes
+    libxcomposite
+    libxdamage
+    libxtst
+    libxft
+    libxcb
+
     # Rust
     cargo
     rustc
