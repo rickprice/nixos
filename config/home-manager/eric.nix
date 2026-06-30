@@ -559,7 +559,7 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.inappropriate-video-handler}/bin/inappropriate-video-handler --daemon";
+      ExecStart = "${pkgs.inappropriate-video-handler}/bin/inappropriate-video-handler";
       Restart = "on-failure";
       RestartSec = 5;
       TimeoutStopSec = 10;
