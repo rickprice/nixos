@@ -386,7 +386,7 @@
         libxfixes.dev libxcomposite.dev libxdamage.dev libxtst libxft.dev libxcb.dev
       ])) + ":" +
       # xorgproto puts xproto.pc (and others) under share/pkgconfig, not lib/pkgconfig
-      "${pkgs.xorg.xorgproto}/share/pkgconfig";
+      "${pkgs.xorgproto}/share/pkgconfig";
     LD_LIBRARY_PATH = lib.makeLibraryPath (with pkgs; [
       libx11.dev libxext.dev libxrender.dev libxrandr.dev libxcursor.dev libxi.dev libxinerama.dev
       libxfixes.dev libxcomposite.dev libxdamage.dev libxtst libxft.dev libxcb.dev
