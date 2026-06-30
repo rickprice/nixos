@@ -430,6 +430,10 @@
     # Add profiles here after running: autorandr --save <profile-name>
   };
 
+  # ── Inappropriate Video Handler ──────────────────────────────────────────────
+  xdg.configFile."inappropriate-video-handler/BlackList.txt".source = ../innapropriate-video-handler/BlackList.txt;
+  xdg.configFile."inappropriate-video-handler/WhiteList.txt".source = ../innapropriate-video-handler/WhiteList.txt;
+
   # ── Dunst ────────────────────────────────────────────────────────────────────
   xdg.configFile."dunst/dunstrc".text = ''
     [global]
