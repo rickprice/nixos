@@ -10,6 +10,8 @@
     # CLI essentials
     wl-clipboard  # Wayland clipboard (wl-copy / wl-paste) for Neovim
     xclip         # X11 clipboard for Neovim
+    wmctrl        # X11 window manager control
+    xdotool       # X11 window/input automation
     ripgrep       # fast grep
     fd            # fast find
     bat           # cat with syntax highlighting
