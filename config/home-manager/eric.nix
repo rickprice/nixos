@@ -433,6 +433,8 @@
   # ── Inappropriate Video Handler ──────────────────────────────────────────────
   xdg.configFile."inappropriate-video-handler/BlackList.txt".source = ../innapropriate-video-handler/BlackList.txt;
   xdg.configFile."inappropriate-video-handler/WhiteList.txt".source = ../innapropriate-video-handler/WhiteList.txt;
+  xdg.configFile."inappropriate-video-handler/wallpaper/blocked.jpg".source = ../innapropriate-video-handler/wallpaper/blocked.jpg;
+  xdg.configFile."inappropriate-video-handler/wallpaper/wallpaper.jpg".source = ../innapropriate-video-handler/wallpaper/wallpaper.jpg;
 
   # ── Dunst ────────────────────────────────────────────────────────────────────
   xdg.configFile."dunst/dunstrc".text = ''
