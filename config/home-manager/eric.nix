@@ -597,7 +597,7 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --height 36";
+      ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --tint 0x000000 --height 36";
       Restart = "on-failure";
       RestartSec = 1;
       TimeoutStopSec = 10;
