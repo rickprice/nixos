@@ -297,6 +297,7 @@ myStartupHook = do
     -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
     spawn "setxkbmap -layout us,us -variant ,dvorak"
     spawn myFixScreens
+    spawn "~/.config/autorandr/postswitch.d/10_setup_feh"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 
