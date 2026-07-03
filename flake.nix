@@ -36,6 +36,15 @@
               markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
               csvargs = prev.callPackage ./config/packages/csvargs.nix { };
               inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
+              # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
+              # so "Document printed" notifications are sent for auto-discovered printers.
+              system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {
+                postPatch = (oldAttrs.postPatch or "") + ''
+                  substituteInPlace share/system-config-printer/jobviewer.py \
+                    --replace-fail "if scheme not in ['socket', 'ipp', 'http', 'smb']:" \
+                                   "if scheme not in ['socket', 'ipp', 'ipps', 'http', 'smb', 'implicitclass']:"
+                '';
+              });
             })
           ];
         }
