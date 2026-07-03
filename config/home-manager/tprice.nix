@@ -463,7 +463,7 @@
       set -e
       trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
       trap 'echo "\"''${last_command}\" command failed with exit code $?."' EXIT
-      DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox)
+      DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox -print -quit)
       BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
       PERSON_SPECIFIC="''${USER}Specific"
       THEME_DIRS="$PERSON_SPECIFIC Default $(name_time_period)"
