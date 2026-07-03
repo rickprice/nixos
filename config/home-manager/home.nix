@@ -763,16 +763,14 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Printer configuration applet — waits for the trayer systray before starting
   systemd.user.services.system-config-printer-applet = {
     Unit = {
       Description = "system-config-printer tray applet";
-      After = [ "graphical-session.target" "dunst.service" ];
+      After = [ "graphical-session.target" "trayer.service" "dunst.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.system-config-printer}/bin/system-config-printer-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -781,16 +779,14 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Blueman Bluetooth applet — waits for the trayer systray before starting
   systemd.user.services.blueman-applet = {
     Unit = {
       Description = "Blueman Bluetooth manager applet";
-      After = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" "trayer.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.blueman}/bin/blueman-applet";
       Restart = "on-failure";
       RestartSec = 5;
@@ -802,12 +798,11 @@
   systemd.user.services.cbatticon = {
     Unit = {
       Description = "Battery status tray icon";
-      After = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" "trayer.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.procps}/bin/pgrep -x trayer > /dev/null; do sleep 1; done; sleep 2'";
       ExecStart = "${pkgs.cbatticon}/bin/cbatticon";
       Restart = "on-failure";
       RestartSec = 5;
@@ -869,9 +864,6 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Polkit authentication agent for XMonad (the dotfiles xmonad.hs uses the
-  # /usr/lib/polkit-gnome path which doesn't exist in NixOS; this service
-  # starts the agent via systemd instead)
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     Unit = {
       Description = "polkit-gnome-authentication-agent-1";
@@ -883,6 +875,102 @@
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "on-failure";
       RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.trayer = {
+    Unit = {
+      Description = "Trayer system tray";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --height 22";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.nm-applet = {
+    Unit = {
+      Description = "NetworkManager tray applet";
+      After = [ "graphical-session.target" "trayer.service" "dunst.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.networkmanagerapplet}/bin/nm-applet";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.pasystray = {
+    Unit = {
+      Description = "PulseAudio system tray";
+      After = [ "graphical-session.target" "trayer.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.pasystray}/bin/pasystray";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.udiskie = {
+    Unit = {
+      Description = "Udiskie automount tray";
+      After = [ "graphical-session.target" "trayer.service" "dunst.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.udiskie}/bin/udiskie --tray";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.xscreensaver = {
+    Unit = {
+      Description = "XScreensaver screen locker";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.xscreensaver}/bin/xscreensaver --no-splash";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.meteo-qt = {
+    Unit = {
+      Description = "Meteo-Qt weather tray applet";
+      After = [ "graphical-session.target" "trayer.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.meteo-qt}/bin/meteo-qt";
+      Restart = "on-failure";
+      RestartSec = 2;
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];

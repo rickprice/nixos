@@ -296,12 +296,7 @@ myStartupHook = do
     -- System defaults to Dvorak for fprice's login/console; override with two
     -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
     spawn "setxkbmap -layout us,us -variant ,dvorak"
-    spawn "killall pasystray; sleep 15; pasystray"
-    spawnOnce "killall udiskie; udiskie --tray"
     spawn myFixScreens
-    spawnOnce "nm-applet"
-    spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --height 36"
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 

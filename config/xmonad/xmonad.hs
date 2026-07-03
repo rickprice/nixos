@@ -527,19 +527,12 @@ myStartupHook hostname = do
     -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
     spawn "setxkbmap -layout us,us -variant dvorak, && xkb-switch -n && xkb-switch -n"
-    -- System services
-    -- spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    spawn "killall pasystray; sleep 15; pasystray"
-    spawnOnce "killall udiskie; udiskie --tray"
-    -- spawnOnce "easyeffects --service-mode --hide-window"
     spawn myFixScreens
     spawn myFixLogitechMouse
 
     -- Host-specific configuration
     if hostnameWork `isPrefixOf` hostname
         then do
-            spawnOnce "system-config-printer-applet"
-            spawnOnce "meteo-qt"
             spawnOn "MAIL" myEmailer
             spawnOn "IM" "discord"
             spawnOn "ADM" myMarkdownEditor
@@ -551,10 +544,6 @@ myStartupHook hostname = do
         else do
             spawnOn "FP11" myArdour
 
-    -- System tray and utilities
-    spawnOnce "nm-applet"
-    spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --height 22"
     setWMName "LG3D"
 
 -- =============================================================================

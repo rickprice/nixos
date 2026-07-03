@@ -293,12 +293,7 @@ myNewStyleKeys = eWorkspaceKeys ++ myCustomKeys ++ warpMouseKeys
 myStartupHook :: X ()
 myStartupHook = do
     setupWorkspaceGroups
-    spawn "killall pasystray; sleep 15; pasystray"
-    spawnOnce "killall udiskie; udiskie --tray"
     spawn myFixScreens
-    spawnOnce "nm-applet"
-    spawnOnce "xscreensaver --no-splash"
-    spawnOnce "trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --height 36"
     spawnOnOnce "E1" myBrowser
     setWMName "LG3D"
 
