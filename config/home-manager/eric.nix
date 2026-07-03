@@ -424,7 +424,7 @@
 
     hooks.postswitch."05_set_keyboard" = ''
       #! /usr/bin/bash
-      setxkbmap -layout us,us -variant ,dvorak
+      setxkbmap -layout us
     '';
 
     # Add profiles here after running: autorandr --save <profile-name>
@@ -549,7 +549,7 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'until ${pkgs.xscreensaver}/bin/xscreensaver-command -version &>/dev/null; do sleep 2; done; ${pkgs.xscreensaver}/bin/xscreensaver-command -watch | while read event; do case \"$event\" in UNBLANK*|AUTH*) ${pkgs.setxkbmap}/bin/setxkbmap -layout us,us -variant ,dvorak ;; esac; done'";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'until ${pkgs.xscreensaver}/bin/xscreensaver-command -version &>/dev/null; do sleep 2; done; ${pkgs.xscreensaver}/bin/xscreensaver-command -watch | while read event; do case \"$event\" in UNBLANK*|AUTH*) ${pkgs.setxkbmap}/bin/setxkbmap -layout us ;; esac; done'";
       Restart = "on-failure";
       RestartSec = 3;
       TimeoutStopSec = 10;
