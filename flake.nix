@@ -40,7 +40,7 @@
               # so "Document printed" notifications are sent for auto-discovered printers.
               system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {
                 postPatch = (oldAttrs.postPatch or "") + ''
-                  substituteInPlace share/system-config-printer/jobviewer.py \
+                  substituteInPlace jobviewer.py \
                     --replace-fail "if scheme not in ['socket', 'ipp', 'http', 'smb']:" \
                                    "if scheme not in ['socket', 'ipp', 'ipps', 'http', 'smb', 'implicitclass']:"
                 '';
