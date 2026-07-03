@@ -830,6 +830,30 @@
     Install.WantedBy = [ "default.target" ];
   };
 
+  # Set wallpaper from Dropbox after the FUSE mount is ready
+  systemd.user.services.setup-wallpaper = {
+    Unit = {
+      Description = "Set desktop wallpaper from Dropbox backgrounds";
+      After = [ "rclone-dropbox.service" "graphical-session.target" ];
+      Requires = [ "rclone-dropbox.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = let
+        script = pkgs.writeShellScript "setup-wallpaper" ''
+          DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox -print -quit)
+          BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
+          PERSON_SPECIFIC="''${USER}Specific"
+          THEME_DIRS="$PERSON_SPECIFIC Default $(${pkgs.name-time-period}/bin/name_time_period)"
+          ${pkgs.feh}/bin/feh --no-fehbg --bg-max $(${pkgs.images-matching-subdirectories}/bin/images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
+        '';
+      in "${script}";
+      RemainAfterExit = false;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # KWallet daemon — provides a secrets store for apps that use the KWallet API
   systemd.user.services.kwalletd6 = {
     Unit = {

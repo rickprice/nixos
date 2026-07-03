@@ -528,7 +528,6 @@ myStartupHook hostname = do
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
     spawn "setxkbmap -layout us,us -variant dvorak, && xkb-switch -n && xkb-switch -n"
     spawn myFixScreens
-    spawn "~/.config/autorandr/postswitch.d/10_setup_feh"
     spawn myFixLogitechMouse
 
     -- Host-specific configuration
