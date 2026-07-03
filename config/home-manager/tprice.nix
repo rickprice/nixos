@@ -536,7 +536,7 @@
   systemd.user.services.system-config-printer-applet = {
     Unit = {
       Description = "system-config-printer tray applet";
-      After = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" "dunst.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
