@@ -110,6 +110,7 @@
     md-to-svg
     markdown-timesheet
     csvargs
+    (pkgs.writeShellScriptBin "BackupComputer" (builtins.readFile ../scripts/BackupComputer.sh))
 
     volumepanningstereo-lv2
 
