@@ -2,13 +2,13 @@
 
 rustPlatform.buildRustPackage {
   pname = "md-to-svg";
-  version = "0.2.1";
+  version = "0.2.2";
 
   src = fetchFromGitHub {
     owner = "noahprice-dev";
     repo = "md-to-svg";
-    rev = "v0.2.1";
-    hash = "sha256-QJCstxN9iFfjGv0vzYRIWBr96sEB9lI+iBkWYCeWf+E=";
+    rev = "v0.2.2";
+    hash = "sha256-3nDzVEqSudT6Sg+CYI3IuzEydXyfLa/hAkTpTzJ6eHE=";
   };
 
   cargoHash = "sha256-TOpRWICLpN7mtYe0rYFQqm/2ZmjcKYB7llU/mpqeOTI=";
