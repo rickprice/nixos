@@ -111,6 +111,11 @@
     markdown-timesheet
     csvargs
     (pkgs.writeShellScriptBin "BackupComputer" (builtins.readFile ../scripts/BackupComputer.sh))
+    (pkgs.writeShellScriptBin "ProcessRawImages" (builtins.readFile ../scripts/ProcessRawImages.sh))
+
+    # ProcessRawImages dependencies
+    exiftool
+    trash-cli
 
     volumepanningstereo-lv2
 
