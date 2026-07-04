@@ -653,6 +653,10 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  home.file.".xscreensaver".text = ''
+    lock:           False
+  '';
+
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {
     enable = true;

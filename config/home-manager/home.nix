@@ -990,6 +990,11 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  home.file.".xscreensaver".text = ''
+    lock:           True
+    lockTimeout:    0:05:00
+  '';
+
   systemd.user.services.meteo-qt = {
     Unit = {
       Description = "Meteo-Qt weather tray applet";
