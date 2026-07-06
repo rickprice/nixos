@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "inappropriate-video-handler";
-  version = "0.4.2";
+  version = "0.4.3";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "InappropriateVideoHandler";
-    rev = "v0.4.2";
-    hash = "sha256-HCiKZIgBbxo3BjPeD9EqM3g26lqFUtBqUzOIvwQq+eQ=";
+    rev = "v0.4.3";
+    hash = "sha256-eSUVLhCwzodg6UZQW7sc4bU//qKz1ojvQwhbgrm0y94=";
   };
 
-  cargoHash = "sha256-CTo1U0DRoDAt4V2ku62FoWm0ZGgiX0JMrfCeNgNbii4=";
+  cargoHash = "sha256-1F5GA8xpQyO52nKu3JC4ZjvRMhKoYCw5Fb4c2C06Lsc=";
 
   doCheck = false;
 
