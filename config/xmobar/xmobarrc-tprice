@@ -7,7 +7,7 @@ Config { overrideRedirect = False
        , hideOnStart = False
        , persistent = True
        , commands = [ Run Cpu [ "--template", "Cpu: <total>%" , "-L", "5" , "-H", "50" , "--high", "red" , "--low", "white" , "--normal", "white" ] 10
-                    , Run Date "<fc=#FFB53A>%A %B</fc> %Y-%m-%d <fc=#FFB53A>%H:%M</fc>" "date" 10
+                    , Run Date "<fc=#FFB53A>%A %B</fc> %Y-%m-%d <fc=#FFB53A>%I:%M %p</fc>" "date" 10
                     , Run XMonadLog
                     , Run Kbd [("us(dvorak)", "DV"), ("us", "US")]
                     ]
