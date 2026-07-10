@@ -52,14 +52,7 @@ Verify connectivity:
 ping -c 3 nixos.org
 ```
 
-### 3. Enable Nix flakes for this session
-
-The installer may not have flakes enabled by default:
-```
-export NIX_CONFIG="experimental-features = nix-command flakes"
-```
-
-### 4. Clone this repo
+### 3. Clone this repo
 
 ```
 nix-shell -p git
@@ -67,21 +60,21 @@ git clone https://github.com/rickprice/nixos.git /tmp/nixos
 exit
 ```
 
-### 5. Partition and format the disk
+### 4. Partition and format the disk
 
 **For daw or fprice** (LUKS encryption — you will be prompted to set a passphrase):
 ```
-sudo nix run github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
 ```
 
 **For tprice or eric** (no encryption):
 ```
-sudo nix run github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/plain.nix
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/plain.nix
 ```
 
 Disko partitions, formats, and mounts everything under `/mnt` automatically. The disk used is `/dev/nvme0n1`.
 
-### 6. Install NixOS
+### 5. Install NixOS
 
 Replace `<hostname>` with `daw`, `fprice`, `tprice`, or `eric`:
 ```
@@ -90,7 +83,7 @@ sudo nixos-install --flake /tmp/nixos#<hostname>
 
 You will be prompted to set a root password at the end.
 
-### 7. Set user passwords
+### 6. Set user passwords
 
 ```
 sudo nixos-enter --root /mnt
@@ -101,7 +94,7 @@ passwd eric      # on eric
 exit
 ```
 
-### 8. Reboot into the new system
+### 7. Reboot into the new system
 
 ```
 reboot
@@ -109,7 +102,7 @@ reboot
 
 Remove the USB drive when prompted.
 
-### 9. After first boot — put the repo in place
+### 8. After first boot — put the repo in place
 
 Log in, then clone the repo and run the bootstrap script to symlink it to `/etc/nixos`:
 ```
@@ -117,7 +110,7 @@ git clone https://github.com/rickprice/nixos.git ~/nixos
 ~/nixos/NukeAndInstall.sh
 ```
 
-### 10. Rebuild to confirm everything is wired up
+### 9. Rebuild to confirm everything is wired up
 
 ```
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
