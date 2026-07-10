@@ -61,6 +61,17 @@
     mkHost = hostname: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = commonModules ++ [
+        ({ lib, ... }: {
+          networking.hostName = lib.mkForce hostname;
+          services.xserver.xkb.layout = lib.mkForce "us";
+          services.xserver.xkb.variant = lib.mkForce "";
+          console.keyMap = lib.mkForce "us";
+        })
+      ];
+    };
+    mkDvorakHost = hostname: nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = commonModules ++ [
         ({ lib, ... }: { networking.hostName = lib.mkForce hostname; })
       ];
     };
@@ -70,6 +81,7 @@
       system = "x86_64-linux";
       modules = commonModules;
     };
+    nixosConfigurations.fprice = mkDvorakHost "fprice";
     nixosConfigurations.tprice = mkHost "tprice";
     nixosConfigurations.eric   = mkHost "eric";
   };
