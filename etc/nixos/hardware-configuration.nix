@@ -13,19 +13,6 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/mapper/luks-e7d410f9-c013-47d0-ad2b-7a5a342012fa";
-      fsType = "ext4";
-    };
-
-  boot.initrd.luks.devices."luks-e7d410f9-c013-47d0-ad2b-7a5a342012fa".device = "/dev/disk/by-uuid/e7d410f9-c013-47d0-ad2b-7a5a342012fa";
-
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/4081-5761";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
-
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

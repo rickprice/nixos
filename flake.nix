@@ -14,9 +14,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, plasma-manager, ... }:
+  outputs = { self, nixpkgs, home-manager, plasma-manager, disko, ... }:
   let
     commonModules = [
       ./etc/nixos/configuration.nix
@@ -58,9 +63,11 @@
         ];
       }
     ];
-    mkHost = hostname: nixpkgs.lib.nixosSystem {
+    mkHost = hostname: diskModule: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = commonModules ++ [
+        disko.nixosModules.disko
+        diskModule
         ({ lib, ... }: {
           networking.hostName = lib.mkForce hostname;
           services.xserver.xkb.layout = lib.mkForce "us";
@@ -69,9 +76,11 @@
         })
       ];
     };
-    mkDvorakHost = hostname: nixpkgs.lib.nixosSystem {
+    mkDvorakHost = hostname: diskModule: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = commonModules ++ [
+        disko.nixosModules.disko
+        diskModule
         ({ lib, ... }: { networking.hostName = lib.mkForce hostname; })
       ];
     };
@@ -79,10 +88,13 @@
   {
     nixosConfigurations.daw    = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = commonModules;
+      modules = commonModules ++ [
+        disko.nixosModules.disko
+        ./config/disko/encrypted.nix
+      ];
     };
-    nixosConfigurations.fprice = mkDvorakHost "fprice";
-    nixosConfigurations.tprice = mkHost "tprice";
-    nixosConfigurations.eric   = mkHost "eric";
+    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix;
+    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix;
+    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix;
   };
 }
