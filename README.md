@@ -30,60 +30,105 @@ NukeAndInstall.sh                # Bootstrap script (for rebuilding an existing 
 
 ## Fresh install (any machine)
 
-Boot the NixOS installer ISO, then open a terminal.
+### 1. Boot the NixOS installer
 
-**1. Enable networking** (if not already connected):
+Write the NixOS ISO to a USB drive and boot from it. Either the graphical or minimal ISO works. If using the graphical ISO, open a terminal from the desktop before proceeding.
+
+### 2. Connect to the internet
+
+Ethernet is detected automatically. For Wi-Fi:
 ```
-sudo systemctl start wpa_supplicant   # for Wi-Fi; or just plug in ethernet
+sudo systemctl start wpa_supplicant
+wpa_cli
+> add_network
+> set_network 0 ssid "YourNetwork"
+> set_network 0 psk "YourPassword"
+> enable_network 0
+> quit
 ```
 
-**2. Clone this repo:**
+Verify connectivity:
+```
+ping -c 3 nixos.org
+```
+
+### 3. Enable Nix flakes for this session
+
+The installer may not have flakes enabled by default:
+```
+export NIX_CONFIG="experimental-features = nix-command flakes"
+```
+
+### 4. Clone this repo
+
 ```
 nix-shell -p git
 git clone https://github.com/rickprice/nixos.git /tmp/nixos
+exit
 ```
 
-**3. Partition and format the disk using disko:**
+### 5. Partition and format the disk
 
-For **daw** or **fprice** (LUKS encryption):
+**For daw or fprice** (LUKS encryption — you will be prompted to set a passphrase):
 ```
 sudo nix run github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
 ```
 
-For **tprice** or **eric** (no encryption):
+**For tprice or eric** (no encryption):
 ```
 sudo nix run github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/plain.nix
 ```
 
-Disko partitions, formats, and mounts everything under `/mnt` automatically.
+Disko partitions, formats, and mounts everything under `/mnt` automatically. The disk used is `/dev/nvme0n1`.
 
-**4. Install NixOS:**
+### 6. Install NixOS
 
 Replace `<hostname>` with `daw`, `fprice`, `tprice`, or `eric`:
 ```
 sudo nixos-install --flake /tmp/nixos#<hostname>
 ```
 
-**5. Set passwords, then reboot:**
+You will be prompted to set a root password at the end.
+
+### 7. Set user passwords
+
 ```
 sudo nixos-enter --root /mnt
-passwd fprice    # or tprice / eric depending on the machine
+passwd fprice    # on daw or fprice
+# or:
+passwd tprice    # on tprice
+passwd eric      # on eric
 exit
+```
+
+### 8. Reboot into the new system
+
+```
 reboot
 ```
 
-**6. After first boot — symlink the repo into place:**
+Remove the USB drive when prompted.
+
+### 9. After first boot — put the repo in place
+
+Log in, then clone the repo and run the bootstrap script to symlink it to `/etc/nixos`:
 ```
 git clone https://github.com/rickprice/nixos.git ~/nixos
-sudo ./~/nixos/NukeAndInstall.sh
+~/nixos/NukeAndInstall.sh
 ```
 
-**7. Subsequent rebuilds:**
+### 10. Rebuild to confirm everything is wired up
+
 ```
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
 ```
 
-Or use the shell alias:
+If flakes are not yet enabled on the freshly booted system:
+```
+sudo nixos-rebuild switch --flake /etc/nixos#<hostname> --option extra-experimental-features 'nix-command flakes'
+```
+
+After this first rebuild, flakes will be enabled and you can use the shell alias for future rebuilds:
 ```
 rebuild
 ```
