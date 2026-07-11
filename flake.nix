@@ -63,7 +63,7 @@
         ];
       }
     ];
-    mkHost = hostname: diskModule: nixpkgs.lib.nixosSystem {
+    mkHost = hostname: diskModule: extraModules: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = commonModules ++ [
         disko.nixosModules.disko
@@ -74,7 +74,7 @@
           services.xserver.xkb.variant = lib.mkForce "";
           console.keyMap = lib.mkForce "us";
         })
-      ];
+      ] ++ extraModules;
     };
     mkDvorakHost = hostname: diskModule: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -94,7 +94,7 @@
       ];
     };
     nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix;
-    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix;
-    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix;
+    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
+    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ ];
   };
 }

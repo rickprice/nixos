@@ -365,6 +365,10 @@ in
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # Limit parallel builds to avoid OOM SIGKILL during compilation.
+  nix.settings.max-jobs = 2;
+  nix.settings.cores = 2;
+
   # ── midi-daemon ─────────────────────────────────────────────────────────────
   environment.etc."midi-daemon".source = ./files/midi-daemon;
 
