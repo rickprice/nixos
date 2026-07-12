@@ -76,14 +76,16 @@
         })
       ] ++ extraModules;
     };
-    mkDvorakHost = hostname: diskModule: nixpkgs.lib.nixosSystem {
+    mkDvorakHost = hostname: diskModule: extraModules: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = commonModules ++ [
         disko.nixosModules.disko
         diskModule
         ({ lib, ... }: { networking.hostName = lib.mkForce hostname; })
-      ];
+      ] ++ extraModules;
     };
+    encryptedSwapModule = { boot.resumeDevice = "/dev/vg/swap"; };
+    plainSwapModule     = { boot.resumeDevice = "/dev/disk/by-partlabel/swap"; };
   in
   {
     nixosConfigurations.daw    = nixpkgs.lib.nixosSystem {
@@ -91,10 +93,11 @@
       modules = commonModules ++ [
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
+        encryptedSwapModule
       ];
     };
-    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix;
-    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
-    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ ];
+    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix [ encryptedSwapModule ];
+    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ plainSwapModule ];
+    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ plainSwapModule ];
   };
 }
