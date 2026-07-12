@@ -17,6 +17,12 @@
             mountOptions = [ "fmask=0077" "dmask=0077" ];
           };
         };
+        swap = {
+          size = "16G";
+          content = {
+            type = "swap";
+          };
+        };
         root = {
           size = "100%";
           content = {

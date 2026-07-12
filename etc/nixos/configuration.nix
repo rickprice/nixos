@@ -28,10 +28,6 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Compressed RAM swap — cheap OOM headroom on 8-16GB machines, no disk
-  # partition needed and no hibernation support required.
-  zramSwap.enable = true;
-
   # Mainline kernel — for hard real-time scheduling switch to pkgs.linuxPackages_rt_latest.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
