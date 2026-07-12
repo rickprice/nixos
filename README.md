@@ -74,16 +74,28 @@ sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-commu
 
 Disko partitions, formats, and mounts everything under `/mnt` automatically. The disk used is `/dev/nvme0n1`.
 
-### 5. Install NixOS
+### 5. Enable swap on the live ISO
 
-Replace `<hostname>` with `daw`, `fprice`, `tprice`, or `eric`:
+The installer ISO has no swap, and the default Nix build uses all CPU cores. On machines with 8–16 GB of RAM this causes OOM kills that hang the machine mid-install. Enable zram swap before building:
+
 ```
-sudo nixos-install --flake /tmp/nixos#<hostname>
+sudo modprobe zram
+sudo zramctl --find --size 4G
+# note the device printed, e.g. /dev/zram0
+sudo mkswap /dev/zram0
+sudo swapon /dev/zram0
+```
+
+### 6. Install NixOS
+
+Replace `<hostname>` with `daw`, `fprice`, `tprice`, or `eric`. The `--option` flags limit parallelism to match what the installed config enforces, preventing OOM kills during the build:
+```
+sudo nixos-install --flake /tmp/nixos#<hostname> --option max-jobs 2 --option cores 2
 ```
 
 You will be prompted to set a root password at the end.
 
-### 6. Set user passwords
+### 7. Set user passwords
 
 ```
 sudo nixos-enter --root /mnt
@@ -94,7 +106,7 @@ passwd eric      # on eric
 exit
 ```
 
-### 7. Reboot into the new system
+### 8. Reboot into the new system
 
 ```
 reboot
@@ -102,7 +114,7 @@ reboot
 
 Remove the USB drive when prompted.
 
-### 8. After first boot — put the repo in place
+### 9. After first boot — put the repo in place
 
 Log in, then clone the repo and run the bootstrap script to symlink it to `/etc/nixos`:
 ```
@@ -110,7 +122,7 @@ git clone https://github.com/rickprice/nixos.git ~/nixos
 ~/nixos/NukeAndInstall.sh
 ```
 
-### 9. Rebuild to confirm everything is wired up
+### 10. Rebuild to confirm everything is wired up
 
 ```
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
@@ -125,6 +137,33 @@ After this first rebuild, flakes will be enabled and you can use the shell alias
 ```
 rebuild
 ```
+
+## Installing on a disk set up externally (e.g. by the NixOS installer)
+
+The normal install uses disko to partition and generate `fileSystems` entries. If the disk was partitioned by some other means (e.g. the NixOS graphical installer), the disko module will still try to generate `fileSystems` based on what it expects and may not match what is actually on disk.
+
+To handle this, capture the real filesystem layout and remove disko from the machine entry in `flake.nix`:
+
+### 1. Generate a hardware configuration from the mounted system
+
+With the target partitions mounted under `/mnt`:
+```
+nixos-generate-config --root /mnt --show-hardware-config > /tmp/nixos/etc/nixos/hardware-configuration.nix
+```
+
+This replaces the shared `hardware-configuration.nix` with one that includes real `fileSystems` entries for the actual partition layout.
+
+### 2. Remove the disko module for that machine in `flake.nix`
+
+Disko must not be included when it did not create the partitions, because it would generate conflicting `fileSystems` entries. Edit `flake.nix` and remove `disko.nixosModules.disko` and the disko disk config (e.g. `./config/disko/encrypted.nix`) from that machine's module list.
+
+### 3. Install as normal
+
+```
+sudo nixos-install --flake /tmp/nixos#<hostname>
+```
+
+> **Note:** The modified `hardware-configuration.nix` is machine-specific. Commit it only if this machine will always use the same partition layout, or keep it local.
 
 ## How it works
 
