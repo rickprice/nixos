@@ -74,9 +74,24 @@ sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-commu
 
 Disko partitions, formats, and mounts everything under `/mnt` automatically. The disk used is `/dev/nvme0n1`.
 
-### 5. Swap
+### 5. Activate swap
 
-Disko creates a 16 GB swap partition (or LVM logical volume, for the encrypted layout) and activates it automatically during step 4. No manual swap setup is needed before installing.
+Disko formats a 16 GB swap partition (or LVM logical volume for the encrypted layout) during step 4, but does not always activate it in the live installer environment. Activate it manually before installing:
+
+**For daw or fprice** (encrypted — LVM logical volume):
+```
+sudo swapon /dev/vg/swap
+```
+
+**For tprice or eric** (plain — partition):
+```
+sudo swapon /dev/nvme0n1p2
+```
+
+Verify it is active:
+```
+swapon --show
+```
 
 ### 6. Install NixOS
 
