@@ -74,17 +74,9 @@ sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-commu
 
 Disko partitions, formats, and mounts everything under `/mnt` automatically. The disk used is `/dev/nvme0n1`.
 
-### 5. Enable swap on the live ISO
+### 5. Swap
 
-The installer ISO has no swap, and the default Nix build uses all CPU cores. On machines with 8–16 GB of RAM this causes OOM kills that hang the machine mid-install. Enable zram swap before building:
-
-```
-sudo modprobe zram
-sudo zramctl --find --size 4G
-# note the device printed, e.g. /dev/zram0
-sudo mkswap /dev/zram0
-sudo swapon /dev/zram0
-```
+Disko creates a 16 GB swap partition (or LVM logical volume, for the encrypted layout) and activates it automatically during step 4. No manual swap setup is needed before installing.
 
 ### 6. Install NixOS
 
