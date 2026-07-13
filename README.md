@@ -176,7 +176,7 @@ sudo nixos-install --flake /tmp/nixos#<hostname>
 
 - `flake.nix` pins nixpkgs (`nixos-26.05`), home-manager (`release-26.05`), plasma-manager, and disko.
 - Home Manager runs as a NixOS module — no separate `home-manager switch` needed.
-- Disk layouts are declared in `config/disko/` and applied at install time. All machines use `/dev/nvme0n1`.
+- Disk layouts are declared in `config/disko/` and applied at install time. All machines use `/dev/nvme0n1`. Each layout sets `resumeDevice = true` on the swap so disko wires up `boot.resumeDevice` to the actual device node — no manual override needed in `flake.nix`.
 - `NukeAndInstall.sh` symlinks the repo root to `/etc/nixos` so `flake.nix` is available at `/etc/nixos/flake.nix`.
 - `hardware-configuration.nix` contains kernel modules suited to Intel NVMe hardware. If a machine has significantly different hardware, run `nixos-generate-config --no-filesystems` on it after install and commit the result.
 
