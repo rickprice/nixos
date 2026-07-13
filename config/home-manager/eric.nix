@@ -58,7 +58,6 @@
     wezterm
     dunst
     trayer
-    networkmanagerapplet
     xscreensaver
     cbatticon
     polkit_gnome
@@ -605,22 +604,6 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  systemd.user.services.nm-applet = {
-    Unit = {
-      Description = "NetworkManager tray applet";
-      After = [ "graphical-session.target" "trayer.service" "dunst.service" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.networkmanagerapplet}/bin/nm-applet";
-      Restart = "on-failure";
-      RestartSec = 2;
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
-
   systemd.user.services.pasystray = {
     Unit = {
       Description = "PulseAudio system tray";
@@ -670,6 +653,13 @@
       displayBrightness = 40;
       turnOffDisplay.idleTimeout = 3600;
       autoSuspend.action = "nothing";
+    };
+  };
+
+  # ── Xfconf ───────────────────────────────────────────────────────────────────
+  xfconf.settings = {
+    "xfce4-power-manager" = {
+      "/xfce4-power-manager/power-button-action" = 3;
     };
   };
 
