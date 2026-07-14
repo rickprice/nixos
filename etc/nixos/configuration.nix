@@ -68,6 +68,9 @@ in
   # Set your time zone.
   time.timeZone = "America/Toronto";
 
+  # Time synchronization via chrony (replaces systemd-timesyncd).
+  services.chrony.enable = true;
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_CA.UTF-8";
 
