@@ -352,6 +352,9 @@ in
 };
 
 
+  # PAM service for KDE screen locker (kscreenlocker_greet uses service name "kde")
+  security.pam.services.kde.enable = true;
+
   # Unlock KWallet automatically on SDDM login (applies to all users)
   security.pam.services.sddm.kwallet = {
     enable = true;
