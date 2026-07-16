@@ -262,6 +262,8 @@ myCustomKeys =
     , ("C-M-'",            addName "Screen lock"   $ spawn myScreenLock)
     , spawnKey "l" "Screen lock" myScreenLock
     , spawnKey "z" "Fix screens" myFixScreens
+    , ("<Print>",   addName "Screenshot (select region)" $ spawn "flameshot gui")
+    , ("S-<Print>", addName "Screenshot (full screen)"   $ spawn "flameshot full")
 
     , ("M-1", addName "Power key 1" $ powerkeys 1)
     , ("M-2", addName "Power key 2" $ powerkeys 2)

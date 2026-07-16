@@ -445,6 +445,8 @@ myCustomKeys hostname =
     , spawnKey "o" "Markdown editor (Obsidian)" myMarkdownEditor
     , spawnKey "l" "Screen lock" myScreenLock
     , spawnKey "m" "Fix Kensington trackball" myFixKensingtonTrackball
+    , ("<Print>",   addName "Screenshot (select region)" $ spawn "flameshot gui")
+    , ("S-<Print>", addName "Screenshot (full screen)"   $ spawn "flameshot full")
 
     -- Handle powerkeys
     , ("M-1", addName "Power key 1" $ powerkeys 1 hostname)

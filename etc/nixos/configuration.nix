@@ -235,6 +235,7 @@ in
   keychain
   picom
   simple-scan
+  flameshot
   ];
 
 
