@@ -359,8 +359,17 @@ in
   # PAM service for KDE screen locker (kscreenlocker_greet uses service name "kde")
   security.pam.services.kde.enable = true;
 
-  # xscreensaver needs a SUID wrapper and /etc/pam.d/xscreensaver to authenticate
+  # xscreensaver needs a SUID wrapper and /etc/pam.d/xscreensaver to authenticate.
+  # programs.xscreensaver.enable gives us the sonar SUID wrapper and package.
+  # We also need xscreensaver-auth as SUID root and its own PAM service.
   programs.xscreensaver.enable = true;
+  security.wrappers.xscreensaver-auth = {
+    setuid = true;
+    owner = "root";
+    group = "root";
+    source = "${pkgs.xscreensaver}/libexec/xscreensaver/xscreensaver-auth";
+  };
+  security.pam.services.xscreensaver.enable = true;
 
   # Unlock KWallet automatically on SDDM login (applies to all users)
   security.pam.services.sddm.kwallet = {
