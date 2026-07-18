@@ -414,6 +414,7 @@
 
   home.activation.forceXmonadRecompile = lib.hm.dag.entryAfter ["linkGeneration"] ''
     $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
+    /run/current-system/sw/bin/xmonad --restart || true
   '';
   home.file.".xmobarrc".source = ../xmobar/xmobarrc-eric;
 
