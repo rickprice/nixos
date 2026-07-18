@@ -91,9 +91,12 @@
       modules = commonModules ++ [
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
+        ./config/modules/umc404hd-udev.nix
       ];
     };
-    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix [ ];
+    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix [
+      ./config/modules/umc404hd-udev.nix
+    ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
     nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ ];
   };
