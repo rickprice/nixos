@@ -533,6 +533,22 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  systemd.user.services.flameshot = {
+    Unit = {
+      Description = "Flameshot screenshot tool";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.flameshot}/bin/flameshot";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   systemd.user.services.system-config-printer-applet = {
     Unit = {
       Description = "system-config-printer tray applet";
