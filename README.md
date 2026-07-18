@@ -180,6 +180,43 @@ sudo nixos-install --flake /tmp/nixos#<hostname>
 - `NukeAndInstall.sh` symlinks the repo root to `/etc/nixos` so `flake.nix` is available at `/etc/nixos/flake.nix`.
 - `hardware-configuration.nix` contains kernel modules suited to Intel NVMe hardware. If a machine has significantly different hardware, run `nixos-generate-config --no-filesystems` on it after install and commit the result.
 
+## Configuring Dropbox (rclone FUSE mount)
+
+Dropbox is mounted via rclone as a FUSE filesystem and managed by a systemd user service (`rclone-dropbox.service`). The service starts automatically, but you must configure the rclone remote once per user account.
+
+### 1. Check if the remote is already configured
+
+```
+rclone listremotes
+```
+
+If `Dropbox:` appears in the output, skip to step 3.
+
+### 2. Configure the rclone Dropbox remote
+
+```
+rclone config
+```
+
+In the interactive wizard:
+1. Press `n` to create a new remote
+2. Name it exactly `Dropbox`
+3. Choose `dropbox` as the storage type
+4. Follow the OAuth flow — a browser window will open to authenticate with Dropbox
+
+### 3. Start the mount service
+
+```
+systemctl --user start rclone-dropbox.service
+systemctl --user status rclone-dropbox.service
+```
+
+Mount points by user:
+- `fprice` — `~/Documents/Personal/Dropbox`
+- `tprice` — `~/Documents/Dropbox`
+
+The service starts automatically on login once configured.
+
 ## Updating inputs
 
 ```
