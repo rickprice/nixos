@@ -1039,7 +1039,9 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  home.file.".xscreensaver".text = ''
+  home.file.".xscreensaver" = {
+    force = true;
+    text = ''
     timeout:       0:10:00
     cycle:         0:10:00
     lock:          True
@@ -1306,7 +1308,8 @@
     - GL: dumpsterfire --root \n\
       GL: hopffibration --root \n\
       GL: platonicfolding --root \n
-  '';
+    '';
+  };
 
   systemd.user.services.meteo-qt = {
     Unit = {

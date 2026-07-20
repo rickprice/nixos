@@ -820,7 +820,9 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  home.file.".xscreensaver".text = ''
+  home.file.".xscreensaver" = {
+    force = true;
+    text = ''
     timeout:       0:10:00
     cycle:         0:10:00
     lock:          False
@@ -1086,7 +1088,8 @@
     - GL: dumpsterfire --root \n\
       GL: hopffibration --root \n\
       GL: platonicfolding --root \n
-  '';
+    '';
+  };
 
   # ── KDE Plasma ───────────────────────────────────────────────────────────────
   programs.plasma = {
