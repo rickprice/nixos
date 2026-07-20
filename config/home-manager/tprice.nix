@@ -273,12 +273,12 @@
     VISUAL  = "nvim";
     PAGER   = "bat";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-    GDK_DPI_SCALE = "1.3";
-    QT_SCALE_FACTOR = "1.3";
+    GDK_DPI_SCALE = "1.5";
+    QT_SCALE_FACTOR = "1.5";
   };
 
   xresources.properties = {
-    "Xft.dpi" = "125";
+    "Xft.dpi" = "144";
   };
 
   # ── XDG MIME associations ────────────────────────────────────────────────────
