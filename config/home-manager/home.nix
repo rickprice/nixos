@@ -427,6 +427,10 @@
       "image/x-portable-pixmap"  = "feh.desktop";
       "image/x-tga"              = "feh.desktop";
       "image/x-xbitmap"          = "feh.desktop";
+      "application/pdf"          = "atril.desktop";
+      "application/x-bzpdf"      = "atril.desktop";
+      "application/x-gzpdf"      = "atril.desktop";
+      "application/x-xzpdf"      = "atril.desktop";
     };
   };
 
