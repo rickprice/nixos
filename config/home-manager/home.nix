@@ -161,7 +161,7 @@
 
     # XMonad window manager utilities
     arandr
-    feh
+    (feh.override { imlib2Full = imlib2Full; })
     dmenu
     xmobar
     wezterm
@@ -401,6 +401,31 @@
     ]);
   };
 
+
+  # ── XDG MIME associations ────────────────────────────────────────────────────
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "image/bmp"                = "feh.desktop";
+      "image/gif"                = "feh.desktop";
+      "image/heic"               = "feh.desktop";
+      "image/jpeg"               = "feh.desktop";
+      "image/jpg"                = "feh.desktop";
+      "image/pjpeg"              = "feh.desktop";
+      "image/png"                = "feh.desktop";
+      "image/tiff"               = "feh.desktop";
+      "image/webp"               = "feh.desktop";
+      "image/x-bmp"              = "feh.desktop";
+      "image/x-pcx"              = "feh.desktop";
+      "image/x-png"              = "feh.desktop";
+      "image/x-portable-anymap"  = "feh.desktop";
+      "image/x-portable-bitmap"  = "feh.desktop";
+      "image/x-portable-graymap" = "feh.desktop";
+      "image/x-portable-pixmap"  = "feh.desktop";
+      "image/x-tga"              = "feh.desktop";
+      "image/x-xbitmap"          = "feh.desktop";
+    };
+  };
 
   # ── Wired ────────────────────────────────────────────────────────────────────
   xdg.configFile."wired/wired.ron".text = ''
