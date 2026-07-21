@@ -345,6 +345,17 @@ in
 # Power button → clean shutdown
   services.logind.settings.Login.HandlePowerKey = "poweroff";
 
+  # Allow any local user to power off regardless of which VT is active.
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if ((action.id === "org.freedesktop.login1.power-off" ||
+           action.id === "org.freedesktop.login1.power-off-multiple-sessions") &&
+          subject.local) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
 # Disable automatic hibernation
   systemd.sleep.settings = {
     Sleep = {
