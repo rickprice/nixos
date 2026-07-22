@@ -1049,6 +1049,10 @@
     passwdTimeout: 0:00:30
     mode:          random
     selected:      -1
+    dpmsEnabled:   True
+    dpmsStandby:   0:30:00
+    dpmsSuspend:   0:30:00
+    dpmsOff:       0:30:00
     programs: \
         maze --root \n\
       GL: superquadrics --root \n\
