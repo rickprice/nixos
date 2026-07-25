@@ -151,7 +151,7 @@ uWorkspaceKeys = wsKeys uWorkspaceKeyPrefix uWorkspaceDisplayPrefix uDesktops uD
 
 -- Workspace sets by hostname
 myExtraWorkspaces hostname | hostnameWork `isPrefixOf` hostname = ["IM", "MAIL", "ADM", "SCRATCH", "ZM", "DOC", "NSP"]
-myExtraWorkspaces _ = ["SCRATCH", "DOC", "NSP"]
+myExtraWorkspaces _ = ["IM", "MAIL", "ADM", "SCRATCH", "ZM", "DOC", "NSP"]
 
 myWorkspaces hostname | hostnameWork `isPrefixOf` hostname = wWorkspaces ++ myExtraWorkspaces hostname ++ tWorkspaces ++ fWorkspaces ++ uWorkspaces
 myWorkspaces hostname = fWorkspaces ++ myExtraWorkspaces hostname
