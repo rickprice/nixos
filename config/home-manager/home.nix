@@ -735,6 +735,22 @@
   };
 
   # Dunst notification daemon
+  systemd.user.services.discord = {
+    Unit = {
+      Description = "Discord messaging client";
+      After = [ "graphical-session.target" "trayer.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.discord}/bin/discord";
+      Restart = "on-failure";
+      RestartSec = 5;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   systemd.user.services.dunst = {
     Unit = {
       Description = "Dunst notification daemon";

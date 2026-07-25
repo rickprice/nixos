@@ -536,7 +536,6 @@ myStartupHook hostname = do
     if hostnameWork `isPrefixOf` hostname
         then do
             spawnOn "MAIL" myEmailer
-            spawnOn "IM" "discord"
             spawnOn "ADM" myMarkdownEditor
             spawnOn "ADM" myBrowser
             spawnOn "U11" myCarla
