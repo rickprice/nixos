@@ -543,7 +543,7 @@ myStartupHook hostname = do
             spawnOn "U12" myQPWGraph
             spawnOn "U13" myTouchOSC
         else do
-            spawnOn "FP11" myArdour
+            return ()
 
     setWMName "LG3D"
 
