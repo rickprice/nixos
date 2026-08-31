@@ -170,7 +170,6 @@
     networkmanagerapplet
     xscreensaver
     udiskie
-    cbatticon
     blueman
     polkit_gnome
     xfce4-power-manager
@@ -865,21 +864,6 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  systemd.user.services.cbatticon = {
-    Unit = {
-      Description = "Battery status tray icon";
-      After = [ "graphical-session.target" "trayer.service" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.cbatticon}/bin/cbatticon";
-      Restart = "on-failure";
-      RestartSec = 5;
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 
   # Rclone Dropbox FUSE mount
   systemd.user.services.rclone-dropbox = {
