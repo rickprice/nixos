@@ -75,7 +75,19 @@
     ardour
     calf
     guitarix
-    carla
+    # Wrap Carla so it links against PipeWire's JACK library instead of the
+    # real JACK. Without this, Carla's JACK backend can't connect to PipeWire
+    # and the plugin scanner never initialises.
+    (pkgs.symlinkJoin {
+      name = "carla";
+      paths = [ pkgs.carla ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/carla \
+          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+      '';
+    })
+    pkgs.pipewire.jack  # provides pw-jack for running any JACK app under PipeWire
     qpwgraph
     midisnoop
     touchosc
@@ -195,7 +207,7 @@
       grep = "rg";
 
       # NixOS shortcuts
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#daw";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
     };
 
     history = {

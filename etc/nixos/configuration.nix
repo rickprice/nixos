@@ -184,7 +184,7 @@ in
   syntaxHighlighting.enable = true;
   shellAliases = {
       ll = "ls -lah";
-      update-nixos = "sudo nixos-rebuild switch --flake /etc/nixos#daw";
+      update-nixos = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
   };
   histSize = 100000;
   };

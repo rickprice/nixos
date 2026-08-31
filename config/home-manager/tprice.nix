@@ -110,7 +110,7 @@
       cat  = "bat";
       grep = "rg";
 
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#daw";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
     };
 
     history = {
