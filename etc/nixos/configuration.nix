@@ -109,6 +109,10 @@ in
   services.avahi = {
     enable = true;
     nssmdns4 = true;
+    publish = {
+      enable = true;
+      userServices = true; # allows apps like TouchOSC to advertise services
+    };
   };
 
   # Bluetooth
