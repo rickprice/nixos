@@ -94,7 +94,7 @@
         ./config/modules/umc404hd-udev.nix
       ];
     };
-    nixosConfigurations.fprice = mkDvorakHost "fprice" ./config/disko/encrypted.nix [
+    nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
       ./config/modules/umc404hd-udev.nix
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
