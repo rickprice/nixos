@@ -621,6 +621,11 @@
   programs.autorandr = {
     enable = true;
 
+    hooks.postswitch."05_restart_trayer" = ''
+      #! /usr/bin/bash
+      systemctl --user restart trayer.service
+    '';
+
     hooks.postswitch."10_setup_feh" = ''
       #! /usr/bin/bash
       set -e
@@ -982,7 +987,7 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --tint 0x000000 --height 22";
+      ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --tint 0x000000 --height 22 --monitor primary";
       Restart = "on-failure";
       RestartSec = 1;
       TimeoutStopSec = 10;
