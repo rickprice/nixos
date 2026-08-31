@@ -11,7 +11,7 @@ let
     pkgs.caps
     pkgs.guitarix
     pkgs.lsp-plugins
-    pkgs.sfizz
+    pkgs.sfizz-ui
     pkgs.x42-plugins
     pkgs.dragonfly-reverb
     pkgs.volumepanningstereo-lv2
