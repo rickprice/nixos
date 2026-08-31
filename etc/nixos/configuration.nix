@@ -157,8 +157,9 @@ in
 
   # Tell JACK clients (Carla, Ardour, etc.) to request 128 frames at 48 kHz.
   # Without this Carla falls back to its own default of 512.
-  environment.sessionVariables = {
-    PIPEWIRE_LATENCY = "128/48000";
+  environment.sessionVariables.PIPEWIRE_LATENCY = "128/48000";
+
+  environment.variables = {
     LV2_PATH    = lib.makeSearchPath "lib/lv2"    audioPlugins;
     LADSPA_PATH = lib.makeSearchPath "lib/ladspa" audioPlugins;
     VST3_PATH   = lib.makeSearchPath "lib/vst3"   audioPlugins;
