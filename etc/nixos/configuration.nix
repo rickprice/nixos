@@ -426,13 +426,33 @@ in
     ];
   };
 
-  # PipeWire-Pulse drop-in: create the umc404hd_combined combine-sink
-  # (merges umc404hd_out12 + umc404hd_out34). Also tighten the
-  # speech-dispatcher latency floor (dotfiles uses 1024 frames vs NixOS default 512).
-  services.pipewire.extraConfig.pipewire-pulse."10-umc404hd" = {
-    "context.exec" = [
-      { path = "pactl"; args = "load-module module-combine-sink sink_name=umc404hd_combined sink_properties='device.description=\"UMC404HD All Outputs\"' slaves=umc404hd_out12,umc404hd_out34"; }
+  # Native PipeWire combine-stream: merges umc404hd_out12 + umc404hd_out34 into a
+  # single "UMC404HD All Outputs" sink visible in the PipeWire graph.
+  # Using libpipewire-module-combine-stream instead of pactl module-combine-sink so
+  # the node appears as a first-class PipeWire node (helvum, qpwgraph, etc.).
+  services.pipewire.extraConfig.pipewire."11-umc404hd-combined" = {
+    "context.modules" = [
+      { name = "libpipewire-module-combine-stream";
+        args = {
+          "node.name"        = "umc404hd_combined";
+          "node.description" = "UMC404HD All Outputs";
+          "media.class"      = "Audio/Sink";
+          "combine.mode"     = "sink";
+          "stream.rules" = [
+            { matches = [ { "node.name" = "umc404hd_out12"; } ];
+              actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
+            }
+            { matches = [ { "node.name" = "umc404hd_out34"; } ];
+              actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
+            }
+          ];
+        };
+      }
     ];
+  };
+
+  # PipeWire-Pulse drop-in: tighten speech-dispatcher latency floor.
+  services.pipewire.extraConfig.pipewire-pulse."10-umc404hd" = {
     "pulse.rules" = [
       { matches = [ { "application.name" = "~speech-dispatcher.*"; } ];
         actions.update-props = {
