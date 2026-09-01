@@ -634,6 +634,11 @@
       systemctl --user restart trayer.service
     '';
 
+    hooks.postswitch."07_numlock" = ''
+      #! /usr/bin/bash
+      numlockx on
+    '';
+
     hooks.postswitch."10_setup_feh" = ''
       #! /usr/bin/bash
       set -e
