@@ -133,6 +133,10 @@ in
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
 
+    # Make LADSPA plugins available inside the pipewire service (affects the
+    # LADSPA_PATH baked into the systemd unit, not just the user session).
+    extraLadspaPackages = [ pkgs.zam-plugins pkgs.ladspaPlugins ];
+
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
