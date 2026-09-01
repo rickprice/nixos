@@ -82,6 +82,7 @@ in
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.settings.General.Numlock = "on";
   services.desktopManager.plasma6.enable = true;
 
   # XMonad window manager (available alongside KDE in the SDDM session chooser)
