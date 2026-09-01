@@ -568,6 +568,7 @@ in
     openFirewall = true;
     settings = {
       PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
       PermitRootLogin = "no";
     };
     # Allow password auth from Tailscale (100.64.0.0/10) only.
@@ -578,6 +579,10 @@ in
         KbdInteractiveAuthentication yes
     '';
   };
+
+  # pam_unix is required in the sshd auth stack for keyboard-interactive to work.
+  # NixOS defaults to pam_deny when PasswordAuthentication is globally disabled.
+  security.pam.services.sshd.unixAuth = true;
 
   # ── keyd (keyboard remapping) ───────────────────────────────────────────────
   services.keyd = {
