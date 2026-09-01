@@ -575,6 +575,7 @@ in
     extraConfig = ''
       Match Address 100.64.0.0/10
         PasswordAuthentication yes
+        KbdInteractiveAuthentication yes
     '';
   };
 
