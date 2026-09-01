@@ -165,6 +165,32 @@ in
     };
   };
 
+  # Bypass UCM/ACP so the UMC404HD appears as a flat 4-channel device with
+  # AUX0-3 numbered ports. Required so the loopback and filter-chain sinks
+  # below can target specific AUX channel pairs. Without this WirePlumber
+  # applies ALSA Card Profiles and splits the device into HiFi nodes instead.
+  services.wireplumber.extraConfig."51-umc404-direct" = {
+    "monitor.alsa.rules" = [
+      { matches = [ { "device.name" = "alsa_card.usb-BEHRINGER_UMC404HD_192k-00"; } ];
+        actions.update-props."api.alsa.use-acp" = false;
+      }
+      { matches = [ { "node.name" = "~alsa_output.*BEHRINGER_UMC404HD.*"; } ];
+        actions.update-props = {
+          "node.nick"        = "UMC404HD";
+          "node.description" = "UMC404HD";
+          "audio.position"   = [ "AUX0" "AUX1" "AUX2" "AUX3" ];
+        };
+      }
+      { matches = [ { "node.name" = "~alsa_input.*BEHRINGER_UMC404HD.*"; } ];
+        actions.update-props = {
+          "node.nick"        = "UMC404HD";
+          "node.description" = "UMC404HD";
+          "audio.position"   = [ "AUX0" "AUX1" "AUX2" "AUX3" ];
+        };
+      }
+    ];
+  };
+
   # Loopback sink for UMC404HD outputs 1+2 (flat, AUX0/AUX1) and a 30-band EQ
   # filter-chain sink for outputs 3+4 (AUX2/AUX3). Both are required by the
   # umc404hd_combined combine-sink loaded in the pipewire-pulse drop-in.
