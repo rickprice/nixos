@@ -582,7 +582,7 @@ in
 
   # pam_unix is required in the sshd auth stack for keyboard-interactive to work.
   # NixOS defaults to pam_deny when PasswordAuthentication is globally disabled.
-  security.pam.services.sshd.unixAuth = true;
+  security.pam.services.sshd.unixAuth = lib.mkForce true;
 
   # ── keyd (keyboard remapping) ───────────────────────────────────────────────
   services.keyd = {
