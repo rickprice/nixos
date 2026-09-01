@@ -547,6 +547,7 @@ in
   psmisc
   simple-scan
   flameshot
+  alsa-utils
   ];
 
 
