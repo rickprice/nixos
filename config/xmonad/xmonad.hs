@@ -529,6 +529,7 @@ myStartupHook hostname = do
     -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
     spawn "setxkbmap -layout us,us -variant dvorak, && xkb-switch -n && xkb-switch -n"
+    spawn "numlockx on"
     spawn myFixScreens
     spawn myFixLogitechMouse
 

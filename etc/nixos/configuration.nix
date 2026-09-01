@@ -548,6 +548,7 @@ in
   simple-scan
   flameshot
   alsa-utils
+  numlockx
   ];
 
 
