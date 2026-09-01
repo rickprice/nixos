@@ -566,9 +566,15 @@ in
     enable = true;
     openFirewall = true;
     settings = {
-      PasswordAuthentication = false;  # recommended: keys only
+      PasswordAuthentication = false;
       PermitRootLogin = "no";
     };
+    # Allow password auth from Tailscale (100.64.0.0/10) only.
+    # Tailscale account access is the first factor; SSH password is the second.
+    extraConfig = ''
+      Match Address 100.64.0.0/10
+        PasswordAuthentication yes
+    '';
   };
 
   # ── keyd (keyboard remapping) ───────────────────────────────────────────────
