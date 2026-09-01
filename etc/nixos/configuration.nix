@@ -543,6 +543,7 @@ in
   gh
   keychain
   picom
+  psmisc
   simple-scan
   flameshot
   ];
