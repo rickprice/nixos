@@ -601,11 +601,9 @@
   '';
 
   # ── XMonad ───────────────────────────────────────────────────────────────────
-  home.file.".config/xmonad/xmonad.hs".text =
-    builtins.replaceStrings
-      [ "/usr/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc" ]
-      [ "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc" ]
-      (builtins.readFile ../xmonad/xmonad.hs);
+  home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
+  home.file.".config/touchosc/ComplexSetup.tosc".source =
+    "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc";
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
 
   # Nix store files have epoch timestamps, so XMonad's mtime check thinks the
