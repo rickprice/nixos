@@ -573,14 +573,16 @@ in
     };
     # Allow password auth from Tailscale (100.64.0.0/10) only.
     # Tailscale account access is the first factor; SSH password is the second.
+    # KbdInteractiveAuthentication is intentionally excluded: JuiceSSH (Trilead
+    # SSH2) hangs on PAM challenge-response and times out. Plain password auth
+    # sends the credential directly to PAM without a conversation loop.
     extraConfig = ''
       Match Address 100.64.0.0/10
         PasswordAuthentication yes
-        KbdInteractiveAuthentication yes
     '';
   };
 
-  # pam_unix is required in the sshd auth stack for keyboard-interactive to work.
+  # pam_unix is required in the sshd auth stack for password auth to work.
   # NixOS defaults to pam_deny when PasswordAuthentication is globally disabled.
   security.pam.services.sshd.unixAuth = lib.mkForce true;
 
