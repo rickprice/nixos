@@ -74,7 +74,17 @@
     # Audio production
     ardour
     calf
-    guitarix
+    # Wrap Guitarix so it links against PipeWire's JACK library instead of the
+    # real JACK, for the same reason Carla is wrapped.
+    (pkgs.symlinkJoin {
+      name = "guitarix";
+      paths = [ pkgs.guitarix ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/guitarix \
+          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+      '';
+    })
     # Wrap Carla so it links against PipeWire's JACK library instead of the
     # real JACK. Without this, Carla's JACK backend can't connect to PipeWire
     # and the plugin scanner never initialises.
