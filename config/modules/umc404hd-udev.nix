@@ -7,6 +7,6 @@
   # to unity, so it can come back down at whatever the USB driver's power-on
   # default is on every reconnect. Pin it to 0dB (127) here instead.
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{idVendor}=="1397", ATTRS{idProduct}=="0509", RUN+="${pkgs.bash}/bin/sh -c '${pkgs.alsa-utils}/bin/amixer -c U192k cset numid=1 127,127; ${pkgs.alsa-utils}/bin/amixer -c U192k cset numid=3 127,127; ${pkgs.alsa-utils}/bin/amixer -c U192k cset numid=17 127,127,127,127'"
+    ACTION=="add", SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{idVendor}=="1397", ATTRS{idProduct}=="0509", RUN+="${pkgs.alsa-utils}/bin/amixer -c U192k cset numid=5 127,127,127,127"
   '';
 }
