@@ -169,7 +169,7 @@ in
   # AUX0-3 numbered ports. Required so the loopback and filter-chain sinks
   # below can target specific AUX channel pairs. Without this WirePlumber
   # applies ALSA Card Profiles and splits the device into HiFi nodes instead.
-  services.wireplumber.extraConfig."51-umc404-direct" = {
+  services.pipewire.wireplumber.extraConfig."51-umc404-direct" = {
     "monitor.alsa.rules" = [
       { matches = [ { "device.name" = "alsa_card.usb-BEHRINGER_UMC404HD_192k-00"; } ];
         actions.update-props."api.alsa.use-acp" = false;
