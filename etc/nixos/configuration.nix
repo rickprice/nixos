@@ -446,6 +446,11 @@ in
             { matches = [ { "node.name" = "umc404hd_out34"; } ];
               actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
             }
+            # USB 2.0 audio dongle — hotplug-safe: sub-stream is created when the
+            # device appears and removed cleanly when unplugged; nothing breaks if absent.
+            { matches = [ { "node.name" = "~alsa_output.usb-Generic_USB2.0_Device.*analog-stereo"; } ];
+              actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
+            }
           ];
         };
       }
