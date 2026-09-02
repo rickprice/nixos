@@ -213,6 +213,27 @@ in
           };
         };
       }
+      # combine-stream can only fan out to virtual pipeline sinks, not directly to
+      # physical ALSA nodes. This loopback provides a virtual sink (usb20_out) that
+      # the combine-stream targets; the playback side forwards to the ALSA device.
+      # node.passive keeps the dongle from blocking the graph when unplugged.
+      { name = "libpipewire-module-loopback";
+        args = {
+          "node.description" = "USB 2.0 Audio Dongle";
+          "capture.props" = {
+            "node.name"      = "usb20_out";
+            "media.class"    = "Audio/Sink";
+            "audio.position" = [ "FL" "FR" ];
+          };
+          "playback.props" = {
+            "node.name"         = "usb20_out_play";
+            "audio.position"    = [ "FL" "FR" ];
+            "target.object"     = "alsa_output.usb-Generic_USB2.0_Device_20170726905959-00.analog-stereo";
+            "stream.dont-remix" = true;
+            "node.passive"      = true;
+          };
+        };
+      }
       { name = "libpipewire-module-filter-chain";
         args = {
           "node.description" = "UMC404HD Outputs 3+4";
@@ -446,9 +467,9 @@ in
             { matches = [ { "node.name" = "umc404hd_out34"; } ];
               actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
             }
-            # USB 2.0 audio dongle — hotplug-safe: sub-stream is created when the
-            # device appears and removed cleanly when unplugged; nothing breaks if absent.
-            { matches = [ { "node.name" = "~alsa_output.usb-Generic_USB2.0_Device.*analog-stereo"; } ];
+            # Routes to usb20_out (a loopback virtual sink) which forwards to the
+            # physical ALSA dongle. combine-stream cannot target ALSA nodes directly.
+            { matches = [ { "node.name" = "usb20_out"; } ];
               actions.create-stream = { "audio.position" = [ "FL" "FR" ]; };
             }
           ];
