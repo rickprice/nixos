@@ -118,10 +118,12 @@ in
     };
   };
 
-  # GPU — AMD Navi 10 (gfx1010). extraPackages exposes the ROCm OpenCL ICD so
-  # darktable (and other OpenCL apps) can use the GPU for acceleration.
+  # GPU — AMD Navi 10 (gfx1010). clr provides the libraries; clr.icd installs
+  # the vendor ICD file into /run/opengl-driver/etc/OpenCL/vendors/ so the
+  # ICD loader can discover the driver.
   hardware.graphics.extraPackages = with pkgs; [
     rocmPackages.clr
+    rocmPackages.clr.icd
   ];
 
   # Bluetooth
