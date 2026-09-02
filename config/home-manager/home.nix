@@ -72,7 +72,17 @@
     ]))
 
     # Audio production
-    ardour
+    # Wrap Ardour so it links against PipeWire's JACK library instead of the
+    # real JACK, for the same reason Carla and Guitarix are wrapped.
+    (pkgs.symlinkJoin {
+      name = "ardour";
+      paths = [ pkgs.ardour ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/ardour9 \
+          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+      '';
+    })
     calf
     # Wrap Guitarix so it links against PipeWire's JACK library instead of the
     # real JACK, for the same reason Carla is wrapped.
