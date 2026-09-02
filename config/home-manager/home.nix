@@ -612,14 +612,8 @@
 
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
-  home.activation.copyTouchoscLayout = lib.hm.dag.entryAfter ["linkGeneration"] ''
-    dest="$HOME/.config/touchosc/ComplexSetup.tosc"
-    if [ ! -f "$dest" ]; then
-      mkdir -p "$(dirname "$dest")"
-      cp "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc" "$dest"
-      chmod u+w "$dest"
-    fi
-  '';
+  home.file.".config/touchosc/ComplexSetup.tosc".source =
+    "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc";
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
 
   # Nix store files have epoch timestamps, so XMonad's mtime check thinks the

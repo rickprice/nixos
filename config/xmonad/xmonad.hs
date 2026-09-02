@@ -75,7 +75,7 @@ myGuitarix = "guitarix"
 myCarlaKeyboardProject = "/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/Music/CurrentKeyboardAndGuitarSetup.carxp"
 myCarla = "carla" ++" "++ myCarlaKeyboardProject
 myTouchOSCProject = "/home/fprice/.config/touchosc/ComplexSetup.tosc"
-myTouchOSC = "TouchOSC" ++ " --general.ui.editor false --general.ui.fullscreen true"++" "++ myTouchOSCProject
+myTouchOSC = "TouchOSC --general.ui.editor=false --general.ui.fullscreen=true " ++ myTouchOSCProject
 myQPWGraph = "qpwgraph"
 myMidiSnoop = "midisnoop"
 myEbookViewer = "ebook-viewer"
