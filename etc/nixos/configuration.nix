@@ -731,6 +731,9 @@ in
   # PAM service for KDE screen locker (kscreenlocker_greet uses service name "kde")
   security.pam.services.kde.enable = true;
 
+  # Enable libopenraw GDK Pixbuf loader so tumbler/pcmanfm can thumbnail RAW files (.cr2, etc.)
+  programs.gdk-pixbuf.modulePackages = [ pkgs.libopenraw ];
+
   # xscreensaver needs a SUID wrapper and /etc/pam.d/xscreensaver to authenticate.
   # programs.xscreensaver.enable gives us the sonar SUID wrapper and package.
   # We also need xscreensaver-auth as SUID root and its own PAM service.

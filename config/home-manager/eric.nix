@@ -253,6 +253,20 @@
     "Xft.dpi" = "125";
   };
 
+  # ── libfm (pcmanfm) ─────────────────────────────────────────────────────────
+  # thumbnail_max is in KB; default 2048 (2 MB) is too small for CR2 RAW files
+  xdg.configFile."libfm/libfm.conf" = {
+    force = true;
+    text = ''
+      [config]
+      single_click=0
+      use_trash=1
+      confirm_del=1
+      thumbnail_local=1
+      thumbnail_max=102400
+    '';
+  };
+
   # ── XDG MIME associations ────────────────────────────────────────────────────
   xdg.configFile."mimeapps.list".force = true;
   xdg.dataFile."applications/mimeapps.list".force = true;
