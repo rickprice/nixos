@@ -688,8 +688,17 @@ in
 
   # Tailscale
   services.tailscale = {
-  enable = true;
-  useRoutingFeatures = "client";
+    enable = true;
+    useRoutingFeatures = "client";
+  };
+
+  # The NixOS drop-in adds After=NetworkManager-wait-online.service but not
+  # Wants=, so systemd never activates it and tailscaled races ahead of DHCP.
+  # Adding Wants=network-online.target pulls NM-wait-online into the dependency
+  # chain, ensuring a lease exists before tailscaled starts.
+  systemd.services.tailscaled = {
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
   };
 
   networking.firewall = {
