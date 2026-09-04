@@ -476,6 +476,18 @@
   # source is always older than the binary and skips recompilation. Deleting the
   # binary after each apply forces XMonad to recompile from the updated source on
   # the next login or Mod+Q restart.
+  home.activation.libfmThumbnailMax = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    libfm_conf="$HOME/.config/libfm/libfm.conf"
+    [ -L "$libfm_conf" ] && rm -f "$libfm_conf"
+    mkdir -p "$HOME/.config/libfm"
+    if [ -f "$libfm_conf" ] && grep -q "^thumbnail_max=" "$libfm_conf"; then
+      sed -i 's/^thumbnail_max=.*/thumbnail_max=102400/' "$libfm_conf"
+    elif [ -f "$libfm_conf" ]; then
+      sed -i '/^\[config\]/a thumbnail_max=102400' "$libfm_conf"
+    else
+      printf '[config]\nthumbnail_local=1\nthumbnail_max=102400\n' > "$libfm_conf"
+    fi
+  '';
   home.activation.forceXmonadRecompile = lib.hm.dag.entryAfter ["linkGeneration"] ''
     $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
     /run/current-system/sw/bin/xmonad --restart || true

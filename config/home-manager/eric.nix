@@ -254,18 +254,18 @@
   };
 
   # ── libfm (pcmanfm) ─────────────────────────────────────────────────────────
-  # thumbnail_max is in KB; default 2048 (2 MB) is too small for CR2 RAW files
-  xdg.configFile."libfm/libfm.conf" = {
-    force = true;
-    text = ''
-      [config]
-      single_click=0
-      use_trash=1
-      confirm_del=1
-      thumbnail_local=1
-      thumbnail_max=102400
-    '';
-  };
+  home.activation.libfmThumbnailMax = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    libfm_conf="$HOME/.config/libfm/libfm.conf"
+    [ -L "$libfm_conf" ] && rm -f "$libfm_conf"
+    mkdir -p "$HOME/.config/libfm"
+    if [ -f "$libfm_conf" ] && grep -q "^thumbnail_max=" "$libfm_conf"; then
+      sed -i 's/^thumbnail_max=.*/thumbnail_max=102400/' "$libfm_conf"
+    elif [ -f "$libfm_conf" ]; then
+      sed -i '/^\[config\]/a thumbnail_max=102400' "$libfm_conf"
+    else
+      printf '[config]\nthumbnail_local=1\nthumbnail_max=102400\n' > "$libfm_conf"
+    fi
+  '';
 
   # ── XDG MIME associations ────────────────────────────────────────────────────
   xdg.configFile."mimeapps.list".force = true;
