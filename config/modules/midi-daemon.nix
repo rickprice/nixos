@@ -87,7 +87,7 @@ in {
           "${cfg.package}/bin/midi-daemon"
           + lib.optionalString (cfg.configFile != null) " --config ${cfg.configFile}"
           + lib.optionalString (cfg.routesDir  != null) " --routes ${cfg.routesDir}";
-        ExecReload    = "${pkgs.coreutils}/bin/kill -USR1 $MAINPID";
+        ExecReload    = "${cfg.package}/bin/midi-daemon reload";
         Restart       = "on-failure";
         RestartSec    = 2;
         User          = cfg.user;

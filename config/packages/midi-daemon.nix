@@ -2,16 +2,19 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-daemon";
-  version = "0.5.0";
+  version = "0.6.1";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-daemon";
-    rev = "v0.5.0";
-    hash = "sha256-t+ti4jWYB/2Awv4OpmTt9p6zXjjF9JcEPzYYsfubpXQ=";
+    rev = "v0.6.1";
+    hash = "sha256-4MAHV8TELK4arBZTf683z4M1EP9kGC9efrI5Jv9T5gc=";
   };
 
-  cargoHash = "sha256-xKKa2Srm8/AGGECTVvqnnyZ1NxKVIEUWWpxulakiHvg=";
+  cargoHash = "sha256-gHOF7/b8EdNAESzMkpNIFEBqzM0QD3+9A+W8UvLpfVE=";
+
+  # Timer tests spawn real-time threads that time out in the Nix sandbox
+  doCheck = false;
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ alsa-lib ];
