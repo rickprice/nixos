@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation {
   pname = "volumepanningstereo-lv2";
-  version = "0.1.4";
+  version = "0.1.6";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "VolumePanningStereo.lv2";
-    rev = "v0.1.4";
-    hash = "sha256-2xhj5K2hp5qvyxzBb4Hc78h9j5XvXEa9iyaSu8s8gZg=";
+    rev = "v0.1.6";
+    hash = "sha256-5kpTWIDYb1PMD5l5riMIcGDry2+i8b+uryCsdqnn7Tc=";
   };
 
   nativeBuildInputs = [ pkg-config ];
