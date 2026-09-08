@@ -70,6 +70,9 @@
     gimp
     inkscape
 
+    # Touchpad management
+    touchpad-toggle-daemon
+
     # Autorandr background selection helpers
     name-time-period
     images-matching-subdirectories
@@ -529,6 +532,22 @@
   '';
 
   # ── Systemd user services ────────────────────────────────────────────────────
+
+  systemd.user.services.touchpad-toggle-daemon = {
+    Unit = {
+      Description = "Disable the touchpad while an external mouse is connected";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.touchpad-toggle-daemon}/bin/touchpad-toggle-daemon";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   systemd.user.services.discord = {
     Unit = {
