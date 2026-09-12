@@ -67,6 +67,16 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Use systemd-resolved for DNS. When resolved is running, tailscaled uses its
+  # D-Bus API to register MagicDNS per-interface rather than overwriting
+  # /etc/resolv.conf entirely. This keeps the local router DNS as a fallback so
+  # DNS doesn't break when Tailscale's MagicDNS has issues.
+  services.resolved = {
+    enable = true;
+    dnssec = "allow-downgrade";
+    fallbackDns = [ "1.1.1.1" "9.9.9.9" ];
+  };
+
   # Set your time zone.
   time.timeZone = "America/Toronto";
 

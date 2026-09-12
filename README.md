@@ -6,7 +6,7 @@ My NixOS configuration (flake-based)
 | Hostname | User    | Keyboard | Disk encryption |
 |----------|---------|----------|-----------------|
 | daw      | fprice  | Dvorak   | Yes (LUKS)      |
-| fprice   | fprice  | Dvorak   | Yes (LUKS)      |
+| fwork    | fprice  | Dvorak   | Yes (LUKS)      |
 | tprice   | tprice  | QWERTY   | No              |
 | eric     | eric    | QWERTY   | No              |
 
@@ -62,7 +62,7 @@ exit
 
 ### 4. Partition and format the disk
 
-**For daw or fprice** (LUKS encryption — you will be prompted to set a passphrase):
+**For daw or fwork** (LUKS encryption — you will be prompted to set a passphrase):
 ```
 sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
 ```
@@ -78,7 +78,7 @@ Disko partitions, formats, and mounts everything under `/mnt` automatically. The
 
 Disko formats a 16 GB swap partition (or LVM logical volume for the encrypted layout) during step 4, but does not always activate it in the live installer environment. Activate it manually before installing:
 
-**For daw or fprice** (encrypted — LVM logical volume):
+**For daw or fwork** (encrypted — LVM logical volume):
 ```
 sudo swapon /dev/vg/swap
 ```
@@ -95,7 +95,7 @@ swapon --show
 
 ### 6. Install NixOS
 
-Replace `<hostname>` with `daw`, `fprice`, `tprice`, or `eric`. The `--option` flags limit parallelism to match what the installed config enforces, preventing OOM kills during the build:
+Replace `<hostname>` with `daw`, `fwork`, `tprice`, or `eric`. The `--option` flags limit parallelism to match what the installed config enforces, preventing OOM kills during the build:
 ```
 sudo nixos-install --flake /tmp/nixos#<hostname> --option max-jobs 2 --option cores 2
 ```
@@ -106,7 +106,7 @@ You will be prompted to set a root password at the end.
 
 ```
 sudo nixos-enter --root /mnt
-passwd fprice    # on daw or fprice
+passwd fprice    # on daw or fwork
 # or:
 passwd tprice    # on tprice
 passwd eric      # on eric
@@ -176,7 +176,7 @@ sudo nixos-install --flake /tmp/nixos#<hostname>
 
 - `flake.nix` pins nixpkgs (`nixos-26.05`), home-manager (`release-26.05`), plasma-manager, and disko.
 - Home Manager runs as a NixOS module — no separate `home-manager switch` needed.
-- Disk layouts are declared in `config/disko/` and applied at install time. All machines use `/dev/nvme0n1`. Each layout sets `resumeDevice = true` on the swap so disko wires up `boot.resumeDevice` to the actual device node — no manual override needed in `flake.nix`.
+- Disk layouts are declared in `config/disko/` and applied at install time. All machines use `/dev/nvme0n1`. Each layout sets `resumeDevice = true` on the swap so disko wires up `boot.resumeDevice` to the actual device node — no manual override needed in `flake.nix`. `encrypted.nix` is used by `daw` and `fwork`; `plain.nix` by `tprice` and `eric`.
 - `NukeAndInstall.sh` symlinks the repo root to `/etc/nixos` so `flake.nix` is available at `/etc/nixos/flake.nix`.
 - `hardware-configuration.nix` contains kernel modules suited to Intel NVMe hardware. If a machine has significantly different hardware, run `nixos-generate-config --no-filesystems` on it after install and commit the result.
 
@@ -216,6 +216,17 @@ Mount points by user:
 - `tprice` — `~/Documents/Dropbox`
 
 The service starts automatically on login once configured.
+
+## Tailscale and DNS
+
+Tailscale is enabled on all machines (`services.tailscale.enable`). DNS is handled by `systemd-resolved` (`services.resolved.enable`).
+
+Without resolved, Tailscale's `resolvconf` hook overwrites `/etc/resolv.conf` with only its MagicDNS servers (100.100.100.100), completely displacing the local router DNS. Any hiccup in MagicDNS breaks all DNS resolution. With resolved running, `tailscaled` detects it and registers MagicDNS per-interface via D-Bus instead, leaving the local DNS and global fallbacks (1.1.1.1, 9.9.9.9) intact.
+
+To check DNS status after a rebuild:
+```
+resolvectl status
+```
 
 ## Updating inputs
 
