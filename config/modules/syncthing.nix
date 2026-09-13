@@ -22,6 +22,7 @@ in
     configDir = "/home/fprice/.config/syncthing";
     settings = {
       gui.insecureSkipHostcheck = false;
+      gui.apikey = "f9e96891-1e20-4b92-8303-a76c1931e990";
       devices.${otherName}  = { id = otherID; };
       devices."android"     = { id = androidDeviceId; };
       folders."MarkDownDocuments.personal" = {
