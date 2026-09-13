@@ -93,10 +93,12 @@
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
+        ./config/modules/syncthing.nix
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
       ./config/modules/umc404hd-udev.nix
+      ./config/modules/syncthing.nix
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
     nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ ];

@@ -19,12 +19,16 @@ etc/nixos/
   hardware-configuration.nix     # Shared hardware config (kernel modules, CPU)
 config/
   disko/
-    encrypted.nix                # Disk layout for daw and fprice (LUKS + ext4 on /dev/nvme0n1)
+    encrypted.nix                # Disk layout for daw and fwork (LUKS + ext4 on /dev/nvme0n1)
     plain.nix                    # Disk layout for tprice and eric (plain ext4 on /dev/nvme0n1)
   home-manager/
-    home.nix                     # Home Manager config for fprice (daw, fprice)
+    home.nix                     # Home Manager config for fprice (daw, fwork)
     tprice.nix                   # Home Manager config for tprice
     eric.nix                     # Home Manager config for eric
+  modules/
+    syncthing.nix                # Syncthing file sync service (daw and fwork only)
+    midi-daemon.nix              # MIDI routing daemon (all machines)
+    umc404hd-udev.nix            # udev rules for the Behringer UMC404HD (daw and fwork)
 NukeAndInstall.sh                # Bootstrap script (for rebuilding an existing daw install)
 ```
 
@@ -227,6 +231,36 @@ To check DNS status after a rebuild:
 ```
 resolvectl status
 ```
+
+## Syncthing
+
+Syncthing is enabled on `daw` and `fwork` only, running as `fprice`. Folders and devices are **not** declared in Nix — configure them via the web UI after first boot so each machine gets its own device ID.
+
+### First-time setup on each machine
+
+1. Open `http://localhost:8384` in a browser.
+2. Note the device ID shown in **Actions → Show ID**.
+3. Add the other machine as a remote device using its ID.
+4. Share folders between them.
+
+Firewall ports opened automatically:
+- TCP/UDP 22000 — sync traffic
+- UDP 21027 — local peer discovery
+
+### Adding folders declaratively (optional)
+
+Once you know what to sync, folders can be declared in `config/modules/syncthing.nix`:
+
+```nix
+settings.folders = {
+  "Documents" = {
+    path = "/home/fprice/Documents";
+    devices = [ "fwork" ];  # Syncthing device name, not hostname
+  };
+};
+```
+
+See `services.syncthing.settings` in the NixOS options for the full schema.
 
 ## Updating inputs
 
