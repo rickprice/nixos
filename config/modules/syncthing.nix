@@ -8,7 +8,7 @@ let
   dawDeviceId     = "REPLACE-WITH-DAW-DEVICE-ID";
   fworkDeviceId   = "REPLACE-WITH-FWORK-DEVICE-ID";
   # On Android: Syncthing app → hamburger menu → Device ID
-  androidDeviceId = "REPLACE-WITH-ANDROID-DEVICE-ID";
+  androidDeviceId = "SVKN2P3-74JHTNE-JY5XVLL-DGAXLM7-RZJYB5M-IC63VWP-32DNUJP-SQ2YNAC";
 
   isDAW        = config.networking.hostName == "daw";
   otherName    = if isDAW then "fwork"          else "daw";
