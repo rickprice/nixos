@@ -6,7 +6,7 @@ let
   #   http://localhost:8384 → Actions → Show ID
   # or: sudo -u fprice syncthing cli config system status | grep myID
   dawDeviceId     = "REPLACE-WITH-DAW-DEVICE-ID";
-  fworkDeviceId   = "REPLACE-WITH-FWORK-DEVICE-ID";
+  fworkDeviceId   = "FVU2BRC-3VW47AN-ZR44C24-RB6CFZW-BXAPPHS-NLFCFQY-OKITGEN-6EMWIQF";
   # On Android: Syncthing app → hamburger menu → Device ID
   androidDeviceId = "SVKN2P3-74JHTNE-JY5XVLL-DGAXLM7-RZJYB5M-IC63VWP-32DNUJP-SQ2YNAC";
 
