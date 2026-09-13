@@ -208,7 +208,6 @@
     pasystray
     system-config-printer
     meteo-qt
-    syncthing
     rclone
   ];
 
@@ -865,31 +864,6 @@
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
-  };
-
-  # Syncthing file sync
-  services.syncthing = {
-    enable = true;
-    settings = {
-      devices = {
-        android.id = "SVKN2P3-74JHTNE-JY5XVLL-DGAXLM7-RZJYB5M-IC63VWP-32DNUJP-SQ2YNAC";
-        # daw.id = "REPLACE-WITH-DAW-DEVICE-ID";
-      };
-      folders."MarkDownDocuments.personal" = {
-        path = "/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/MarkDownDocuments.personal";
-        devices = [ "android" ];
-      };
-    };
-  };
-
-  # Override the HM-generated unit to wait for rclone-dropbox and tie into graphical-session
-  systemd.user.services.syncthing = {
-    Unit = {
-      After = lib.mkAfter [ "network-online.target" "rclone-dropbox.service" ];
-      Wants = [ "network-online.target" "rclone-dropbox.service" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Install.WantedBy = lib.mkForce [ "graphical-session.target" ];
   };
 
   # Picom compositor for XMonad
