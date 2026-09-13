@@ -871,7 +871,8 @@
   systemd.user.services.syncthing = {
     Unit = {
       Description = "Syncthing file synchronization";
-      After = [ "graphical-session.target" "network.target" ];
+      After = [ "graphical-session.target" "network-online.target" "rclone-dropbox.service" ];
+      Wants = [ "network-online.target" "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
