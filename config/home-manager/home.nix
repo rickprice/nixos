@@ -626,8 +626,10 @@
     "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc";
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
 
-  xdg.configFile."gsimplecal/config".text = ''
-    main_window_font = Sans 15
+  xdg.configFile."gtk-3.0/gtk.css".text = ''
+    calendar {
+      font-size: 150%;
+    }
   '';
 
   # ── libfm (pcmanfm) ─────────────────────────────────────────────────────────
