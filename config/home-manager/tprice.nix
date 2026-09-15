@@ -476,6 +476,10 @@
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad-tprice.hs;
 
+  xdg.configFile."gsimplecal/config".text = ''
+    main_window_font = Sans 15
+  '';
+
   # Nix store files have epoch timestamps, so XMonad's mtime check thinks the
   # source is always older than the binary and skips recompilation. Deleting the
   # binary after each apply forces XMonad to recompile from the updated source on

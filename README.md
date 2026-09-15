@@ -22,9 +22,9 @@ config/
     encrypted.nix                # Disk layout for daw and fwork (LUKS + ext4 on /dev/nvme0n1)
     plain.nix                    # Disk layout for tprice and eric (plain ext4 on /dev/nvme0n1)
   home-manager/
-    home.nix                     # Home Manager config for fprice (daw, fwork)
+    home.nix                     # Home Manager config for fprice (daw, fwork); gsimplecal font 15pt
     syncthing-fprice.nix         # Syncthing service + package for fprice (fwork only)
-    tprice.nix                   # Home Manager config for tprice
+    tprice.nix                   # Home Manager config for tprice; gsimplecal font 15pt
     eric.nix                     # Home Manager config for eric
   xmobar/
     xmobarrc                     # xmobar config for fprice; date/time click opens gsimplecal

@@ -626,6 +626,10 @@
     "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc";
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
 
+  xdg.configFile."gsimplecal/config".text = ''
+    main_window_font = Sans 15
+  '';
+
   # ── libfm (pcmanfm) ─────────────────────────────────────────────────────────
   # thumbnail_max is in KB; the default 2048 (2 MB) blocks modern camera JPEGs
   # (5–15 MB) and CR2 RAW files (45–55 MB).  xdg.configFile is wrong here
