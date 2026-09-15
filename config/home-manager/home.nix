@@ -632,6 +632,12 @@
     }
   '';
 
+  # xmobar bar is ~24px tall (TopW L 90 with Sans-12); yoffset pushes gsimplecal
+  # below the bar instead of overlapping it when clicking the clock.
+  xdg.configFile."gsimplecal/config".text = ''
+    mainwindow_yoffset = 30
+  '';
+
   # ── libfm (pcmanfm) ─────────────────────────────────────────────────────────
   # thumbnail_max is in KB; the default 2048 (2 MB) blocks modern camera JPEGs
   # (5–15 MB) and CR2 RAW files (45–55 MB).  xdg.configFile is wrong here

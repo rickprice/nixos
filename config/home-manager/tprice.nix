@@ -482,6 +482,12 @@
     }
   '';
 
+  # xmobar bar is exactly 36px tall (TopSize L 90 36); yoffset pushes gsimplecal
+  # below the bar instead of overlapping it when clicking the clock.
+  xdg.configFile."gsimplecal/config".text = ''
+    mainwindow_yoffset = 40
+  '';
+
   # Nix store files have epoch timestamps, so XMonad's mtime check thinks the
   # source is always older than the binary and skips recompilation. Deleting the
   # binary after each apply forces XMonad to recompile from the updated source on
