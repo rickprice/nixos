@@ -325,6 +325,7 @@ myManageHook =
         , className =? "discord" --> doShift "IM"
         , className =? "Slack" --> doShift "IM"
         , className =? "thunderbird" --> doShift "MAIL"
+        , stringProperty "WM_WINDOW_ROLE" =? "GtkFileChooserDialog" --> doSink
         , isDialog --> doFloat
         ]
 

@@ -30,6 +30,10 @@ config/
     xmobarrc                     # xmobar config for fprice; date/time click opens gsimplecal
     xmobarrc-tprice              # xmobar config for tprice; date/time click opens gsimplecal
     xmobarrc-eric                # xmobar config for eric
+  xmonad/
+    xmonad.hs                    # XMonad config for fprice (fwork, daw)
+    xmonad-tprice.hs             # XMonad config for tprice
+    xmonad-eric.hs               # XMonad config for eric
   modules/
     syncthing.nix                # Syncthing firewall ports (fwork only); device IDs documented here
     midi-daemon.nix              # MIDI routing daemon (all machines)
