@@ -195,6 +195,7 @@
     (feh.override { imlib2Full = imlib2Full; })
     dmenu
     xmobar
+    gsimplecal
     wezterm
     dunst
     trayer

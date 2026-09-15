@@ -13,5 +13,5 @@ Config { overrideRedirect = False
                     ]
        , sepChar  = "%"
        , alignSep = "}{"
-       , template = " %XMonadLog% | %date% }{%cpu% | <action=`xkb-switch -n` button=1>%kbd%</action>"
+       , template = " %XMonadLog% | <action=`gsimplecal` button=1>%date%</action> }{%cpu% | <action=`xkb-switch -n` button=1>%kbd%</action>"
        }

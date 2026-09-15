@@ -26,6 +26,10 @@ config/
     syncthing-fprice.nix         # Syncthing service + package for fprice (fwork only)
     tprice.nix                   # Home Manager config for tprice
     eric.nix                     # Home Manager config for eric
+  xmobar/
+    xmobarrc                     # xmobar config for fprice; date/time click opens gsimplecal
+    xmobarrc-tprice              # xmobar config for tprice; date/time click opens gsimplecal
+    xmobarrc-eric                # xmobar config for eric
   modules/
     syncthing.nix                # Syncthing firewall ports (fwork only); device IDs documented here
     midi-daemon.nix              # MIDI routing daemon (all machines)
