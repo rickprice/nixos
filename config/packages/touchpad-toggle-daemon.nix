@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "touchpad-toggle-daemon";
-  version = "0.2.3";
+  version = "0.2.5";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "touchpad-toggle-daemon";
-    rev = "v0.2.3";
-    hash = "sha256-t2PlLSGY8l+LqlisKwHLi3Kic4G863LI+Hs71G5JPoM=";
+    rev = "v0.2.5";
+    hash = "sha256-tPMBrSDE98uNfpJu+LNpwrFacgoZHtoujEdYIGh7qhg=";
   };
 
-  cargoHash = "sha256-f075rYj6z5rhQUtjmOk3O3fS2JI0HSVUkVBQlKi/ZX0=";
+  cargoHash = "sha256-j8MY8KkP6LXi3ydR7/laM22+uzEgsE1qvxz518oEcJY=";
 
   nativeBuildInputs = [ pkg-config makeWrapper ];
   buildInputs = [ udev ];
