@@ -486,6 +486,11 @@
     Level=INFO
   '';
 
+  # ── Google Chrome ────────────────────────────────────────────────────────────
+  home.file.".config/google-chrome/policies/managed/downloads.json".text = builtins.toJSON {
+    DownloadDirectory = "/home/tprice/Documents/Dropbox/TamaraDocuments/Downloads";
+  };
+
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad-tprice.hs;
 

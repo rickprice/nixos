@@ -633,6 +633,11 @@
     Level=INFO
   '';
 
+  # ── Google Chrome ────────────────────────────────────────────────────────────
+  home.file.".config/google-chrome/policies/managed/downloads.json".text = builtins.toJSON {
+    DownloadDirectory = "/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/DropBoxDownloads";
+  };
+
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
   home.file.".config/touchosc/ComplexSetup.tosc".source =
