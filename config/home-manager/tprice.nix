@@ -52,6 +52,9 @@
     atril
     zathura
 
+    # Archive manager
+    file-roller
+
     # Diff and merge tool
     meld
 
@@ -314,6 +317,16 @@
       "application/x-bzpdf"      = "atril.desktop";
       "application/x-gzpdf"      = "atril.desktop";
       "application/x-xzpdf"      = "atril.desktop";
+      "application/zip"          = "org.gnome.FileRoller.desktop";
+      "application/x-zip"        = "org.gnome.FileRoller.desktop";
+      "application/x-zip-compressed" = "org.gnome.FileRoller.desktop";
+      "application/x-tar"        = "org.gnome.FileRoller.desktop";
+      "application/x-bzip2"      = "org.gnome.FileRoller.desktop";
+      "application/x-gzip"       = "org.gnome.FileRoller.desktop";
+      "application/x-xz"         = "org.gnome.FileRoller.desktop";
+      "application/x-7z-compressed" = "org.gnome.FileRoller.desktop";
+      "application/x-rar"        = "org.gnome.FileRoller.desktop";
+      "application/x-rar-compressed" = "org.gnome.FileRoller.desktop";
     };
   };
 
