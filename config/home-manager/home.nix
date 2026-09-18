@@ -163,6 +163,9 @@
     # Archive manager
     file-roller
 
+    # Calculator
+    gnome-calculator
+
     # Diff and merge tool
     meld
 
