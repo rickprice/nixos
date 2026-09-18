@@ -646,6 +646,9 @@
       tmp=$(${pkgs.coreutils}/bin/mktemp)
       ${pkgs.jq}/bin/jq --arg dir "$downloadDir" '.download.default_directory = $dir' "$prefFile" > "$tmp" \
         && ${pkgs.coreutils}/bin/mv "$tmp" "$prefFile"
+    else
+      ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$prefFile")"
+      ${pkgs.jq}/bin/jq -n --arg dir "$downloadDir" '{"download":{"default_directory":$dir}}' > "$prefFile"
     fi
   '';
 
