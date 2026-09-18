@@ -490,9 +490,15 @@
   '';
 
   # ── Google Chrome ────────────────────────────────────────────────────────────
-  home.file.".config/google-chrome/policies/managed/downloads.json".text = builtins.toJSON {
-    DownloadDirectory = "/home/tprice/Documents/Dropbox/TamaraDocuments/Downloads";
-  };
+  home.activation.setChromeDownloadDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    prefFile="$HOME/.config/google-chrome/Default/Preferences"
+    downloadDir="/home/tprice/Documents/Dropbox/TamaraDocuments/Downloads"
+    if [ -f "$prefFile" ]; then
+      tmp=$(${pkgs.coreutils}/bin/mktemp)
+      ${pkgs.jq}/bin/jq --arg dir "$downloadDir" '.download.default_directory = $dir' "$prefFile" > "$tmp" \
+        && ${pkgs.coreutils}/bin/mv "$tmp" "$prefFile"
+    fi
+  '';
 
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad-tprice.hs;

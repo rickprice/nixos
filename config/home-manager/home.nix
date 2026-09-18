@@ -637,9 +637,17 @@
   '';
 
   # ── Google Chrome ────────────────────────────────────────────────────────────
-  home.file.".config/google-chrome/policies/managed/downloads.json".text = builtins.toJSON {
-    DownloadDirectory = "/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/DropBoxDownloads";
-  };
+  # Chrome on Linux only reads managed policies from /etc/opt/chrome/policies/
+  # (system-wide), so per-user settings must go through the Preferences file.
+  home.activation.setChromeDownloadDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    prefFile="$HOME/.config/google-chrome/Default/Preferences"
+    downloadDir="/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/DropBoxDownloads"
+    if [ -f "$prefFile" ]; then
+      tmp=$(${pkgs.coreutils}/bin/mktemp)
+      ${pkgs.jq}/bin/jq --arg dir "$downloadDir" '.download.default_directory = $dir' "$prefFile" > "$tmp" \
+        && ${pkgs.coreutils}/bin/mv "$tmp" "$prefFile"
+    fi
+  '';
 
   # ── XMonad ───────────────────────────────────────────────────────────────────
   home.file.".config/xmonad/xmonad.hs".source = ../xmonad/xmonad.hs;
