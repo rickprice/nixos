@@ -1,4 +1,4 @@
-{ lib, rustPlatform, fetchFromGitHub, pkg-config, alsa-lib, libGL, libxkbcommon, wayland,
+{ lib, rustPlatform, fetchFromGitHub, pkg-config, makeWrapper, alsa-lib, libGL, libxkbcommon, wayland,
   libx11, libxcursor, libxrandr, libxi }:
 
 rustPlatform.buildRustPackage {
@@ -16,7 +16,7 @@ rustPlatform.buildRustPackage {
 
   doCheck = false;
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ pkg-config makeWrapper ];
 
   buildInputs = [
     alsa-lib
@@ -28,6 +28,15 @@ rustPlatform.buildRustPackage {
     libxrandr
     libxi
   ];
+
+  postInstall = ''
+    wrapProgram $out/bin/midi-staff-trainer \
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [
+        libxkbcommon
+        libGL
+        wayland
+      ]}
+  '';
 
   meta = with lib; {
     description = "Interactive MIDI keyboard to musical staff trainer";
