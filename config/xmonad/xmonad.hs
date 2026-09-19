@@ -78,6 +78,7 @@ myTouchOSCProject = "/home/fprice/.config/touchosc/ComplexSetup.tosc"
 myTouchOSC = "TouchOSC --general.ui.editor=false --general.ui.fullscreen=true " ++ myTouchOSCProject
 myQPWGraph = "qpwgraph"
 myMidiSnoop = "midisnoop"
+myMidiStaffTrainer = "midi-staff-trainer"
 myEbookViewer = "ebook-viewer"
 myMarkdownEditor = "obsidian"
 
@@ -442,6 +443,7 @@ myCustomKeys hostname =
     , spawnKey "a c" "Carla" myCarla
     , spawnKey "a q" "QPWGraph" myQPWGraph
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
+    , spawnKey "a s" "Midi Staff Trainer" myMidiStaffTrainer
     , spawnKey "z" "Fix screens" myFixScreens
     , spawnKey "o" "Markdown editor (Obsidian)" myMarkdownEditor
     , spawnKey "l" "Screen lock" myScreenLock

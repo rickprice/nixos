@@ -38,6 +38,10 @@ in
   # would otherwise fire on long-running RT bursts.
   boot.kernelParams = [ "threadirqs" "nosoftlockup" ];
 
+  # Bridge raw USB MIDI devices into the ALSA sequencer so rtmidi-based apps
+  # (midisnoop, etc.) can subscribe and receive events, not just enumerate port names.
+  boot.kernelModules = [ "snd-seq-midi" ];
+
   # Remove the 95 % CPU-time cap on SCHED_FIFO/SCHED_RR tasks.  On a
   # dedicated DAW there is no reason to throttle RT threads.
   boot.kernel.sysctl = {

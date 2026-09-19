@@ -135,6 +135,7 @@
 
     # My MIDI controller/OSC controller
     midi-daemon
+    midi-staff-trainer
     name-time-period
     images-matching-subdirectories
     background-picker

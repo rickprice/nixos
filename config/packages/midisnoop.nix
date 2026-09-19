@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, qmake, wrapQtAppsHook, qtbase, qttools, rtmidi, pkg-config }:
+{ lib, stdenv, fetchFromGitHub, qmake, wrapQtAppsHook, qtbase, qttools, rtmidi, pipewire, pkg-config }:
 
 stdenv.mkDerivation {
   pname = "midisnoop";
@@ -33,6 +33,8 @@ stdenv.mkDerivation {
     # skip it and only install the binary.
     sed -i '/INSTALLS += desktop/d' src/src.pro
   '';
+
+  qtWrapperArgs = [ "--prefix" "LD_LIBRARY_PATH" ":" "${pipewire.jack}/lib" ];
 
   qmakeFlags = [ "PREFIX=${placeholder "out"}" ];
 

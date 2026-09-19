@@ -39,6 +39,7 @@
             md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
             markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
             csvargs = prev.callPackage ./config/packages/csvargs.nix { };
+            midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
             inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
             touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
             # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
