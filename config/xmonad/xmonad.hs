@@ -92,7 +92,6 @@ myScreenLock = "xscreensaver-command -lock"
 -- Scripts and commands
 myFixScreens = "autorandr --change"
 myFixLogitechMouse = "xinput --set-prop 'Logitech M325' 'libinput Accel Speed' -0.4"
-myFixKensingtonTrackball = "kensington-reset.sh"
 
 -- Colors
 myNormalBorderColor = "#dddddd"
@@ -443,11 +442,10 @@ myCustomKeys hostname =
     , spawnKey "a c" "Carla" myCarla
     , spawnKey "a q" "QPWGraph" myQPWGraph
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
-    , spawnKey "a s" "Midi Staff Trainer" myMidiStaffTrainer
+    , spawnKey "m" "Midi Staff Trainer" myMidiStaffTrainer
     , spawnKey "z" "Fix screens" myFixScreens
     , spawnKey "o" "Markdown editor (Obsidian)" myMarkdownEditor
     , spawnKey "l" "Screen lock" myScreenLock
-    , spawnKey "m" "Fix Kensington trackball" myFixKensingtonTrackball
     , ("<Print>",   addName "Screenshot (select region)" $ spawn "flameshot gui")
     , ("S-<Print>", addName "Screenshot (full screen)"   $ spawn "flameshot full")
 
