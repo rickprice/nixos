@@ -919,6 +919,8 @@
     passwdTimeout: 0:00:30
     mode:          random
     selected:      -1
+    fade:          False
+    unfade:        False
     dpmsEnabled:   True
     dpmsStandby:   0:30:00
     dpmsSuspend:   0:30:00

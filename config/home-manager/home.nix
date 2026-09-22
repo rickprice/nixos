@@ -1159,6 +1159,8 @@
     lockTimeout:   0:05:00
     passwdTimeout: 0:00:30
     mode:          blank
+    fade:          False
+    unfade:        False
     dpmsEnabled:   True
     dpmsStandby:   0:30:00
     dpmsSuspend:   0:30:00
