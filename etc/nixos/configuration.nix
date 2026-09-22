@@ -241,8 +241,8 @@ in
       #
       # EQ rationale (starting-point; replace with REW measurements when available):
       #   HP  60 Hz Q=0.71  cut inaudible sub-bass the woofer can't reproduce
-      #   +4 dB  80 Hz Q=1.5  bass punch
-      #   +5 dB 150 Hz Q=1.2  warmth / body (biggest gap in these speakers)
+      #   +2 dB  80 Hz Q=1.5  bass punch (reduced from +4 dB; was boomy)
+      #   +4 dB 150 Hz Q=1.2  warmth / body (reduced from +5 dB; was boomy)
       #   +4 dB 250 Hz Q=1.0  fullness
       #   -1 dB 500 Hz Q=1.5  reduce muddiness
       #   -1 dB 3 kHz  Q=2.0  tame presence harshness
@@ -255,16 +255,16 @@ in
             nodes = [
               # Left channel
               { type = "builtin"; name = "hp_l";    label = "bq_highpass"; control = { "Freq" = 60;   "Q" = 0.71; }; }
-              { type = "builtin"; name = "eq_l_1";  label = "bq_peaking";  control = { "Freq" = 80;   "Q" = 1.5;  "Gain" =  4.0; }; }
-              { type = "builtin"; name = "eq_l_2";  label = "bq_peaking";  control = { "Freq" = 150;  "Q" = 1.2;  "Gain" =  5.0; }; }
+              { type = "builtin"; name = "eq_l_1";  label = "bq_peaking";  control = { "Freq" = 80;   "Q" = 1.5;  "Gain" =  2.0; }; }
+              { type = "builtin"; name = "eq_l_2";  label = "bq_peaking";  control = { "Freq" = 150;  "Q" = 1.2;  "Gain" =  4.0; }; }
               { type = "builtin"; name = "eq_l_3";  label = "bq_peaking";  control = { "Freq" = 250;  "Q" = 1.0;  "Gain" =  4.0; }; }
               { type = "builtin"; name = "eq_l_4";  label = "bq_peaking";  control = { "Freq" = 500;  "Q" = 1.5;  "Gain" = -1.0; }; }
               { type = "builtin"; name = "eq_l_5";  label = "bq_peaking";  control = { "Freq" = 3000; "Q" = 2.0;  "Gain" = -1.0; }; }
               { type = "builtin"; name = "eq_l_6";  label = "bq_peaking";  control = { "Freq" = 8000; "Q" = 1.5;  "Gain" = -1.0; }; }
               # Right channel
               { type = "builtin"; name = "hp_r";    label = "bq_highpass"; control = { "Freq" = 60;   "Q" = 0.71; }; }
-              { type = "builtin"; name = "eq_r_1";  label = "bq_peaking";  control = { "Freq" = 80;   "Q" = 1.5;  "Gain" =  4.0; }; }
-              { type = "builtin"; name = "eq_r_2";  label = "bq_peaking";  control = { "Freq" = 150;  "Q" = 1.2;  "Gain" =  5.0; }; }
+              { type = "builtin"; name = "eq_r_1";  label = "bq_peaking";  control = { "Freq" = 80;   "Q" = 1.5;  "Gain" =  2.0; }; }
+              { type = "builtin"; name = "eq_r_2";  label = "bq_peaking";  control = { "Freq" = 150;  "Q" = 1.2;  "Gain" =  4.0; }; }
               { type = "builtin"; name = "eq_r_3";  label = "bq_peaking";  control = { "Freq" = 250;  "Q" = 1.0;  "Gain" =  4.0; }; }
               { type = "builtin"; name = "eq_r_4";  label = "bq_peaking";  control = { "Freq" = 500;  "Q" = 1.5;  "Gain" = -1.0; }; }
               { type = "builtin"; name = "eq_r_5";  label = "bq_peaking";  control = { "Freq" = 3000; "Q" = 2.0;  "Gain" = -1.0; }; }
