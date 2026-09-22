@@ -56,11 +56,6 @@ in
     "kernel.perf_event_paranoid"    = 1;
   };
 
-  # Keep the CPU at full frequency so there are no scaling-induced latency
-  # spikes during a session.  The i3-1005G1 is fanless-class so thermals are
-  # fine under the light computational load of a DAW.
-  powerManagement.cpuFreqGovernor = "performance";
-
   networking.hostName = "daw"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

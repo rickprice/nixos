@@ -3,12 +3,12 @@ My NixOS configuration (flake-based)
 
 ## Machines
 
-| Hostname | User    | Keyboard | Disk encryption |
-|----------|---------|----------|-----------------|
-| daw      | fprice  | Dvorak   | Yes (LUKS)      |
-| fwork    | fprice  | Dvorak   | Yes (LUKS)      |
-| tprice   | tprice  | QWERTY   | No              |
-| eric     | eric    | QWERTY   | No              |
+| Hostname | Type    | User    | Keyboard | Disk encryption |
+|----------|---------|---------|----------|-----------------|
+| daw      | Laptop  | fprice  | Dvorak   | Yes (LUKS)      |
+| fwork    | Desktop | fprice  | Dvorak   | Yes (LUKS)      |
+| tprice   | Laptop  | tprice  | QWERTY   | No              |
+| eric     | Laptop  | eric    | QWERTY   | No              |
 
 ## Structure
 
@@ -35,6 +35,7 @@ config/
     xmonad-tprice.hs             # XMonad config for tprice
     xmonad-eric.hs               # XMonad config for eric
   modules/
+    laptop.nix                   # Laptop power management via TLP (daw, tprice, eric); performance on AC, powersave on battery
     syncthing.nix                # Syncthing firewall ports (fwork only); device IDs documented here
     midi-daemon.nix              # MIDI routing daemon (all machines)
     umc404hd-udev.nix            # udev rules for the Behringer UMC404HD (daw and fwork)

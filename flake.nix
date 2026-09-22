@@ -94,14 +94,20 @@
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
+        ./config/modules/laptop.nix
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
       ./config/modules/umc404hd-udev.nix
       ./config/modules/syncthing.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
+      { powerManagement.cpuFreqGovernor = "performance"; }
     ];
-    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [ ];
-    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [ ];
+    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
+      ./config/modules/laptop.nix
+    ];
+    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [
+      ./config/modules/laptop.nix
+    ];
   };
 }
