@@ -130,7 +130,7 @@ fDesktopPanes = 3
 uWorkspaceDisplayPrefix = "U"
 uWorkspaceKeyPrefix = Just "u"
 uDesktops = 1
-uDesktopPanes = 3
+uDesktopPanes = 6
 
 -- =============================================================================
 -- WORKSPACE MANAGEMENT
