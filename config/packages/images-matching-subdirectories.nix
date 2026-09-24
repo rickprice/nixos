@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage {
   pname = "images_matching_subdirectories";
-  version = "0.1.0";
+  version = "0.2.0";
 
   src = fetchCrate {
     pname = "images_matching_subdirectories";
-    version = "0.1.0";
-    hash = "sha256-yRyIsrWROR6nBBCVUQE0OCliXdB3gZRLDGaLVnAVyTg=";
+    version = "0.2.0";
+    hash = "sha256-ERtYiaLBpiuVSenF5mquCk981X4Y/tJ23q+OyYbDEVM=";
   };
 
-  cargoHash = "sha256-izCylpt8V0+2s2XqVBckvSIlj6k0Q6H1R+6dJqkkr+k=";
+  cargoHash = "sha256-mmy68kC7BY2t8wtq+lKNWtmxPEq49psZm+t1Lb8wCP8=";
 
   meta = with lib; {
     description = "Find images inside named subdirectories of a parent directory";

@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage {
   pname = "name_time_period";
-  version = "0.3.1";
+  version = "0.4.0";
 
   src = fetchCrate {
     pname = "name_time_period";
-    version = "0.3.1";
-    hash = "sha256-WOM63AF/GAdCXNdbo1S6UDZs3fh00ckXNlaybSSBJHs=";
+    version = "0.4.0";
+    hash = "sha256-Dk32hHiOGpX7zoFycEcqkJE948pMUxiMurW23//KG/U=";
   };
 
-  cargoHash = "sha256-U7JAvCl30v5cicHnsNlO0QOsZ5rEmlTUVJ0xjwHe6MY=";
+  cargoHash = "sha256-wbXcSeevRQT3cBxbV/ArzlZS43xfKA5FoiXZ6v0sogs=";
 
   meta = with lib; {
     description = "Name the time period a date is in, configuration is supported";
