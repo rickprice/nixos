@@ -3,16 +3,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-staff-trainer";
-  version = "0.4.5";
+  version = "0.4.8";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-staff-trainer";
-    rev = "v0.4.5";
-    hash = "sha256-BE8wM3TgzW1n3qQtLUg2s2W+rskRlUGRB8yUutrqJus=";
+    rev = "v0.4.8";
+    hash = "sha256-UAYF4pUc4v6bMs+2zIM2mjodXZHd8rOF5wp5/wNw9cw=";
   };
 
-  cargoHash = "sha256-CW2tHplNhwDCubtlRf16v7xT9a/GHqmNm+Xsuv/IMyQ=";
+  cargoHash = "sha256-CptFOJDVpXMiz7RuZYx2zoDOawQ8ym6Rzke+UsaYtQw=";
 
   doCheck = false;
 
