@@ -744,6 +744,10 @@ in
 
   # Autorandr — triggers autorandr on display hotplug via udev
   services.autorandr.enable = true;
+  # --batch mode has a race condition (ProcessLookupError) in 1.15; delegate to
+  # the user service instead so autorandr runs in fprice's session environment.
+  systemd.services.autorandr.serviceConfig.ExecStart = lib.mkForce
+    "${pkgs.systemd}/bin/systemctl --machine=fprice@.host --user start autorandr.service";
 
   # Tailscale
   services.tailscale = {

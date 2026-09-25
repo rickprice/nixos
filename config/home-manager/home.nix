@@ -862,6 +862,17 @@
   x-prop-underscan_vborder 0
   '';
 
+  systemd.user.services.autorandr = {
+    Unit = {
+      Description = "Autorandr display change";
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.autorandr}/bin/autorandr --change --default default";
+    };
+  };
+
   # Dunst notification daemon
   systemd.user.services.discord = {
     Unit = {
