@@ -869,7 +869,7 @@
     };
     Service = {
       Type = "oneshot";
-      ExecStart = "${pkgs.autorandr}/bin/autorandr --change --default default";
+      ExecStart = "${pkgs.autorandr}/bin/autorandr --change";
     };
   };
 
