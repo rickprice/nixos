@@ -4,6 +4,7 @@
 
 -- Base imports
 import Data.List
+import Data.Monoid (All (..))
 import Data.Ratio
 import Network.HostName (getHostName)
 
