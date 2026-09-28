@@ -407,7 +407,7 @@
   # ── Terminal multiplexer ─────────────────────────────────────────────────────
   programs.tmux = {
     enable = true;
-    shortcut = "a";          # Ctrl-a prefix
+    shortcut = "b";          # Ctrl-b prefix (default)
     escapeTime = 0;
     historyLimit = 10000;
     terminal = "screen-256color";
