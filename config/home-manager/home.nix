@@ -233,6 +233,9 @@
       cat = "bat";
       grep = "rg";
 
+      # tmux: attach to existing session or start new one
+      ta = "tmux attach 2>/dev/null || tmux";
+
       # NixOS shortcuts
       rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
     };
