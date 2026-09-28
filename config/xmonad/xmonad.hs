@@ -308,6 +308,26 @@ myLayouts = toggleLayouts (noBorders Full) (smartBorders (multiColumn ||| mainGr
     churchSetup = (tall ****|* tall) ****/* tall
 
 -- =============================================================================
+-- EWMH FULLSCREEN (custom - blocks fullscreen for darktable)
+-- =============================================================================
+
+-- ewmhFullscreen honors _NET_WM_STATE_FULLSCREEN requests, but darktable sets
+-- this on its darkroom window at startup, causing it to float instead of tile.
+-- This replacement blocks fullscreen for darktable only.
+customEwmhFullscreen :: XConfig a -> XConfig a
+customEwmhFullscreen c = c
+    { handleEventHook = handleEventHook c <+> filteredFullscreenEventHook
+    , manageHook = manageHook c <+> (isFullscreen <&&> fmap not (className =? "darktable") --> doFullFloat)
+    }
+
+filteredFullscreenEventHook :: Event -> X All
+filteredFullscreenEventHook e = do
+    isDarktable <- case e of
+        ClientMessageEvent { ev_window = w } -> runQuery (className =? "darktable") w
+        _                                    -> return False
+    if isDarktable then return (All True) else fullscreenEventHook e
+
+-- =============================================================================
 -- MANAGE HOOKS
 -- =============================================================================
 
@@ -559,7 +579,7 @@ main = do
     xmonad $ withUrgencyHook NoUrgencyHook
         $ setEwmhActivateHook doAskUrgent
         . ewmh
-        . ewmhFullscreen
+        . customEwmhFullscreen
         . docks
         . withEasySB (statusBarProp "xmobar" myXmobarPP) defToggleStrutsKey
         $ createMyConfig hostname
