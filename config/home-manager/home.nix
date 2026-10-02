@@ -188,6 +188,7 @@
     darktable
     gimp
     inkscape
+    rapidraw      # RAW photo editor
 
     # Video editing
     kdePackages.kdenlive
