@@ -37,6 +37,7 @@ config/
   modules/
     laptop.nix                   # Laptop power management via TLP (daw, tprice, eric); performance on AC, powersave on battery
     syncthing.nix                # Syncthing firewall ports (fwork only); device IDs documented here
+    virtualisation.nix           # libvirtd + virt-manager + qemu, KVM (fwork only)
     midi-daemon.nix              # MIDI routing daemon (all machines)
     umc404hd-udev.nix            # udev rules for the Behringer UMC404HD (daw and fwork)
 NukeAndInstall.sh                # Bootstrap script (for rebuilding an existing daw install)
@@ -262,6 +263,12 @@ Known device IDs are documented as comments in `config/modules/syncthing.nix`.
 2. Add it to `services.syncthing.settings.devices` in `syncthing-fprice.nix`.
 3. Add the device name to the relevant folder's `devices` list.
 4. Run `rebuild` — `syncthing-init` will push the config automatically.
+
+## Virtualisation (KVM/QEMU)
+
+`libvirtd`, `virt-manager`, and `qemu` are enabled on **fwork only**, via `config/modules/virtualisation.nix`. The `fprice` user is added to the `libvirtd` group.
+
+After a rebuild that adds this for the first time, log out and back in (or `newgrp libvirtd`) before using virt-manager.
 
 ## Updating inputs
 
