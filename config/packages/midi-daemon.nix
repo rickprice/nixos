@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-daemon";
-  version = "0.7.3";
+  version = "0.8.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-daemon";
-    rev = "v0.7.3";
-    hash = "sha256-YZwtqN/HMPWfBkuZ/2K0IDC6VCEpEyYcs12+6ZBymDU=";
+    rev = "v0.8.0";
+    hash = "sha256-Fdhxq+g1xTra3FGeRaV33B1j+XU6lOYQposnpPoVd4Y=";
   };
 
-  cargoHash = "sha256-tQdxglHo4vgYKT4pj1gqckqoMxMdsArN5B26KyujXQk=";
+  cargoHash = "sha256-zmrhkC8/Rndkq/Pfcu4aYr9IDoyR2EH9GkYl5tIW190=";
 
   # Timer tests spawn real-time threads that time out in the Nix sandbox
   doCheck = false;

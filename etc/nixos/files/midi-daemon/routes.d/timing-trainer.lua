@@ -64,6 +64,17 @@ local function set_running(state)
     log(running and "Enabled" or "Disabled")
 end
 
+-- Restore whether training was running at the end of the last session.
+function on_startup()
+    local saved = load_state()
+    if saved.running ~= nil then running = saved.running end
+end
+
+-- Called on graceful shutdown (SIGTERM / systemctl stop).
+function on_shutdown()
+    save_state({ running = running })
+end
+
 -- ─────────────────────────────────────────────────────────────────────────────
 
 function init()

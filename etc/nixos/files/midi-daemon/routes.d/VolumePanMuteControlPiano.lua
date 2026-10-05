@@ -45,6 +45,20 @@ local function send_mute_cc()
            value = muted and 127 or 0 })
 end
 
+-- Restore volume/pan/mute from the last session and re-send the CCs so
+-- connected hardware/DAW reflects the restored values immediately.
+function on_startup()
+    local state = load_state()
+    if state.volume ~= nil then volume = state.volume; send_volume_cc() end
+    if state.pan    ~= nil then pan    = state.pan;    send_pan_cc()    end
+    if state.muted  ~= nil then muted  = state.muted;  send_mute_cc()   end
+end
+
+-- Called on graceful shutdown (SIGTERM / systemctl stop).
+function on_shutdown()
+    save_state({ volume = volume, pan = pan, muted = muted })
+end
+
 function init()
     return {
         inputs  = {"midi"},

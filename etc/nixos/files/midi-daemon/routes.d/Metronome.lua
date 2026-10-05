@@ -41,6 +41,18 @@ local beat        = 0
 local note_off_at = {}  -- tick -> list of {note, channel}
 local running     = (config.start_running ~= false)  -- default true
 
+-- Restore bpm/running from the last session, if any was saved.
+function on_startup()
+    local state = load_state()
+    if state.bpm then set_bpm(state.bpm) end
+    if state.running ~= nil then running = state.running end
+end
+
+-- Called on graceful shutdown (SIGTERM / systemctl stop).
+function on_shutdown()
+    save_state({ bpm = get_bpm(), running = running })
+end
+
 local function flush_notes()
     for _, evs in pairs(note_off_at) do
         for _, ev in ipairs(evs) do
