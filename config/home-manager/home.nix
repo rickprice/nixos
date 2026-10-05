@@ -198,6 +198,9 @@
     v4l-utils      # webcam / capture card support
     opencv         # motion tracking
 
+    # Screen recording / streaming
+    obs-studio
+
     # XMonad window manager utilities
     arandr
     (feh.override { imlib2Full = imlib2Full; })
