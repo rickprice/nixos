@@ -14,10 +14,8 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ lv2 ];
 
-  # -march=native is not reproducible in Nix builds
-  postPatch = ''
-    sed -i 's/-march=native //' Makefile
-  '';
+  # Upstream's Makefile already hardcodes -march=native; left in place since
+  # this is built per-host rather than distributed via a shared binary cache.
 
   installPhase = ''
     runHook preInstall

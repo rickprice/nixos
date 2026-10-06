@@ -6,17 +6,25 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Forces a from-source rebuild (losing the binary cache for these) so the
+  # DSP code gets -march=native/-mtune=native. Safe here since every host
+  # builds its own config locally rather than fetching a shared substitute.
+  nativeOpt = pkg: pkg.overrideAttrs (old: {
+    NIX_CFLAGS_COMPILE   = "${old.NIX_CFLAGS_COMPILE or ""} -march=native -mtune=native";
+    NIX_CXXFLAGS_COMPILE = "${old.NIX_CXXFLAGS_COMPILE or ""} -march=native -mtune=native";
+  });
+
   audioPlugins = [
-    pkgs.calf
-    pkgs.caps
-    pkgs.guitarix
-    pkgs.ladspaPlugins   # Steve Harris SWH plugins (fast_lookahead_limiter, etc.)
-    pkgs.lsp-plugins
-    pkgs.sfizz-ui
-    pkgs.x42-plugins
-    pkgs.dragonfly-reverb
-    pkgs.volumepanningstereo-lv2
-    pkgs.zam-plugins     # ZamCompX2-ladspa
+    (nativeOpt pkgs.calf)
+    (nativeOpt pkgs.caps)
+    (nativeOpt pkgs.guitarix)
+    (nativeOpt pkgs.ladspaPlugins)   # Steve Harris SWH plugins (fast_lookahead_limiter, etc.)
+    (nativeOpt pkgs.lsp-plugins)
+    (nativeOpt pkgs.sfizz-ui)
+    (nativeOpt pkgs.x42-plugins)
+    (nativeOpt pkgs.dragonfly-reverb)
+    pkgs.volumepanningstereo-lv2 # already built per-host with -march=native in its own Makefile
+    (nativeOpt pkgs.zam-plugins)     # ZamCompX2-ladspa
   ];
 in
 

@@ -279,6 +279,8 @@ Both packages are registered in the `flake.nix` overlay and wired up for `fprice
 
 `fwork` also sets `powerManagement.cpuFreqGovernor = "performance"` directly in `flake.nix` and disables `power-profiles-daemon` (desktop, no battery — PPD otherwise fights the static governor and resets it back to "balanced" on every boot, which causes CPU P-state ramp-up latency and JACK xruns under sudden RT load).
 
+The LV2/LADSPA/VST3 plugin bundle (`calf`, `caps`, `guitarix`, `ladspaPlugins`, `lsp-plugins`, `sfizz-ui`, `x42-plugins`, `dragonfly-reverb`, `zam-plugins`, `volumepanningstereo-lv2` — defined as `audioPlugins` in `etc/nixos/configuration.nix`) is rebuilt from source with `-march=native -mtune=native` rather than pulled as prebuilt binaries, trading the binary cache for CPU-specific codegen on the DSP-heavy hot paths. Safe since every host builds its own config locally. `volumepanningstereo-lv2` already hardcodes `-march=native` in its upstream Makefile; the rest are pinned via a `nativeOpt` overlay helper.
+
 ## Virtualisation (KVM/QEMU)
 
 `libvirtd`, `virt-manager`, and `qemu` are enabled on **fwork only**, via `config/modules/virtualisation.nix`. The `fprice` user is added to the `libvirtd` group.
