@@ -95,6 +95,7 @@
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
         ./config/modules/laptop.nix
+        { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
@@ -102,6 +103,7 @@
       ./config/modules/syncthing.nix
       ./config/modules/virtualisation.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
+      { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
       { powerManagement.cpuFreqGovernor = "performance"; }
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
