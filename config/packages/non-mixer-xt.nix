@@ -97,9 +97,12 @@ stdenv.mkDerivation rec {
 
   # Bundling Steinberg's VST3 SDK submodule just for this is unnecessary;
   # VST2/LV2/CLAP/LADSPA cover plugin needs without it.
+  #
+  # NativeOptimizations is ON: built per-host, not distributed via a shared
+  # binary cache, so -march=native is safe here.
   cmakeFlags = [
     "-DEnableVST3Support=OFF"
-    "-DNativeOptimizations=OFF"
+    "-DNativeOptimizations=ON"
   ];
 
   meta = with lib; {

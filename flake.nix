@@ -106,7 +106,13 @@
       ./config/modules/virtualisation.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
       { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-      { powerManagement.cpuFreqGovernor = "performance"; }
+      {
+        powerManagement.cpuFreqGovernor = "performance";
+        # power-profiles-daemon fights the static governor above, continuously
+        # resetting it back to "balanced" after boot. fwork is a desktop with
+        # no battery, so there's no power-saving tradeoff to disabling it.
+        services.power-profiles-daemon.enable = false;
+      }
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
       ./config/modules/laptop.nix

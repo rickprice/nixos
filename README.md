@@ -271,11 +271,13 @@ Known device IDs are documented as comments in `config/modules/syncthing.nix`.
 
 ## Non suite (audio mixer / timeline)
 
-`non-mixer-xt` and `non-timeline-xt` ([Stazed](https://github.com/Stazed)'s actively maintained reboots of the original Non suite) are custom-packaged in `config/packages/`, since neither is in nixpkgs — only the unmaintained original `non` (last updated 2021) is. They're built from source via `cmake`, pulling in the `nonlib-xt` and `non-FL` submodules as separate `fetchFromGitHub` sources rather than via git submodules, so the ~24 MB Steinberg VST3 SDK submodule can be skipped entirely (`non-mixer-xt` is built with `-DEnableVST3Support=OFF`; LV2, CLAP, VST2, and LADSPA plugin support are unaffected).
+`non-mixer-xt` and `non-timeline-xt` ([Stazed](https://github.com/Stazed)'s actively maintained reboots of the original Non suite) are custom-packaged in `config/packages/`, since neither is in nixpkgs — only the unmaintained original `non` (last updated 2021) is. They're built from source via `cmake`, pulling in the `nonlib-xt` and `non-FL` submodules as separate `fetchFromGitHub` sources rather than via git submodules, so the ~24 MB Steinberg VST3 SDK submodule can be skipped entirely (`non-mixer-xt` is built with `-DEnableVST3Support=OFF`; LV2, CLAP, VST2, and LADSPA plugin support are unaffected). Both are built with `-DNativeOptimizations=ON` (`-march=native -mtune=native`) — safe since they're built per-host rather than distributed via a shared binary cache.
 
 There's no maintained "XT" fork of `non-sequencer` or `jackpatch`, so those two are dropped rather than kept on the stale 2021 build.
 
 Both packages are registered in the `flake.nix` overlay and wired up for `fprice` on **daw and fwork only**, via `config/home-manager/non-fprice.nix`. That module wraps every binary (`non-mixer-xt`, `midi-mapper-xt`, `nmxt-plugin-scan`, `nmxt-patch`, `non-timeline-xt`) to link against PipeWire's JACK library instead of real JACK, matching how Ardour/Carla/Guitarix are wrapped elsewhere in this config.
+
+`fwork` also sets `powerManagement.cpuFreqGovernor = "performance"` directly in `flake.nix` and disables `power-profiles-daemon` (desktop, no battery — PPD otherwise fights the static governor and resets it back to "balanced" on every boot, which causes CPU P-state ramp-up latency and JACK xruns under sudden RT load).
 
 ## Virtualisation (KVM/QEMU)
 

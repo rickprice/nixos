@@ -71,7 +71,9 @@ stdenv.mkDerivation rec {
     libxrender
   ];
 
-  cmakeFlags = [ "-DNativeOptimizations=OFF" ];
+  # Built per-host, not distributed via a shared binary cache, so -march=native
+  # is safe here.
+  cmakeFlags = [ "-DNativeOptimizations=ON" ];
 
   # Upstream installs timeline/doc/icon.png as a relative symlink to a path
   # that doesn't exist in the install tree (icons go to share/icons, not
