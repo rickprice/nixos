@@ -9,10 +9,22 @@ let
   # Forces a from-source rebuild (losing the binary cache for these) so the
   # DSP code gets -march=native/-mtune=native. Safe here since every host
   # builds its own config locally rather than fetching a shared substitute.
-  nativeOpt = pkg: pkg.overrideAttrs (old: {
-    NIX_CFLAGS_COMPILE   = "${old.NIX_CFLAGS_COMPILE or ""} -march=native -mtune=native";
-    NIX_CXXFLAGS_COMPILE = "${old.NIX_CXXFLAGS_COMPILE or ""} -march=native -mtune=native";
-  });
+  #
+  # Packages on newer nixpkgs (e.g. lsp-plugins) set these via the structured
+  # `env` attrset instead of as plain derivation attributes; mkDerivation
+  # errors if the same var ends up defined both ways, so match whichever
+  # mechanism each package already uses.
+  nativeOpt = pkg: pkg.overrideAttrs (old:
+    if old ? env then {
+      env = old.env // {
+        NIX_CFLAGS_COMPILE   = "${old.env.NIX_CFLAGS_COMPILE or ""} -march=native -mtune=native";
+        NIX_CXXFLAGS_COMPILE = "${old.env.NIX_CXXFLAGS_COMPILE or ""} -march=native -mtune=native";
+      };
+    } else {
+      NIX_CFLAGS_COMPILE   = "${old.NIX_CFLAGS_COMPILE or ""} -march=native -mtune=native";
+      NIX_CXXFLAGS_COMPILE = "${old.NIX_CXXFLAGS_COMPILE or ""} -march=native -mtune=native";
+    }
+  );
 
   audioPlugins = [
     (nativeOpt pkgs.calf)
