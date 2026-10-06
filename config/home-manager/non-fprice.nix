@@ -1,21 +1,29 @@
 { pkgs, ... }:
 
 {
-  # Wrap the Non suite (non-mixer, non-sequencer, non-timeline/non-daw,
-  # non-midi-mapper, jackpatch) so they link against PipeWire's JACK library
-  # instead of the real JACK, for the same reason Ardour/Carla/Guitarix are
-  # wrapped. non-session-manager, nsmd, and nsm-proxy don't talk to JACK
-  # directly, so they're left unwrapped.
+  # Wrap non-mixer-xt's and non-timeline-xt's binaries so they link against
+  # PipeWire's JACK library instead of the real JACK, for the same reason
+  # Ardour/Carla/Guitarix are wrapped. nmxt-patch doesn't talk to JACK
+  # directly, but is wrapped too for consistency since it's cheap to do so.
   home.packages = [
     (pkgs.symlinkJoin {
-      name = "non";
-      paths = [ pkgs.non ];
+      name = "non-mixer-xt";
+      paths = [ pkgs.non-mixer-xt ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
-        for bin in jackpatch non-midi-mapper non-mixer non-sequencer non-timeline; do
+        for bin in non-mixer-xt midi-mapper-xt nmxt-plugin-scan nmxt-patch; do
           wrapProgram $out/bin/$bin \
             --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
         done
+      '';
+    })
+    (pkgs.symlinkJoin {
+      name = "non-timeline-xt";
+      paths = [ pkgs.non-timeline-xt ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/non-timeline-xt \
+          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
       '';
     })
   ];

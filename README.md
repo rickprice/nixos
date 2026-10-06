@@ -23,9 +23,14 @@ config/
     plain.nix                    # Disk layout for tprice and eric (plain ext4 on /dev/nvme0n1)
   home-manager/
     home.nix                     # Home Manager config for fprice (daw, fwork); gtk.css calendar 150%
+    non-fprice.nix               # Non suite (non-mixer-xt, non-timeline-xt) for fprice (daw, fwork only)
     syncthing-fprice.nix         # Syncthing service + package for fprice (fwork only)
     tprice.nix                   # Home Manager config for tprice; gtk.css calendar 150%
     eric.nix                     # Home Manager config for eric
+  packages/
+    non-mixer-xt.nix             # Custom package: Stazed's non-mixer-xt (not in nixpkgs)
+    non-timeline-xt.nix          # Custom package: Stazed's non-timeline-xt (not in nixpkgs)
+    ...                         # Other custom packages (see flake.nix overlay for the full list)
   xmobar/
     xmobarrc                     # xmobar config for fprice; date/time click opens gsimplecal
     xmobarrc-tprice              # xmobar config for tprice; date/time click opens gsimplecal
@@ -263,6 +268,14 @@ Known device IDs are documented as comments in `config/modules/syncthing.nix`.
 2. Add it to `services.syncthing.settings.devices` in `syncthing-fprice.nix`.
 3. Add the device name to the relevant folder's `devices` list.
 4. Run `rebuild` — `syncthing-init` will push the config automatically.
+
+## Non suite (audio mixer / timeline)
+
+`non-mixer-xt` and `non-timeline-xt` ([Stazed](https://github.com/Stazed)'s actively maintained reboots of the original Non suite) are custom-packaged in `config/packages/`, since neither is in nixpkgs — only the unmaintained original `non` (last updated 2021) is. They're built from source via `cmake`, pulling in the `nonlib-xt` and `non-FL` submodules as separate `fetchFromGitHub` sources rather than via git submodules, so the ~24 MB Steinberg VST3 SDK submodule can be skipped entirely (`non-mixer-xt` is built with `-DEnableVST3Support=OFF`; LV2, CLAP, VST2, and LADSPA plugin support are unaffected).
+
+There's no maintained "XT" fork of `non-sequencer` or `jackpatch`, so those two are dropped rather than kept on the stale 2021 build.
+
+Both packages are registered in the `flake.nix` overlay and wired up for `fprice` on **daw and fwork only**, via `config/home-manager/non-fprice.nix`. That module wraps every binary (`non-mixer-xt`, `midi-mapper-xt`, `nmxt-plugin-scan`, `nmxt-patch`, `non-timeline-xt`) to link against PipeWire's JACK library instead of real JACK, matching how Ardour/Carla/Guitarix are wrapped elsewhere in this config.
 
 ## Virtualisation (KVM/QEMU)
 
