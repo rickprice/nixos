@@ -177,12 +177,10 @@
         name  = "Tamara Price";
         email = "tprice@pricemail.ca";
       };
-      extraConfig = {
-        init.defaultBranch = "main";
-        pull.rebase = true;
-        core.editor = "nvim";
-      };
-      aliases = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      core.editor = "nvim";
+      alias = {
         st = "status";
         co = "checkout";
         lg = "log --oneline --graph --decorate";

@@ -302,16 +302,14 @@
   programs.git = {
     enable = true;
     settings = {
-        user = {
-          name  = "Frederick Price";
-          email = "fprice@pricemail.ca";
-        };
-      extraConfig = {
-        init.defaultBranch = "main";
-        pull.rebase = true;
-        core.editor = "nvim";
+      user = {
+        name  = "Frederick Price";
+        email = "fprice@pricemail.ca";
       };
-      aliases = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      core.editor = "nvim";
+      alias = {
         st = "status";
         co = "checkout";
         lg = "log --oneline --graph --decorate";
