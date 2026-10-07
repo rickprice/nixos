@@ -111,6 +111,8 @@
     qpwgraph
     midisnoop
     touchosc
+    protokol      # Hexler's MIDI/OSC/gamepad input monitor
+    liblo         # oscsend / oscdump / oscsendfile CLI tools for OSC debugging
 
     lsp-plugins
     sfizz-ui

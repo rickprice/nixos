@@ -33,6 +33,7 @@
             midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
             non-mixer-xt = prev.callPackage ./config/packages/non-mixer-xt.nix { };
             non-timeline-xt = prev.callPackage ./config/packages/non-timeline-xt.nix { };
+            protokol = prev.callPackage ./config/packages/protokol.nix { };
             midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
             volumepanningstereo-lv2 = prev.callPackage ./config/packages/volumepanningstereo-lv2.nix { };
             name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
