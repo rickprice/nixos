@@ -149,6 +149,9 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
 
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+nmxt_strip = "Metronome"
+
 [VolumePanMuteControlVocals]
 # Shared MIDI channel for all three CCs (overridden by the per-param keys below)
 channel = 1
@@ -171,6 +174,11 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # OSC receive/send — use the global config or override here per-route
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
+
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua) — the Vocals strip already
+# has a Mono Pan plugin inserted, so pan is wired up here too.
+nmxt_strip = "Vocals"
+nmxt_pan   = true
 
 
 [VolumePanMuteControlGuitarix]
@@ -196,6 +204,9 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
 
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+nmxt_strip = "Guitar"
+
 
 [VolumePanMuteControlPiano]
 # Shared MIDI channel for all three CCs (overridden by the per-param keys below)
@@ -219,6 +230,9 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # OSC receive/send — use the global config or override here per-route
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
+
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+nmxt_strip = "Piano"
 
 [timing-trainer]
 connect_keyboard-in = [".*A-PRO 1.*", ".*A-PRO 2.*"]   # regex matched against "ClientName:PortName"

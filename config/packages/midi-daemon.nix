@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-daemon";
-  version = "0.8.0";
+  version = "0.9.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-daemon";
-    rev = "v0.8.0";
-    hash = "sha256-Fdhxq+g1xTra3FGeRaV33B1j+XU6lOYQposnpPoVd4Y=";
+    rev = "v0.9.0";
+    hash = "sha256-r91L6QRZ5wKEqh5NJG/nojrFc/YiVAOKuOYD+oBeRD8=";
   };
 
-  cargoHash = "sha256-zmrhkC8/Rndkq/Pfcu4aYr9IDoyR2EH9GkYl5tIW190=";
+  cargoHash = "sha256-Zm5UuHajNjB5GD4r3tHTSu661RsbswVo9A8ACU7dSt8=";
 
   # Timer tests spawn real-time threads that time out in the Nix sandbox
   doCheck = false;
@@ -22,7 +22,9 @@ rustPlatform.buildRustPackage {
   postInstall = ''
     install -Dm644 config.toml $out/share/doc/midi-daemon/config.toml
 
-    for lua in routes.d/*.lua; do
+    # find, not a routes.d/*.lua glob: routes.d/lib/ holds shared helpers
+    # (e.g. nmxt.lua) that a flat glob wouldn't reach.
+    find routes.d -name '*.lua' -print0 | while IFS= read -r -d $'\0' lua; do
       install -Dm644 "$lua" $out/share/doc/midi-daemon/examples/"$lua"
     done
 
