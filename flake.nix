@@ -35,6 +35,7 @@
             non-timeline-xt = prev.callPackage ./config/packages/non-timeline-xt.nix { };
             protokol = prev.callPackage ./config/packages/protokol.nix { };
             midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
+            midi-auto-connector = prev.callPackage ./config/packages/midi-auto-connector.nix { };
             volumepanningstereo-lv2 = prev.callPackage ./config/packages/volumepanningstereo-lv2.nix { };
             name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
             images-matching-subdirectories = prev.callPackage ./config/packages/images-matching-subdirectories.nix { };
