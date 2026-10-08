@@ -666,6 +666,9 @@
     "${pkgs.midi-daemon}/share/doc/midi-daemon/examples/TouchOSC/ComplexSetup.tosc";
   home.file.".xmobarrc".source = ../xmobar/xmobarrc;
 
+  # ── Claude Code skills ───────────────────────────────────────────────────────
+  home.file.".claude/skills/touchosc/SKILL.md".source = ../claude/skills/touchosc/SKILL.md;
+
   xdg.configFile."gtk-3.0/gtk.css".text = ''
     calendar {
       font-size: 150%;
