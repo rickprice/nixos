@@ -668,6 +668,8 @@
 
   # ── Claude Code skills ───────────────────────────────────────────────────────
   home.file.".claude/skills/touchosc/SKILL.md".source = ../claude/skills/touchosc/SKILL.md;
+  home.file.".claude/skills/rust-best-practices/SKILL.md".source =
+    ../claude/skills/rust-best-practices/SKILL.md;
 
   xdg.configFile."gtk-3.0/gtk.css".text = ''
     calendar {
