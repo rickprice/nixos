@@ -86,6 +86,20 @@
     kind = "audio"
     output = '^Non-Mixer-XT/(?:Metronome|Piano|Vocals|Guitar):out-(\d+)$'
     input = '^Non-Mixer-XT/Mains:in-(\d+)$'
+
+    [[rule]]
+    name = "gx-head-fx-to-guitar-l"
+    backend = "pipewire"
+    kind = "audio"
+    output = '^gx_head_fx:out_0$'
+    input = '^Non-Mixer-XT/Guitar:in-1$'
+
+    [[rule]]
+    name = "gx-head-fx-to-guitar-r"
+    backend = "pipewire"
+    kind = "audio"
+    output = '^gx_head_fx:out_1$'
+    input = '^Non-Mixer-XT/Guitar:in-2$'
   '';
 
   systemd.user.services.midi-auto-connector = {

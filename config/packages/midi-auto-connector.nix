@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "midi-auto-connector";
-  version = "0.2.0";
+  version = "0.3.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-auto-connector";
-    rev = "v0.2.0";
-    hash = "sha256-XCSWHi+X8zVkgBWnxRYbosExVpZ0WRQiFhLOF2hZmpI=";
+    rev = "v0.3.0";
+    hash = "sha256-rma3uhXRhOTmRofbkPXJ/8C+MW4LV1wQhrTJm6YrXvc=";
   };
 
-  cargoHash = "sha256-U7x59tTNqrafN/T7zaXyooXzd/zU3hH/Laq7BEEaS4Y=";
+  cargoHash = "sha256-Og2vgWKa0g5fs564FyNsOjVB4xzytpdrOO1Trk1zU5A=";
 
   nativeBuildInputs = [ pkg-config rustPlatform.bindgenHook ];
   buildInputs = [ alsa-lib pipewire ];
