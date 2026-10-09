@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage {
   pname = "background-picker";
-  version = "0.2.1";
+  version = "0.3.0";
 
   src = fetchCrate {
     pname = "background-picker";
-    version = "0.2.1";
-    hash = "sha256-bBsQgud+M4rTlogib1g9AlsJGDcCmqxz6WkeBaVYCCM=";
+    version = "0.3.0";
+    hash = "sha256-cMGnvWiX8cvOxeYzrtWCPriR0HUcH6msFmraYMLwKhY=";
   };
 
-  cargoHash = "sha256-6KO4qVt1ghuKbMkuVlsRTSRMUyyOi9Cuh2v3WFpYzL8=";
+  cargoHash = "sha256-Bs3Bn6V2wlBEXE/XTL0Q1n4+13sQrvpdm4ytZGTkvRU=";
 
   nativeBuildInputs = [ pkg-config ];
 

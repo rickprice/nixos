@@ -82,6 +82,7 @@
     # Autorandr background selection helpers
     name-time-period
     images-matching-subdirectories
+    background-picker
 
     # XMonad window manager utilities
     arandr
