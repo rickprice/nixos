@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, osConfig, ... }:
 
 let
   nonMixerXtWrapped = pkgs.symlinkJoin {
@@ -137,11 +137,25 @@ in {
   systemd.user.services.non-mixer-xt = {
     Unit = {
       Description = "Non-Mixer-XT (KeyboardAndGuitarix project)";
-      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      # The project's sfizz plugins load sample sets from the Dropbox FUSE
+      # mount; rclone-dropbox is Type=notify, so After=/Requires= here
+      # actually blocks until the mount is ready, not just until rclone has
+      # been forked.
+      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" "rclone-dropbox.service" ];
+      Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
+      # systemd --user units don't inherit the login shell's environment, so
+      # NixOS's environment.variables (LV2_PATH/LADSPA_PATH/VST3_PATH) never
+      # reach this unit on their own — without these, non-mixer-xt finds no
+      # plugins at all.
+      Environment = [
+        "LV2_PATH=${osConfig.environment.variables.LV2_PATH}"
+        "LADSPA_PATH=${osConfig.environment.variables.LADSPA_PATH}"
+        "VST3_PATH=${osConfig.environment.variables.VST3_PATH}"
+      ];
       ExecStart = "${nonMixerXtWrapped}/bin/non-mixer-xt --osc-port 9500 ${keyboardAndGuitarixProject}";
       Restart = "on-failure";
       RestartSec = 2;
@@ -169,6 +183,26 @@ in {
       RuntimeDirectory = "midi-daemon";
       CacheDirectory = "midi-daemon";
       Environment = "RUST_LOG=midi_daemon=info";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Moved from xmonad's startupHook: previously spawned on login via spawnOn
+  # "U13", now started as a user service (like non-mixer-xt/midi-daemon)
+  # and pinned to U13 by WM_CLASS in xmonad's manageHook instead.
+  systemd.user.services.touchosc = {
+    Unit = {
+      Description = "TouchOSC (ComplexSetup project)";
+      After = [ "graphical-session.target" "midi-daemon.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart =
+        "${pkgs.touchosc}/bin/TouchOSC --general.ui.editor=false --general.ui.fullscreen=true /home/fprice/.config/touchosc/ComplexSetup.tosc";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };
