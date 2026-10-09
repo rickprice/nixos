@@ -118,17 +118,37 @@ in {
     input = '^Non-Mixer-XT/Vocals:in-1$'
   '';
 
+  # Restart policy shared by the MIDI/audio service mesh below
+  # (midi-auto-connector, non-mixer-xt, midi-daemon, touchosc): "always"
+  # rather than "on-failure" because these are long-running GUI/daemon
+  # processes that should come back even if they exit 0 (e.g. a GUI closed
+  # by a stray Alt-F4 or a crash that happens not to set a nonzero exit
+  # code) -- "on-failure" would silently leave them dead in that case.
+  # RestartSteps/RestartMaxDelaySec back off exponentially (2s, 4s, 8s,
+  # 16s, 32s, then holds at 32s) instead of hammering a genuinely broken
+  # process every 2 seconds forever. StartLimitIntervalSec/StartLimitBurst
+  # is the hard circuit breaker on top: 5 restarts inside 60s and systemd
+  # gives up, leaving the unit "failed" instead of looping indefinitely --
+  # `systemctl --user status <name>` will show that state, and
+  # `systemctl --user reset-failed <name> && systemctl --user start <name>`
+  # clears it once the underlying problem (missing device, bad project
+  # file, etc.) is fixed. An explicit `systemctl --user stop` is never
+  # overridden by any of this -- systemd always honors a manual stop.
   systemd.user.services.midi-auto-connector = {
     Unit = {
       Description = "Auto-connects Non-Mixer-XT's MIDI/audio ports by regex rule";
       After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.midi-auto-connector}/bin/midi-auto-connector run";
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -144,6 +164,8 @@ in {
       After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" "rclone-dropbox.service" ];
       Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
@@ -157,8 +179,10 @@ in {
         "VST3_PATH=${osConfig.environment.variables.VST3_PATH}"
       ];
       ExecStart = "${nonMixerXtWrapped}/bin/non-mixer-xt --osc-port 9500 ${keyboardAndGuitarixProject}";
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -172,13 +196,17 @@ in {
       Description = "MIDI Lua Routing Daemon";
       After = [ "graphical-session.target" "non-mixer-xt.service" "pipewire.service" "wireplumber.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart =
         "${pkgs.midi-daemon}/bin/midi-daemon --config /etc/midi-daemon/config.toml --routes /etc/midi-daemon/routes.d";
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 30;
       RuntimeDirectory = "midi-daemon";
       CacheDirectory = "midi-daemon";
@@ -195,13 +223,17 @@ in {
       Description = "TouchOSC (ComplexSetup project)";
       After = [ "graphical-session.target" "midi-daemon.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart =
         "${pkgs.touchosc}/bin/TouchOSC --general.ui.editor=false --general.ui.fullscreen=true /home/fprice/.config/touchosc/ComplexSetup.tosc";
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
