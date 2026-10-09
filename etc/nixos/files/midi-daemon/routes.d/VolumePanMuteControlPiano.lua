@@ -53,6 +53,18 @@ local volume = 1.0   -- 0–1, default full
 local pan    = 0.0   -- −1–1, default center
 local muted  = false
 
+-- Non-Mixer-XT's OSC server may not be up yet when this route's on_startup()
+-- fires (e.g. both processes launched together at session start, and
+-- Non-Mixer-XT is still loading its project / scanning LV2 plugins) -- the
+-- one-shot hello()/connect() below can be sent before anything is listening
+-- on the other end and silently dropped, permanently losing this route's
+-- feedback subscription for the rest of the session. on_tick() below resends
+-- hello() periodically (harmless no-op once registered) so a lost
+-- registration -- from either side restarting -- heals itself within one
+-- retry interval instead of requiring a daemon restart.
+local NMXT_RETRY_INTERVAL_SECS = 5.0
+local nmxt_retry_elapsed = 0.0
+
 local nmxt = config.nmxt_strip and nmxt_lib.new({
     addr       = config.nmxt_osc_addr,
     strip      = config.nmxt_strip,
@@ -104,6 +116,19 @@ function on_startup()
         nmxt.push_volume(volume)
         nmxt.push_pan(pan)
         nmxt.push_mute(muted)
+    end
+end
+
+-- Resend the Non-Mixer-XT hello/connect registration every
+-- NMXT_RETRY_INTERVAL_SECS so a registration lost to a startup race (see the
+-- comment above the nmxt local) heals itself instead of staying broken for
+-- the rest of the session.
+function on_tick(_tick, bpm, ppqn)
+    if not nmxt then return end
+    nmxt_retry_elapsed = nmxt_retry_elapsed + 60.0 / (bpm * ppqn)
+    if nmxt_retry_elapsed >= NMXT_RETRY_INTERVAL_SECS then
+        nmxt_retry_elapsed = 0.0
+        nmxt.hello()
     end
 end
 
