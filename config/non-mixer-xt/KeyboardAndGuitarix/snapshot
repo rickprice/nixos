@@ -4,7 +4,7 @@
 	Chain 0x66 create :strip 0x65 :tab "chain"
 	JACK_Module 0x67 create :parameter_values "0.000000:1.000000" :is_default 1 :chain 0x66 :active 1
 	LV2_Plugin 0x6D create :lv2_plugin_uri "http://sfztools.github.io/sfizz" :plugin_ins 0 :plugin_outs 2 :custom_data "sfizz.nMCPJ" :is_default 0 :chain 0x66 :active 1 :number 0
-	Gain_Module 0x68 create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x66 :active 1
+	Gain_Module 0x68 create :parameter_values "0.000000:1.000000:0.000000" :is_default 1 :chain 0x66 :active 1
 	Meter_Module 0x69 create :is_default 1 :chain 0x66 :active 1
 	JACK_Module 0x6A create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x66 :active 1
 	Mixer_Strip 0x8 create :name "Piano" :width "narrow" :tab "fader" :color 15888421 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0

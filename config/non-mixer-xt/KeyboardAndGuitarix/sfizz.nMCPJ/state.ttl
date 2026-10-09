@@ -51,8 +51,5 @@
 	] ;
 	state:state [
 		<http://sfztools.github.io/sfizz:sfzfile> <DefaultInstrument.sfz> ;
-		<http://sfztools.github.io/sfizz:tuningfile> <DefaultScale.scl> ;
-		<http://sfztools.github.io/sfizz#cc007> "0.78740156"^^xsd:float ;
-		<http://sfztools.github.io/sfizz#cc010> "0.5"^^xsd:float ;
-		<http://sfztools.github.io/sfizz#cc011> "1.0"^^xsd:float
+		<http://sfztools.github.io/sfizz:tuningfile> <DefaultScale.scl>
 	] .
