@@ -786,7 +786,8 @@ in
 
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
-    allowedUDPPorts = [ config.services.tailscale.port ];
+    # 9000: midi-daemon OSC (now a systemd --user service, see non-fprice.nix)
+    allowedUDPPorts = [ config.services.tailscale.port 9000 ];
   };
 
   # Open ports in the firewall.
@@ -852,13 +853,10 @@ in
   nix.settings.cores = 2;
 
   # ── midi-daemon ─────────────────────────────────────────────────────────────
+  # Config/routes deployed system-wide; the daemon itself now runs as a
+  # systemd --user service (see non-fprice.nix) so it can be ordered after
+  # non-mixer-xt, which only exists once fprice's graphical session starts.
   environment.etc."midi-daemon".source = ./files/midi-daemon;
-
-  services.midi-daemon = {
-    enable = true;
-    configFile = "/etc/midi-daemon/config.toml";
-    routesDir  = "/etc/midi-daemon/routes.d";
-  };
 
 
 

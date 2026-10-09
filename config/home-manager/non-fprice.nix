@@ -1,6 +1,25 @@
 { pkgs, ... }:
 
-{
+let
+  nonMixerXtWrapped = pkgs.symlinkJoin {
+    name = "non-mixer-xt";
+    paths = [ pkgs.non-mixer-xt ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      for bin in non-mixer-xt midi-mapper-xt nmxt-plugin-scan nmxt-patch; do
+        wrapProgram $out/bin/$bin \
+          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+      done
+    '';
+  };
+
+  # Kept under the NixOS config repo (not ~/Documents/Personal/NonMixerProjects)
+  # so it's tracked alongside the service that launches it. Non-Mixer-XT
+  # rewrites files in here (lock, snapshot, plugin state) every session, so
+  # expect this path to show up dirty in `git status` after normal use.
+  keyboardAndGuitarixProject =
+    "/home/fprice/Documents/Personal/personal_repo/nixos/config/non-mixer-xt/KeyboardAndGuitarix";
+in {
   # Wrap non-mixer-xt's, non-timeline-xt's, and new-session-manager's
   # binaries so they link against PipeWire's JACK library instead of the
   # real JACK, for the same reason Ardour/Carla/Guitarix are wrapped.
@@ -8,17 +27,7 @@
   # consistency since it's cheap to do so. Of new-session-manager's
   # binaries, only jackpatch links against JACK directly.
   home.packages = [
-    (pkgs.symlinkJoin {
-      name = "non-mixer-xt";
-      paths = [ pkgs.non-mixer-xt ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        for bin in non-mixer-xt midi-mapper-xt nmxt-plugin-scan nmxt-patch; do
-          wrapProgram $out/bin/$bin \
-            --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
-        done
-      '';
-    })
+    nonMixerXtWrapped
     (pkgs.symlinkJoin {
       name = "non-timeline-xt";
       paths = [ pkgs.non-timeline-xt ];
@@ -121,6 +130,45 @@
       Restart = "on-failure";
       RestartSec = 2;
       TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.non-mixer-xt = {
+    Unit = {
+      Description = "Non-Mixer-XT (KeyboardAndGuitarix project)";
+      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${nonMixerXtWrapped}/bin/non-mixer-xt --osc-port 9500 ${keyboardAndGuitarixProject}";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Moved from a NixOS system service to here: midi-daemon routes Non-Mixer-XT
+  # OSC traffic, so it needs to start after non-mixer-xt exists, and systemd's
+  # system and user managers can't order units against each other.
+  systemd.user.services.midi-daemon = {
+    Unit = {
+      Description = "MIDI Lua Routing Daemon";
+      After = [ "graphical-session.target" "non-mixer-xt.service" "pipewire.service" "wireplumber.service" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart =
+        "${pkgs.midi-daemon}/bin/midi-daemon --config /etc/midi-daemon/config.toml --routes /etc/midi-daemon/routes.d";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 30;
+      RuntimeDirectory = "midi-daemon";
+      CacheDirectory = "midi-daemon";
+      Environment = "RUST_LOG=midi_daemon=info";
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };

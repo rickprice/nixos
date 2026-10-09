@@ -1,0 +1,37 @@
+{
+	Spatialization_Console 0x2C create :range 3.000000 :projection 0 :shown 0
+	Mixer_Strip 0x65 create :name "Metronome" :width "narrow" :tab "fader" :color 1189641421 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0
+	Chain 0x66 create :strip 0x65 :tab "chain"
+	JACK_Module 0x67 create :parameter_values "0.000000:1.000000" :is_default 1 :chain 0x66 :active 1
+	LV2_Plugin 0x6D create :lv2_plugin_uri "http://sfztools.github.io/sfizz" :plugin_ins 0 :plugin_outs 2 :custom_data "sfizz.nMCPJ" :is_default 0 :chain 0x66 :active 1 :number 0
+	Gain_Module 0x68 create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x66 :active 1
+	Meter_Module 0x69 create :is_default 1 :chain 0x66 :active 1
+	JACK_Module 0x6A create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x66 :active 1
+	Mixer_Strip 0x8 create :name "Piano" :width "narrow" :tab "fader" :color 15888421 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0
+	Chain 0x9 create :strip 0x8 :tab "chain"
+	JACK_Module 0xA create :parameter_values "0.000000:1.000000" :is_default 1 :chain 0x9 :active 1
+	LV2_Plugin 0x17 create :lv2_plugin_uri "http://sfztools.github.io/sfizz" :plugin_ins 0 :plugin_outs 2 :custom_data "sfizz.nCUDT" :is_default 0 :chain 0x9 :active 1 :number 0
+	Gain_Module 0xB create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x9 :active 1
+	Meter_Module 0xC create :is_default 1 :chain 0x9 :active 1
+	JACK_Module 0xD create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x9 :active 1
+	Mixer_Strip 0x1 create :name "Vocals" :width "narrow" :tab "fader" :color 424238335 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0
+	Chain 0x2 create :strip 0x1 :tab "chain"
+	JACK_Module 0x3 create :parameter_values "0.000000:1.000000" :is_default 1 :chain 0x2 :active 1
+	Gain_Module 0x4 create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x2 :active 1
+	Mono_Pan_Module 0x18 create :parameter_values "0.000000" :is_default 0 :chain 0x2 :active 1 :number 0
+	Meter_Module 0x5 create :is_default 1 :chain 0x2 :active 1
+	JACK_Module 0x6 create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x2 :active 1
+	Mixer_Strip 0x48 create :name "Guitar" :width "narrow" :tab "fader" :color 1649760492 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0
+	Chain 0x49 create :strip 0x48 :tab "chain"
+	JACK_Module 0x4A create :parameter_values "0.000000:2.000000" :is_default 1 :chain 0x49 :active 1
+	Gain_Module 0x4B create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x49 :active 1
+	Meter_Module 0x4C create :is_default 1 :chain 0x49 :active 1
+	JACK_Module 0x4D create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x49 :active 1
+	Mixer_Strip 0x11 create :name "Mains" :width "narrow" :tab "fader" :color 1623351861 :gain_mode 0 :mute_mode 0 :group 0x0 :auto_input "" :manual_connection 0
+	Chain 0x12 create :strip 0x11 :tab "chain"
+	JACK_Module 0x13 create :parameter_values "0.000000:2.000000" :is_default 1 :chain 0x12 :active 1
+	Gain_Module 0x14 create :parameter_values "0.000000:0.000000:0.000000" :is_default 1 :chain 0x12 :active 1
+	LV2_Plugin 0x28 create :lv2_plugin_uri "https://github.com/michaelwillis/dragonfly-reverb" :plugin_ins 2 :plugin_outs 2 :custom_data "Dragonfly_Hall_Reverb.nTOMS" :is_default 0 :chain 0x12 :active 1 :number 0
+	Meter_Module 0x15 create :is_default 1 :chain 0x12 :active 1
+	JACK_Module 0x16 create :parameter_values "2.000000:0.000000" :is_default 1 :chain 0x12 :active 1
+}

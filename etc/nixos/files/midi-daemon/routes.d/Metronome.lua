@@ -33,6 +33,7 @@ local CC_CHANNEL             = config.cc_channel             or 1
 local CC_CONTROLLER          = config.cc_controller          or 21
 local START_STOP_CHANNEL     = config.start_stop_channel     or 1
 local START_STOP_CONTROLLER  = config.start_stop_controller  or 22
+local START_STOP_INVERT      = config.start_stop_invert      or false
 
 set_bpm(config.bpm   or 120)
 set_ppqn(config.ppqn or 24)
@@ -104,9 +105,12 @@ function init()
                     set = function(v) set_running(v ~= 0) end,
                     get = function() return running and 1 or 0 end,
                     -- CC value ≥ 64 → start (1), < 64 → stop (0)
+                    -- (reversed if start_stop_invert = true in config.toml,
+                    -- for controllers whose buttons report "on" as the low value)
                     midi = {
                         { type = "cc", channel = START_STOP_CHANNEL,
-                          controller = START_STOP_CONTROLLER, threshold = 64 },
+                          controller = START_STOP_CONTROLLER, threshold = 64,
+                          invert = START_STOP_INVERT },
                     },
                 },
                 start = {

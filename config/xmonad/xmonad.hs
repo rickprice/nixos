@@ -73,8 +73,6 @@ myDarkTableCommercialLibrary = "~/Documents/Personal/DarktableCommercial/library
 myInkScape = "inkscape"
 myArdour = "ardour9"
 myGuitarix = "guitarix"
-myCarlaKeyboardProject = "/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/Music/CurrentKeyboardAndGuitarSetup.carxp"
-myCarla = "carla" ++" "++ myCarlaKeyboardProject
 myTouchOSCProject = "/home/fprice/.config/touchosc/ComplexSetup.tosc"
 myTouchOSC = "TouchOSC --general.ui.editor=false --general.ui.fullscreen=true " ++ myTouchOSCProject
 myQPWGraph = "qpwgraph"
@@ -321,6 +319,10 @@ myManageHook =
         , className =? "trayer" --> doIgnore
         , className =? "simple-scan" --> doSink
         , className =? "zoom" --> doShift "ZM"
+        -- Started by a systemd --user service (before XMonad), not spawnOn,
+        -- so it's pinned to the same desktop Carla used via its WM_CLASS
+        -- instead of at spawn time.
+        , className =? "Non-Mixer-XT" --> doShift "U11"
         -- , className =? "Gimp" --> doFloat
         , className =? "meteo-qt" --> doFloat
         , className =? "discord" --> doShift "IM"
@@ -441,7 +443,6 @@ myCustomKeys hostname =
     , spawnKey "r" "RDP client" myRDPClient
     , spawnKey "a a" "Ardour DAW" myArdour
     , spawnKey "a g" "Guitarix" myGuitarix
-    , spawnKey "a c" "Carla" myCarla
     , spawnKey "a q" "QPWGraph" myQPWGraph
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
     , spawnKey "m" "Midi Staff Trainer" myMidiStaffTrainer
@@ -541,7 +542,6 @@ myStartupHook hostname = do
             spawnOn "MAIL" myEmailer
             spawnOn "ADM" myMarkdownEditor
             spawnOn "ADM" myBrowser
-            spawnOn "U11" myCarla
             spawnOn "U11" myGuitarix
             spawnOn "U12" myQPWGraph
             spawnOn "U13" myTouchOSC

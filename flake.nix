@@ -25,7 +25,6 @@
   let
     commonModules = [
       ./etc/nixos/configuration.nix
-      ./config/modules/midi-daemon.nix
       home-manager.nixosModules.home-manager
       {
         nixpkgs.overlays = [

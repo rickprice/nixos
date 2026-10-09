@@ -120,6 +120,13 @@ start_stop_channel    = 1
 # start_stop_controller = 22
 start_stop_controller = 80
 
+# This CC (channel 1, controller 80) is the same one wired to
+# VolumePanMuteControlMetronome's mute button below, so the metronome
+# stops when that channel is muted. Its own gate direction is backwards
+# from what muting the channel needs, so invert it here instead of in
+# the mute logic.
+start_stop_invert = true
+
 # Whether the metronome starts playing immediately on launch (default: true)
 # start_running = true
 start_running = false
