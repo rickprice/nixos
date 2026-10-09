@@ -103,6 +103,18 @@ local function notify_subscribers(param, value)
     send_osc("/" .. ROUTE_NAME .. "/" .. param, value)
 end
 
+-- midi-daemon is the master reference for volume/pan/mute -- Non-Mixer-XT's
+-- own GUI always starts from its plugin defaults, so it must be told the
+-- current state explicitly rather than assumed to already have it. Pushing
+-- is idempotent/harmless (see the push_* comment on the nmxt local above and
+-- nmxt.lua's self-echo note), so this is safe to call as often as hello().
+local function push_nmxt_state()
+    if not nmxt then return end
+    nmxt.push_volume(volume)
+    nmxt.push_pan(pan)
+    nmxt.push_mute(muted)
+end
+
 -- Restore volume/pan/mute from the last session and re-send the CCs so
 -- connected hardware/DAW reflects the restored values immediately.
 function on_startup()
@@ -113,22 +125,24 @@ function on_startup()
 
     if nmxt then
         nmxt.hello()
-        nmxt.push_volume(volume)
-        nmxt.push_pan(pan)
-        nmxt.push_mute(muted)
+        push_nmxt_state()
     end
 end
 
--- Resend the Non-Mixer-XT hello/connect registration every
--- NMXT_RETRY_INTERVAL_SECS so a registration lost to a startup race (see the
--- comment above the nmxt local) heals itself instead of staying broken for
--- the rest of the session.
+-- Resend the Non-Mixer-XT hello/connect registration, and this route's
+-- current state, every NMXT_RETRY_INTERVAL_SECS. The hello/connect resend
+-- heals a registration lost to a startup race (see the comment above the
+-- nmxt local); the state resend covers the same race for the one-shot push
+-- in on_startup, and also covers Non-Mixer-XT restarting on its own (its GUI
+-- comes back up with its plugin defaults, having forgotten midi-daemon's
+-- state, but is never told to re-sync since midi-daemon doesn't restart too).
 function on_tick(_tick, bpm, ppqn)
     if not nmxt then return end
     nmxt_retry_elapsed = nmxt_retry_elapsed + 60.0 / (bpm * ppqn)
     if nmxt_retry_elapsed >= NMXT_RETRY_INTERVAL_SECS then
         nmxt_retry_elapsed = 0.0
         nmxt.hello()
+        push_nmxt_state()
     end
 end
 
