@@ -317,6 +317,9 @@ myManageHook =
         , className =? "trayer" --> doIgnore
         , className =? "simple-scan" --> doSink
         , className =? "zoom" --> doShift "ZM"
+        -- Session-restored Chrome windows carry their last _NET_WM_DESKTOP;
+        -- honor it instead of letting them land on the current workspace.
+        , className =? "Google-chrome" --> shiftToHinted
         -- Started by a systemd --user service (before XMonad), not spawnOn,
         -- so it's pinned to the same desktop Carla used via its WM_CLASS
         -- instead of at spawn time.
@@ -348,6 +351,20 @@ customInsertPosition = do
     case (wmClass, wmTransientFor, isDialogWindow) of
         (Just _, Nothing, False) -> insertPosition End Newer
         _ -> idHook
+
+-- Shift a window to the workspace named by its _NET_WM_DESKTOP hint, if any.
+shiftToHinted :: ManageHook
+shiftToHinted = ask >>= \w -> liftX (hinted w) >>= \case
+    Just ws -> doShift ws
+    Nothing -> idHook
+  where
+    hinted w = withDisplay $ \d -> do
+      a  <- getAtom "_NET_WM_DESKTOP"
+      r  <- io $ getWindowProperty32 d a w
+      ws <- asks (workspaces . config)
+      pure $ case r of
+        Just (n:_) | fromIntegral n < length ws -> Just (ws !! fromIntegral n)
+        _                                       -> Nothing
 
 -- manageZoomHook =
 --     composeAll $
