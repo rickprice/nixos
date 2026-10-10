@@ -102,6 +102,7 @@
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
+        ./config/modules/umc404hd-pipewire.nix
         (import ./config/modules/onepassword.nix "fprice")
         musnix.nixosModules.musnix
         ./config/modules/musnix-audio.nix
@@ -120,6 +121,7 @@
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
       ./config/modules/umc404hd-udev.nix
+      ./config/modules/umc404hd-pipewire.nix
       ./config/modules/syncthing.nix
       ./config/modules/virtualisation.nix
       (import ./config/modules/onepassword.nix "fprice")
