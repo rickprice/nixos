@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 
 {
   home.username = "fprice";
@@ -243,7 +243,7 @@
       ta = "tmux attach 2>/dev/null || tmux";
 
       # NixOS shortcuts
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#${osConfig.networking.hostName}";
     };
 
     history = {

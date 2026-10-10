@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 
 {
   home.username = "eric";
@@ -82,7 +82,7 @@
       cat  = "bat";
       grep = "rg";
 
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#fwork";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#${osConfig.networking.hostName}";
     };
 
     history = {

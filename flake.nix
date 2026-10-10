@@ -106,15 +106,13 @@
         musnix.nixosModules.musnix
         ./config/modules/musnix-audio.nix
         { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-        ({ lib, ... }: {
+        {
           # daw is physically a laptop, but it's used for field recording with
           # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
           # autosuspend that could drop the audio interface mid-session.
-          # mkForce: musnix also sets cpuFreqGovernor plainly to the same
-          # value, which NixOS still rejects as a duplicate unique definition.
-          powerManagement.cpuFreqGovernor = lib.mkForce "performance";
+          # (musnix.enable already sets cpuFreqGovernor = "performance".)
           services.power-profiles-daemon.enable = false;
-        })
+        }
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
@@ -126,15 +124,13 @@
       ./config/modules/musnix-audio.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
       { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-      ({ lib, ... }: {
-        # mkForce: musnix also sets cpuFreqGovernor plainly to the same
-        # value, which NixOS still rejects as a duplicate unique definition.
-        powerManagement.cpuFreqGovernor = lib.mkForce "performance";
-        # power-profiles-daemon fights the static governor above, continuously
-        # resetting it back to "balanced" after boot. fwork is a desktop with
-        # no battery, so there's no power-saving tradeoff to disabling it.
+      {
+        # power-profiles-daemon fights musnix's static performance governor,
+        # continuously resetting it back to "balanced" after boot. fwork is
+        # a desktop with no battery, so there's no power-saving tradeoff to
+        # disabling it. (musnix.enable already sets cpuFreqGovernor.)
         services.power-profiles-daemon.enable = false;
-      })
+      }
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
       ./config/modules/laptop.nix
