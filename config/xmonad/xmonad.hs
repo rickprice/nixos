@@ -154,6 +154,10 @@ myExtraWorkspaces hostname | hostnameWork `isPrefixOf` hostname = ["IM", "MAIL",
 myExtraWorkspaces _ = ["IM", "MAIL", "ADM", "SCRATCH", "ZM", "DOC", "NSP"]
 
 myWorkspaces hostname | hostnameWork `isPrefixOf` hostname = wWorkspaces ++ myExtraWorkspaces hostname ++ tWorkspaces ++ fWorkspaces ++ uWorkspaces
+-- daw also runs the non-fprice.nix UMC404HD audio-workstation services
+-- (Non-Mixer-XT, TouchOSC) which doShift to U11/U13 in myManageHook below;
+-- without uWorkspaces here those tags don't exist and doShift is a no-op.
+myWorkspaces "daw" = fWorkspaces ++ myExtraWorkspaces "daw" ++ uWorkspaces
 myWorkspaces hostname = fWorkspaces ++ myExtraWorkspaces hostname
 
 -- Workspace navigation helpers
