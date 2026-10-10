@@ -16,11 +16,18 @@
     };
   };
 
-  # Wait for rclone-dropbox before starting; tie into graphical-session lifetime
+  # The only folder this syncs lives under the Dropbox mount. Requires (not
+  # just Wants) rclone-dropbox: if the mount fails, this must not start at
+  # all — Wants alone would let syncthing start anyway against a real but
+  # empty directory (ExecStartPre only mkdir's the Dropbox mountpoint
+  # itself, so a failed mount leaves an empty tree underneath it, or
+  # syncthing would just create the missing folder outright), and it would
+  # propagate that as a mass delete to the paired Android device.
   systemd.user.services.syncthing = {
     Unit = {
       After = lib.mkAfter [ "network-online.target" "rclone-dropbox.service" ];
-      Wants = [ "network-online.target" "rclone-dropbox.service" ];
+      Requires = [ "rclone-dropbox.service" ];
+      Wants = [ "network-online.target" ];
       PartOf = [ "graphical-session.target" ];
     };
     Install.WantedBy = lib.mkForce [ "graphical-session.target" ];
