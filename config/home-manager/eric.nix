@@ -507,12 +507,16 @@
       Description = "Dunst notification daemon";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.dunst}/bin/dunst";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -523,12 +527,16 @@
       Description = "XFCE4 Power Manager";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.xfce4-power-manager}/bin/xfce4-power-manager";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -539,12 +547,16 @@
       Description = "Picom X compositor";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.picom}/bin/picom --backend glx";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -555,12 +567,16 @@
       Description = "Battery status tray icon";
       After = [ "graphical-session.target" "trayer.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.cbatticon}/bin/cbatticon";
       Restart = "on-failure";
       RestartSec = 5;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -635,12 +651,16 @@
       Description = "polkit-gnome-authentication-agent-1";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -651,12 +671,16 @@
       Description = "Trayer system tray";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --tint 0x000000 --height 36";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -667,12 +691,16 @@
       Description = "PulseAudio system tray";
       After = [ "graphical-session.target" "trayer.service" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.pasystray}/bin/pasystray";
       Restart = "on-failure";
       RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
@@ -683,12 +711,16 @@
       Description = "XScreensaver screen locker";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
     };
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.xscreensaver}/bin/xscreensaver --no-splash";
       Restart = "on-failure";
       RestartSec = 1;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
     Install.WantedBy = [ "graphical-session.target" ];
