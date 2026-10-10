@@ -295,7 +295,6 @@ myNewStyleKeys = eWorkspaceKeys ++ myCustomKeys ++ warpMouseKeys
 myStartupHook :: X ()
 myStartupHook = do
     setupWorkspaceGroups
-    spawn myFixScreens
     spawnOnOnce "E1" myBrowser
     setWMName "LG3D"
 

@@ -38,6 +38,13 @@ let
     pkgs.volumepanningstereo-lv2 # already built per-host with -march=native in its own Makefile
     (nativeOpt pkgs.zam-plugins)     # ZamCompX2-ladspa
   ];
+
+  # This config is shared across every host (daw, fwork, tprice, eric), but
+  # each host's graphical session belongs to a different primary user.
+  autorandrPrimaryUser =
+    if config.networking.hostName == "tprice" then "tprice"
+    else if config.networking.hostName == "eric" then "eric"
+    else "fprice";
 in
 
 {
@@ -765,9 +772,10 @@ in
   # Autorandr — triggers autorandr on display hotplug via udev
   services.autorandr.enable = true;
   # --batch mode has a race condition (ProcessLookupError) in 1.15; delegate to
-  # the user service instead so autorandr runs in fprice's session environment.
+  # the user service instead so autorandr runs in the session of whoever
+  # actually logs into this host.
   systemd.services.autorandr.serviceConfig.ExecStart = lib.mkForce
-    "${pkgs.systemd}/bin/systemctl --machine=fprice@.host --user start autorandr.service";
+    "${pkgs.systemd}/bin/systemctl --machine=${autorandrPrimaryUser}@.host --user start autorandr.service";
 
   # Tailscale
   services.tailscale = {

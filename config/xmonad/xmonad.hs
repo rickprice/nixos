@@ -89,6 +89,9 @@ myScreenLock = "xscreensaver-command -lock"
 -- Scripts and commands
 myFixScreens = "autorandr --change"
 myFixLogitechMouse = "xinput --set-prop 'Logitech M325' 'libinput Accel Speed' -0.4"
+mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
+myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
+myResetBackground = "rm -f \"" ++ mySelectedBackgroundFile ++ "\" && autorandr --change --force"
 
 -- Colors
 myNormalBorderColor = "#dddddd"
@@ -466,6 +469,8 @@ myCustomKeys hostname =
     , spawnKey "z" "Fix screens" myFixScreens
     , spawnKey "o" "Markdown editor (Obsidian)" myMarkdownEditor
     , spawnKey "l" "Screen lock" myScreenLock
+    , ("M-<F5>", addName "Pick background" $ spawn myBackgroundPicker)
+    , ("M-<F4>", addName "Reset background to random" $ spawn myResetBackground)
     , ("<Print>",   addName "Screenshot (select region)" $ spawn "flameshot gui")
     , ("S-<Print>", addName "Screenshot (full screen)"   $ spawn "flameshot full")
 
@@ -550,7 +555,6 @@ myStartupHook hostname = do
     -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
     spawn "setxkbmap -layout us,us -variant dvorak, && xkb-switch -n && xkb-switch -n && numlockx on"
-    spawn myFixScreens
     spawn myFixLogitechMouse
 
     -- Host-specific configuration

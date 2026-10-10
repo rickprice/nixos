@@ -474,6 +474,19 @@
     # Add profiles here after running: autorandr --save <profile-name>
   };
 
+  systemd.user.services.autorandr = {
+    Unit = {
+      Description = "Autorandr display change";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.autorandr}/bin/autorandr --change";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # ── Inappropriate Video Handler ──────────────────────────────────────────────
   xdg.configFile."inappropriate-video-handler/BlackList.txt".source = ../innapropriate-video-handler/BlackList.txt;
   xdg.configFile."inappropriate-video-handler/WhiteList.txt".source = ../innapropriate-video-handler/WhiteList.txt;

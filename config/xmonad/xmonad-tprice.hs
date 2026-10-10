@@ -44,6 +44,9 @@ mySystemMonitor = "gnome-system-monitor"
 myCalculator    = "gnome-calculator"
 myScreenLock    = "xscreensaver-command -lock"
 myFixScreens    = "autorandr --change"
+mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
+myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
+myResetBackground = "rm -f \"" ++ mySelectedBackgroundFile ++ "\" && autorandr --change --force"
 
 myNormalBorderColor  = "#dddddd"
 myFocusedBorderColor = "#FFB53A"
@@ -259,6 +262,8 @@ myCustomKeys =
     , ("<XF86PowerOff>",  addName "Shutdown"      $ spawn "systemctl poweroff")
     , ("M-<F2>",           addName "Browser"       $ spawn myBrowser)
     , ("M-<F3>",           addName "File manager"  $ spawn myFileManager)
+    , ("M-<F5>",           addName "Pick background" $ spawn myBackgroundPicker)
+    , ("M-<F4>",           addName "Reset background to random" $ spawn myResetBackground)
     , ("C-M-'",            addName "Screen lock"   $ spawn myScreenLock)
     , spawnKey "l" "Screen lock" myScreenLock
     , spawnKey "z" "Fix screens" myFixScreens
@@ -298,7 +303,6 @@ myStartupHook = do
     -- System defaults to Dvorak for fprice's login/console; override with two
     -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
     spawn "setxkbmap -layout us,us -variant ,dvorak"
-    spawn myFixScreens
     spawnOnOnce "TP11" myBrowser
     setWMName "LG3D"
 
