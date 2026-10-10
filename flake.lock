@@ -41,6 +41,26 @@
         "type": "github"
       }
     },
+    "musnix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791575145,
+        "narHash": "sha256-A4dB6Yv1Q3ygHgYWefX2DLdbELN//mB+PbCxRMdjTeg=",
+        "owner": "musnix",
+        "repo": "musnix",
+        "rev": "6e86730c235db14e8cac6605dfc33f300ce9105e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "musnix",
+        "repo": "musnix",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1790218706,
@@ -84,6 +104,7 @@
       "inputs": {
         "disko": "disko",
         "home-manager": "home-manager",
+        "musnix": "musnix",
         "nixpkgs": "nixpkgs",
         "plasma-manager": "plasma-manager"
       }

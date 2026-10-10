@@ -19,9 +19,14 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    musnix = {
+      url = "github:musnix/musnix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, plasma-manager, disko, ... }:
+  outputs = { self, nixpkgs, home-manager, plasma-manager, disko, musnix, ... }:
   let
     commonModules = [
       ./etc/nixos/configuration.nix
@@ -98,14 +103,18 @@
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
         (import ./config/modules/onepassword.nix "fprice")
+        musnix.nixosModules.musnix
+        ./config/modules/musnix-audio.nix
         { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-        {
+        ({ lib, ... }: {
           # daw is physically a laptop, but it's used for field recording with
           # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
           # autosuspend that could drop the audio interface mid-session.
-          powerManagement.cpuFreqGovernor = "performance";
+          # mkForce: musnix also sets cpuFreqGovernor plainly to the same
+          # value, which NixOS still rejects as a duplicate unique definition.
+          powerManagement.cpuFreqGovernor = lib.mkForce "performance";
           services.power-profiles-daemon.enable = false;
-        }
+        })
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
@@ -113,15 +122,19 @@
       ./config/modules/syncthing.nix
       ./config/modules/virtualisation.nix
       (import ./config/modules/onepassword.nix "fprice")
+      musnix.nixosModules.musnix
+      ./config/modules/musnix-audio.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
       { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-      {
-        powerManagement.cpuFreqGovernor = "performance";
+      ({ lib, ... }: {
+        # mkForce: musnix also sets cpuFreqGovernor plainly to the same
+        # value, which NixOS still rejects as a duplicate unique definition.
+        powerManagement.cpuFreqGovernor = lib.mkForce "performance";
         # power-profiles-daemon fights the static governor above, continuously
         # resetting it back to "balanced" after boot. fwork is a desktop with
         # no battery, so there's no power-saving tradeoff to disabling it.
         services.power-profiles-daemon.enable = false;
-      }
+      })
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
       ./config/modules/laptop.nix

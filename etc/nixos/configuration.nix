@@ -74,7 +74,9 @@ in
   boot.kernel.sysctl = {
     "kernel.sched_rt_runtime_us"    = -1;
     # Keep swap out of the hot path; 10 means "swap only under real pressure".
-    "vm.swappiness"                 = 10;
+    # mkForce: musnix (daw/fwork) also sets this plainly to the same value,
+    # which NixOS still rejects as a duplicate unique definition.
+    "vm.swappiness"                 = lib.mkForce 10;
     # Reduce how aggressively the kernel flushes dirty pages — large flushes
     # cause latency spikes while the disk is busy.
     "vm.dirty_background_ratio"     = 20;
@@ -588,10 +590,14 @@ in
   # Without this Carla falls back to its own default of 512.
   environment.sessionVariables.PIPEWIRE_LATENCY = "128/48000";
 
+  # mkForce: musnix also sets these, which previously conflicted with the
+  # plain assignment below (same priority, different value, never surfaced
+  # until something forced strict evaluation of the merged option). Our
+  # native-optimized plugin set should always win.
   environment.variables = {
-    LV2_PATH    = lib.makeSearchPath "lib/lv2"    audioPlugins;
-    LADSPA_PATH = lib.makeSearchPath "lib/ladspa" audioPlugins;
-    VST3_PATH   = lib.makeSearchPath "lib/vst3"   audioPlugins;
+    LV2_PATH    = lib.mkForce (lib.makeSearchPath "lib/lv2"    audioPlugins);
+    LADSPA_PATH = lib.mkForce (lib.makeSearchPath "lib/ladspa" audioPlugins);
+    VST3_PATH   = lib.mkForce (lib.makeSearchPath "lib/vst3"   audioPlugins);
   };
 
   security.pam.loginLimits = [
