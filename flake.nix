@@ -106,6 +106,9 @@
         musnix.nixosModules.musnix
         ./config/modules/musnix-audio.nix
         { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
+        # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
+        # needed where that service actually runs.
+        { networking.firewall.allowedUDPPorts = [ 9000 ]; }
         {
           # daw is physically a laptop, but it's used for field recording with
           # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
@@ -124,6 +127,9 @@
       ./config/modules/musnix-audio.nix
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
       { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
+      # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
+      # needed where that service actually runs.
+      { networking.firewall.allowedUDPPorts = [ 9000 ]; }
       {
         # power-profiles-daemon fights musnix's static performance governor,
         # continuously resetting it back to "balanced" after boot. fwork is

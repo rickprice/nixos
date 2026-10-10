@@ -805,8 +805,7 @@ in
 
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
-    # 9000: midi-daemon OSC (now a systemd --user service, see non-fprice.nix)
-    allowedUDPPorts = [ config.services.tailscale.port 9000 ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
   };
 
   # Open ports in the firewall.
