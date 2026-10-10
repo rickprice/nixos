@@ -97,6 +97,7 @@
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
+        (import ./config/modules/onepassword.nix "fprice")
         { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
         {
           # daw is physically a laptop, but it's used for field recording with
@@ -111,6 +112,7 @@
       ./config/modules/umc404hd-udev.nix
       ./config/modules/syncthing.nix
       ./config/modules/virtualisation.nix
+      (import ./config/modules/onepassword.nix "fprice")
       { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
       { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
       {
@@ -123,6 +125,7 @@
     ];
     nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
       ./config/modules/laptop.nix
+      (import ./config/modules/onepassword.nix "tprice")
     ];
     nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [
       ./config/modules/laptop.nix
