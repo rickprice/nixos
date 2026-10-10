@@ -726,26 +726,14 @@
       numlockx on
     '';
 
+    # Decoupled from autorandr.service itself: setting the wallpaper needs
+    # the Dropbox mount, but trayer/numlock/keyboard above don't, and
+    # shouldn't fail just because Dropbox is unreachable. This hook only
+    # kicks off autorandr-wallpaper.service and doesn't wait on it or
+    # propagate its failure.
     hooks.postswitch."10_setup_feh" = ''
       #! /usr/bin/bash
-      set -e
-      trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-      trap 'echo "\"''${last_command}\" command failed with exit code $?."' EXIT
-      SELECTED_BACKGROUND_FILE="$HOME/.cache/background-picker/selected-background.txt"
-      if [ -s "$SELECTED_BACKGROUND_FILE" ]; then
-        echo "Using manually selected background from: " $SELECTED_BACKGROUND_FILE
-        feh --no-fehbg --bg-max "$(cat "$SELECTED_BACKGROUND_FILE")"
-      else
-        DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox -print -quit)
-        BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
-        PERSON_SPECIFIC="''${USER}Specific"
-        THEME_DIRS="$PERSON_SPECIFIC Default $(name_time_period)"
-        echo "DROPBOX_LOCATION is: " $DROPBOX_LOCATION
-        echo "BACKGROUNDS_DIR is: " $BACKGROUNDS_DIR
-        echo "PERSON_SPECIFIC is: " $PERSON_SPECIFIC
-        echo "THEME_DIRS are: " $THEME_DIRS
-        feh --no-fehbg --bg-max $(images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
-      fi
+      systemctl --user --no-block start autorandr-wallpaper.service
     '';
 
     profiles = {
@@ -883,16 +871,45 @@
   systemd.user.services.autorandr = {
     Unit = {
       Description = "Autorandr display change";
-      # Ordered after rclone-dropbox so the first run at login (which sets
-      # the wallpaper via the 10_setup_feh hook) doesn't race the FUSE mount
-      # and pick a broken/empty background.
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.autorandr}/bin/autorandr --change";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Split out from autorandr.service: setting the wallpaper needs the
+  # Dropbox mount to be up, but the rest of autorandr's postswitch hooks
+  # (trayer, numlock, keyboard layout) don't and shouldn't fail just because
+  # Dropbox is unreachable. Runs once at login (WantedBy) and is re-triggered
+  # on every display change by the 10_setup_feh postswitch hook above.
+  systemd.user.services.autorandr-wallpaper = {
+    Unit = {
+      Description = "Set desktop wallpaper from Dropbox backgrounds";
       After = [ "graphical-session.target" "rclone-dropbox.service" ];
       Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
       Type = "oneshot";
-      ExecStart = "${pkgs.autorandr}/bin/autorandr --change";
+      ExecStart = let
+        script = pkgs.writeShellScript "autorandr-wallpaper" ''
+          SELECTED_BACKGROUND_FILE="$HOME/.cache/background-picker/selected-background.txt"
+          if [ -s "$SELECTED_BACKGROUND_FILE" ]; then
+            ${pkgs.feh}/bin/feh --no-fehbg --bg-max "$(cat "$SELECTED_BACKGROUND_FILE")"
+          else
+            DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox -print -quit)
+            BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
+            PERSON_SPECIFIC="''${USER}Specific"
+            THEME_DIRS="$PERSON_SPECIFIC Default $(${pkgs.name-time-period}/bin/name_time_period)"
+            ${pkgs.feh}/bin/feh --no-fehbg --bg-max $(${pkgs.images-matching-subdirectories}/bin/images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
+          fi
+        '';
+      in "${script}";
+      RemainAfterExit = false;
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };

@@ -97,8 +97,14 @@
         disko.nixosModules.disko
         ./config/disko/encrypted.nix
         ./config/modules/umc404hd-udev.nix
-        ./config/modules/laptop.nix
         { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
+        {
+          # daw is physically a laptop, but it's used for field recording with
+          # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
+          # autosuspend that could drop the audio interface mid-session.
+          powerManagement.cpuFreqGovernor = "performance";
+          services.power-profiles-daemon.enable = false;
+        }
       ];
     };
     nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
