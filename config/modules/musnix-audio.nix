@@ -1,13 +1,14 @@
-{ ... }:
+{ pkgs, ... }:
 {
   musnix.enable = true;
 
-  # musnix.kernel.realtime (PREEMPT_RT) is left at its default (false).
-  # Swapping to an RT-patched kernel is a bigger, riskier change than the
-  # rest of what musnix.enable already provides on top of this repo's
-  # existing manual tuning (performance governor, @audio PAM limits,
-  # vm.swappiness, security.rtkit.enable are all already set and match
-  # musnix's own defaults) — namely the hpet/rtc0/cpu_dma_latency udev
-  # rules this repo was missing. Revisit kernel.realtime if XRUNs persist
-  # after this.
+  # PREEMPT_RT, via musnix's "native RT" path: our kernel (linuxPackages_latest,
+  # well above the 6.12 cutoff) gets PREEMPT_RT enabled through a structured
+  # config override and rebuilt from source — no separately RT-patched kernel
+  # package needed. This no longer builds from the binary cache, and every
+  # out-of-tree kernel module rebuilds against the new kernel ABI, so expect
+  # a long first build. No NVIDIA driver, no ZFS, and no other known hardware
+  # incompatibility was found on daw/fwork for this.
+  musnix.kernel.realtime = true;
+  musnix.kernel.packages = pkgs.linuxPackages_latest;
 }

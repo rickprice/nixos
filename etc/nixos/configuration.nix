@@ -57,8 +57,9 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Mainline kernel — for hard real-time scheduling switch to pkgs.linuxPackages_rt_latest.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # mkDefault: on daw/fwork, musnix.kernel.realtime (config/modules/musnix-audio.nix)
+  # overrides this with a PREEMPT_RT build of the same kernel branch.
+  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
   # threadirqs: force all IRQ handlers into schedulable threads so the RT
   # audio thread can preempt them.  nosoftlockup silences the watchdog that
