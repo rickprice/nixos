@@ -11,4 +11,12 @@
   # incompatibility was found on daw/fwork for this.
   musnix.kernel.realtime = true;
   musnix.kernel.packages = pkgs.linuxPackages_latest;
+
+  # musnix.rtirq.enable defaults to false even with kernel.realtime on, so
+  # it needs setting explicitly. This is the piece most directly aimed at
+  # the UMC404HD XRUNs: it reprioritizes IRQ threads against the RT
+  # scheduler, and its default nameList ("snd usb i8042") is specifically
+  # the sound/USB/keyboard-controller interrupts. das_watchdog is already
+  # on automatically (its default tracks kernel.realtime).
+  musnix.rtirq.enable = true;
 }
