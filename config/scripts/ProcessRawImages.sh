@@ -42,7 +42,6 @@ function setup_google_location_data() {
 
 function process_photo_directory() {
     local directory="$1"
-    local dropbox_location="$2"
     local directory_location_data="${directory}_loc_data"
     local directory_dropbox="${directory}_dropbox"
 
@@ -61,5 +60,5 @@ function process_photo_directory() {
 }
 
 # setup_google_location_data
-process_photo_directory "$WORKING_DIR/Incoming" "Pictures/CanonRawPhotos"
-# process_photo_directory "$WORKING_DIR/CanonSX540HS"  "Pictures/CanonSX540HS"
+process_photo_directory "$WORKING_DIR/Incoming"
+# process_photo_directory "$WORKING_DIR/CanonSX540HS"

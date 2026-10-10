@@ -20,7 +20,14 @@ EXPORT_DIRECTORY=/run/media/fprice/Backup
 
 echo "Exporting to:" $EXPORT_DIRECTORY
 
-mkdir -p $EXPORT_DIRECTORY
+# Must already exist as an actual mounted filesystem — if the backup drive
+# isn't plugged in, this directory won't exist at all (or won't be a mount),
+# and silently creating it here would rsync the whole backup into tmpfs
+# instead of failing loudly.
+if ! mountpoint -q "$EXPORT_DIRECTORY"; then
+  echo "error: $EXPORT_DIRECTORY is not a mounted filesystem — is the backup drive plugged in?" >&2
+  exit 1
+fi
 
 # etc
 DIR_TO_COPY=/etc
