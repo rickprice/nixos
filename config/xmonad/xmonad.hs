@@ -86,7 +86,11 @@ myRDPClient = "remmina"
 myScreenLock = "xscreensaver-command -lock"
 
 -- Scripts and commands
-myFixScreens = "autorandr --change"
+-- Routed through the systemd user service (rather than calling autorandr
+-- directly) so this can't race the service's own login-time run: systemd
+-- coalesces a start request against an already-running unit instead of
+-- spawning a second concurrent autorandr process.
+myFixScreens = "systemctl --user start autorandr.service"
 myFixLogitechMouse = "xinput --set-prop 'Logitech M325' 'libinput Accel Speed' -0.4"
 mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
 myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
