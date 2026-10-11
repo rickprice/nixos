@@ -1,6 +1,20 @@
 { config, pkgs, lib, osConfig, ... }:
 
-{
+let
+  # Wrap Guitarix so it links against PipeWire's JACK library instead of the
+  # real JACK, for the same reason Carla is wrapped. Pulled into a let
+  # binding (rather than inline in home.packages) so the systemd service
+  # below can launch the same wrapped binary.
+  guitarixWrapped = pkgs.symlinkJoin {
+    name = "guitarix";
+    paths = [ pkgs.guitarix ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/guitarix \
+        --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+    '';
+  };
+in {
   home.username = "fprice";
   home.homeDirectory = "/home/fprice";
   home.stateVersion = "26.05";
@@ -84,17 +98,7 @@
       '';
     })
     calf
-    # Wrap Guitarix so it links against PipeWire's JACK library instead of the
-    # real JACK, for the same reason Carla is wrapped.
-    (pkgs.symlinkJoin {
-      name = "guitarix";
-      paths = [ pkgs.guitarix ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/guitarix \
-          --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
-      '';
-    })
+    guitarixWrapped
     # Wrap Carla so it links against PipeWire's JACK library instead of the
     # real JACK. Without this, Carla's JACK backend can't connect to PipeWire
     # and the plugin scanner never initialises.
@@ -938,6 +942,53 @@
       ExecStart = "${pkgs.discord}/bin/discord";
       Restart = "on-failure";
       RestartSec = 5;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Moved from xmonad's startupHook (spawnOn "U11"): kept running like
+  # Non-Mixer-XT/TouchOSC rather than a one-shot launch, since the amp sim
+  # should always be up and ready. className =? "Guitarix" in xmonad's
+  # manageHook pins its window to U11 the way doShift did before.
+  systemd.user.services.guitarix = {
+    Unit = {
+      Description = "Guitarix amp simulator";
+      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${guitarixWrapped}/bin/guitarix";
+      Restart = "always";
+      RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  # Moved from xmonad's startupHook (spawnOn "ADM"): kept running rather than
+  # a one-shot launch, so the vault is always open. className =? "Obsidian"
+  # in xmonad's manageHook pins its window to ADM the way doShift did before.
+  systemd.user.services.obsidian = {
+    Unit = {
+      Description = "Obsidian markdown editor";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.obsidian}/bin/obsidian";
+      Restart = "always";
+      RestartSec = 2;
       RestartSteps = 4;
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;

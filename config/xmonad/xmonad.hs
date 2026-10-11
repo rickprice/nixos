@@ -71,12 +71,10 @@ myDarkTablePersonalLibrary = "~/Documents/Personal/DarktablePersonal/library.db"
 myDarkTableCommercialLibrary = "~/Documents/Personal/DarktableCommercial/library.db"
 myInkScape = "inkscape"
 myArdour = "ardour9"
-myGuitarix = "guitarix"
 myQPWGraph = "qpwgraph"
 myMidiSnoop = "midisnoop"
 myMidiStaffTrainer = "midi-staff-trainer"
 myEbookViewer = "ebook-viewer"
-myMarkdownEditor = "obsidian"
 
 -- System utilities
 mySystemMonitor = "gnome-system-monitor"
@@ -336,6 +334,10 @@ myManageHook =
         , className =? "Non-Mixer-XT" --> doShift "U11"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
         , className =? "TouchOSC" --> doShift "U13"
+        -- Started by a systemd --user service (before XMonad), not spawnOn.
+        , className =? "Guitarix" --> doShift "U11"
+        -- Started by a systemd --user service (before XMonad), not spawnOn.
+        , className =? "Obsidian" --> doShift "ADM"
         -- , className =? "Gimp" --> doFloat
         , className =? "meteo-qt" --> doFloat
         , className =? "discord" --> doShift "IM"
@@ -469,12 +471,10 @@ myCustomKeys hostname =
     , ("calc", addName "Calculator" $ spawn myCalculator)
     , spawnKey "r" "RDP client" myRDPClient
     , spawnKey "a a" "Ardour DAW" myArdour
-    , spawnKey "a g" "Guitarix" myGuitarix
     , spawnKey "a q" "QPWGraph" myQPWGraph
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
     , spawnKey "m" "Midi Staff Trainer" myMidiStaffTrainer
     , spawnKey "z" "Fix screens" myFixScreens
-    , spawnKey "o" "Markdown editor (Obsidian)" myMarkdownEditor
     , spawnKey "l" "Screen lock" myScreenLock
     , ("M-<F5>", addName "Pick background" $ spawn myBackgroundPicker)
     , ("M-<F4>", addName "Reset background to random" $ spawn myResetBackground)
@@ -569,9 +569,7 @@ myStartupHook hostname = do
     if hostnameWork `isPrefixOf` hostname
         then do
             spawnOn "MAIL" myEmailer
-            spawnOn "ADM" myMarkdownEditor
             spawnOn "ADM" myBrowser
-            spawnOn "U11" myGuitarix
             spawnOn "U12" myQPWGraph
         else do
             return ()
