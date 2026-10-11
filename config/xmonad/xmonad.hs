@@ -71,7 +71,6 @@ myDarkTablePersonalLibrary = "~/Documents/Personal/DarktablePersonal/library.db"
 myDarkTableCommercialLibrary = "~/Documents/Personal/DarktableCommercial/library.db"
 myInkScape = "inkscape"
 myArdour = "ardour9"
-myQPWGraph = "qpwgraph"
 myMidiSnoop = "midisnoop"
 myMidiStaffTrainer = "midi-staff-trainer"
 myEbookViewer = "ebook-viewer"
@@ -338,6 +337,8 @@ myManageHook =
         , className =? "Guitarix" --> doShift "U11"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
         , className =? "Obsidian" --> doShift "ADM"
+        -- Started by a systemd --user service (before XMonad), not spawnOn.
+        , className =? "qpwgraph" --> doShift "U12"
         -- , className =? "Gimp" --> doFloat
         , className =? "meteo-qt" --> doFloat
         , className =? "discord" --> doShift "IM"
@@ -471,7 +472,6 @@ myCustomKeys hostname =
     , ("calc", addName "Calculator" $ spawn myCalculator)
     , spawnKey "r" "RDP client" myRDPClient
     , spawnKey "a a" "Ardour DAW" myArdour
-    , spawnKey "a q" "QPWGraph" myQPWGraph
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
     , spawnKey "m" "Midi Staff Trainer" myMidiStaffTrainer
     , spawnKey "z" "Fix screens" myFixScreens
@@ -570,7 +570,6 @@ myStartupHook hostname = do
         then do
             spawnOn "MAIL" myEmailer
             spawnOn "ADM" myBrowser
-            spawnOn "U12" myQPWGraph
         else do
             return ()
 

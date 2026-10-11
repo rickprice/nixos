@@ -996,6 +996,30 @@ in {
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Moved from xmonad's startupHook (spawnOn "U12"): kept running like
+  # Non-Mixer-XT/TouchOSC rather than a one-shot launch, so the PipeWire
+  # graph view is always available. className =? "qpwgraph" in xmonad's
+  # manageHook pins its window to U12 the way doShift did before.
+  systemd.user.services.qpwgraph = {
+    Unit = {
+      Description = "QPWGraph PipeWire patchbay";
+      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      PartOf = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 5;
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.qpwgraph}/bin/qpwgraph";
+      Restart = "always";
+      RestartSec = 2;
+      RestartSteps = 4;
+      RestartMaxDelaySec = "32s";
+      TimeoutStopSec = 10;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   systemd.user.services.dunst = {
     Unit = {
       Description = "Dunst notification daemon";
