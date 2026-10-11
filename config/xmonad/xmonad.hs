@@ -45,7 +45,6 @@ import XMonad.Util.EZConfig
 import XMonad.Util.NamedActions
 import XMonad.Util.Loggers
 import XMonad.Util.NamedScratchpad
-import XMonad.Util.SpawnOnce
 import qualified XMonad.Util.ExtensibleState as XS
 
 -- =============================================================================
@@ -555,7 +554,7 @@ myNewStyleKeys hostname =
 -- =============================================================================
 
 myStartupHook hostname = do
-    spawnOnce "autorandr --change"
+    spawn myFixScreens
     setupWorkspaceGroups hostname
     -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
