@@ -720,9 +720,11 @@ in {
   # Nix store files have epoch timestamps, so XMonad's mtime check thinks the
   # source is always older than the binary and skips recompilation. Deleting the
   # binary after each apply forces XMonad to recompile from the updated source on
-  # the next login or Mod+Q restart.
+  # the next login or Mod+Q restart. The compiled binary lives under XMonad's
+  # XDG cache dir (~/.cache/xmonad), not ~/.config/xmonad -- deleting the wrong
+  # path here silently no-ops and leaves the stale cached binary in place.
   home.activation.forceXmonadRecompile = lib.hm.dag.entryAfter ["linkGeneration"] ''
-    $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
+    $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.cache/xmonad/xmonad-x86_64-linux"
     /run/current-system/sw/bin/xmonad --restart || true
   '';
 
