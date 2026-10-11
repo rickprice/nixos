@@ -72,7 +72,6 @@ myDarkTableCommercialLibrary = "~/Documents/Personal/DarktableCommercial/library
 myInkScape = "inkscape"
 myArdour = "ardour9"
 myMidiSnoop = "midisnoop"
-myMidiStaffTrainer = "midi-staff-trainer"
 myEbookViewer = "ebook-viewer"
 
 -- System utilities
@@ -339,6 +338,8 @@ myManageHook =
         , className =? "Obsidian" --> doShift "ADM"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
         , className =? "qpwgraph" --> doShift "U12"
+        -- Started by a systemd --user service (before XMonad), not spawnOn.
+        , className =? "MIDI Staff Trainer" --> doShift "U14"
         -- , className =? "Gimp" --> doFloat
         , className =? "meteo-qt" --> doFloat
         , className =? "discord" --> doShift "IM"
@@ -417,8 +418,8 @@ myXmobarPP = do
         { ppSep = magenta " • "
         , ppTitleSanitize = xmobarStrip
         , ppCurrent = wrap " " "" . xmobarBorder "Top" "#8be9fd" 2
-        , ppHidden = \ws -> if ws `elem` ["U11", "U12", "U13"] then "" else lowWhite . wrap " " "" $ ws
-        , ppHiddenNoWindows = \ws -> if hideEmpty || ws `elem` ["U11", "U12", "U13"] then "" else lowWhite . wrap " " "" $ ws
+        , ppHidden = \ws -> if ws `elem` ["U11", "U12", "U13", "U14"] then "" else lowWhite . wrap " " "" $ ws
+        , ppHiddenNoWindows = \ws -> if hideEmpty || ws `elem` ["U11", "U12", "U13", "U14"] then "" else lowWhite . wrap " " "" $ ws
         , ppUrgent = red . wrap (yellow "!") (yellow "!")
         , ppOrder = \case { (ws:l:_) -> [ws, l]; _ -> [] }
         , ppExtras = [logTitles formatFocused formatUnfocused]
@@ -473,7 +474,6 @@ myCustomKeys hostname =
     , spawnKey "r" "RDP client" myRDPClient
     , spawnKey "a a" "Ardour DAW" myArdour
     , spawnKey "a m" "MidiSnoop" myMidiSnoop
-    , spawnKey "m" "Midi Staff Trainer" myMidiStaffTrainer
     , spawnKey "z" "Fix screens" myFixScreens
     , spawnKey "l" "Screen lock" myScreenLock
     , ("M-<F5>", addName "Pick background" $ spawn myBackgroundPicker)
