@@ -555,6 +555,7 @@ myNewStyleKeys hostname =
 -- =============================================================================
 
 myStartupHook hostname = do
+    spawnOnce "autorandr --change"
     setupWorkspaceGroups hostname
     -- Set up two XKB groups: Dvorak (default) and plain US QWERTY.
     -- Group bounce forces XkbStateNotify so xmobar Kbd plugin shows DV immediately.
