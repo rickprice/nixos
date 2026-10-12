@@ -50,6 +50,7 @@
             midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
             inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
             touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
+            tone3000-plugin = prev.callPackage ./config/packages/tone3000-plugin.nix { };
             # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
             # so "Document printed" notifications are sent for auto-discovered printers.
             system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {

@@ -19,6 +19,20 @@ let
   # expect this path to show up dirty in `git status` after normal use.
   keyboardAndGuitarixProject =
     "/home/fprice/Documents/Personal/personal_repo/nixos/config/non-mixer-xt/KeyboardAndGuitarix";
+  # TONE3000's Standalone app owns its own JACK device directly (same
+  # reasoning as non-mixer-xt/non-timeline-xt below): point it at
+  # PipeWire's JACK so it shares the UMC404HD instead of grabbing it
+  # exclusively. The LV2/VST3/CLAP plugin formats don't need this -- they
+  # run inside Non-Mixer-XT/Carla's own process, which is already wrapped.
+  tone3000Wrapped = pkgs.symlinkJoin {
+    name = "tone3000-plugin";
+    paths = [ pkgs.tone3000-plugin ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/TONE3000 \
+        --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
+    '';
+  };
 in {
   # Wrap non-mixer-xt's, non-timeline-xt's, and new-session-manager's
   # binaries so they link against PipeWire's JACK library instead of the
@@ -28,6 +42,7 @@ in {
   # binaries, only jackpatch links against JACK directly.
   home.packages = [
     nonMixerXtWrapped
+    tone3000Wrapped
     (pkgs.symlinkJoin {
       name = "non-timeline-xt";
       paths = [ pkgs.non-timeline-xt ];

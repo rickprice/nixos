@@ -37,6 +37,7 @@ let
     (nativeOpt pkgs.dragonfly-reverb)
     pkgs.volumepanningstereo-lv2 # already built per-host with -march=native in its own Makefile
     (nativeOpt pkgs.zam-plugins)     # ZamCompX2-ladspa
+    (nativeOpt pkgs.tone3000-plugin) # NAM-based amp/cab sim, LV2+VST3 (+CLAP, unused by this list)
   ];
 
   # This config is shared across every host (daw, fwork, tprice, eric), but
