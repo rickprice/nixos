@@ -341,7 +341,9 @@ myManageHook =
         -- Started by a systemd --user service (before XMonad), not spawnOn.
         , className =? "Guitarix" --> doShift "U11"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
-        , className =? "Obsidian" --> doShift "ADM"
+        -- Obsidian's WM_CLASS class is "md.obsidian.Obsidian", not "Obsidian"
+        -- (reverse-domain style id), confirmed via xprop.
+        , className =? "md.obsidian.Obsidian" --> doShift "ADM"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
         , className =? "qpwgraph" --> doShift "U12"
         -- Started by a systemd --user service (before XMonad), not spawnOn.
