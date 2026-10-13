@@ -52,6 +52,14 @@ in {
     gdb
     clang-tools  # clangd, clang-format, clang-tidy
 
+    # Nixpkgs contribution tools
+    nixfmt             # official Nix formatter nixpkgs CI enforces
+    nixpkgs-reviewFull # builds a PR/working-tree diff + reverse deps to confirm nothing broke
+    nix-update         # semi-automated version/hash bumps for package updates
+    nix-tree           # inspect dependency closures of built derivations
+    statix             # Nix anti-pattern linter
+    deadnix            # finds dead/unused Nix code
+
     # X11 development libraries (dev outputs include headers and .pc files)
     libx11.dev
     libxext.dev
@@ -270,6 +278,13 @@ in {
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
       source ${pkgs.fzf}/share/fzf/completion.zsh
     '';
+  };
+
+  # ── Direnv ──────────────────────────────────────────────────────────────────
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
   };
 
   # ── ZOxide ──────────────────────────────────────────────────────────────────
