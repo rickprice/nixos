@@ -1,4 +1,4 @@
-{ lib, rustPlatform, fetchCrate, pkg-config, libGL, libxkbcommon, wayland, libx11, libxcursor, libxi, libxrandr, fontconfig }:
+{ lib, rustPlatform, fetchCrate, pkg-config, makeWrapper, libGL, libxkbcommon, wayland, libx11, libxcursor, libxi, libxrandr, fontconfig }:
 
 rustPlatform.buildRustPackage {
   pname = "background-picker";
@@ -12,7 +12,7 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "sha256-Bs3Bn6V2wlBEXE/XTL0Q1n4+13sQrvpdm4ytZGTkvRU=";
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ pkg-config makeWrapper ];
 
   preCheck = ''
     export HOME=$(mktemp -d)
@@ -28,6 +28,15 @@ rustPlatform.buildRustPackage {
     libxrandr
     fontconfig
   ];
+
+  postInstall = ''
+    wrapProgram $out/bin/background-picker \
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [
+        libxkbcommon
+        libGL
+        wayland
+      ]}
+  '';
 
   meta = with lib; {
     description = "Allow user to select a background from a directory hierarchy";
