@@ -752,6 +752,24 @@ in {
       systemctl --user --no-block start autorandr-wallpaper.service
     '';
 
+    # Half of the AND-gate for display-ready.target (see its definition
+    # below): marks "autorandr has actually applied a profile this session"
+    # and, only once XMonad's startup half has also happened, starts the
+    # target. See xmonad-ready.service's comment for why it's an AND rather
+    # than either trigger alone. --no-block on the target start because this
+    # hook runs synchronously inside autorandr's own still-running process
+    # (autorandr.service hasn't exited yet) -- a blocking call here would
+    # wait on a job that can't finish until this hook returns. Plain
+    # `start`, not `restart`: once these apps are up, a later monitor change
+    # doesn't bother them -- only the login-time race does -- so there's no
+    # need to bounce them on every subsequent profile switch.
+    hooks.postswitch."15_start_display_ready" = ''
+      #! /usr/bin/bash
+      systemctl --user start autorandr-settled.service
+      systemctl --user is-active --quiet xmonad-ready.service && systemctl --user --no-block start display-ready.target
+      true
+    '';
+
     profiles = {
       docked = {
         fingerprint = {
@@ -930,6 +948,86 @@ in {
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # One half of the AND-gate for display-ready.target: marks "XMonad has
+  # reached its startup hook this session" and, only once the other half
+  # (autorandr-settled.service, set by the 15_start_display_ready postswitch
+  # hook above) has also happened, starts the target. Using an AND instead
+  # of trusting either trigger alone: XMonad's own spawn fires the moment
+  # XMonad starts, which says nothing about whether autorandr has actually
+  # finished settling the monitor layout; conversely autorandr's postswitch
+  # firing says nothing about whether XMonad (which has to be up to pin
+  # these apps' windows via manageHook) has actually started yet -- the two
+  # events race each other at login with no inherent ordering between them.
+  # Both markers are oneshot+RemainAfterExit and PartOf=graphical-session.target
+  # so they reset on a real logout but survive an `xmonad --restart` within
+  # the same session (where re-arming the gate and re-launching these apps
+  # would be pointless churn).
+  #
+  # The AND is implemented as "set my own marker, then check if the other
+  # one is already set" on both sides rather than systemd-level Requires=
+  # (which would just force-start the other marker immediately, defeating
+  # the point of waiting for a real external signal). Whichever side's
+  # check runs second is guaranteed to observe the other's marker already
+  # active, since each side's own marker-set is a blocking systemctl call
+  # that completes strictly before that side's own check -- so exactly one
+  # side ends up actually starting the target, regardless of which fires
+  # first.
+  systemd.user.services.xmonad-ready = {
+    Unit = {
+      Description = "Marker: XMonad has reached its startup hook this session";
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.coreutils}/bin/true";
+    };
+  };
+
+  systemd.user.services.autorandr-settled = {
+    Unit = {
+      Description = "Marker: autorandr has applied a profile this session";
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.coreutils}/bin/true";
+    };
+  };
+
+  # Single gate for every GUI app whose window placement/geometry depends on
+  # the monitor layout (TouchOSC, midi-staff-trainer, guitarix, obsidian,
+  # qpwgraph, non-mixer-xt -- see their Unit comments -- plus midi-daemon,
+  # which isn't a window itself but has to start between non-mixer-xt and
+  # touchosc, both of which are gated here). Deliberately not WantedBy
+  # anything: if they started at the same time as autorandr.service via
+  # graphical-session.target like everything else, they'd race it exactly
+  # like before. Instead this only ever starts once both xmonad-ready.service
+  # and autorandr-settled.service above are active (see their comment for
+  # why it's an AND of the two, not either alone). Once started, it's left
+  # alone: per observation this race only happens at login, so there's no
+  # postswitch hook to restart it -- a later monitor change shouldn't bounce
+  # these apps. Any new app whose startup cares about the monitor layout
+  # should join this target's Wants= rather than growing its own
+  # autorandr.service After= -- that's what this exists to avoid having to
+  # re-litigate per app.
+  systemd.user.targets.display-ready = {
+    Unit = {
+      Description = "Display geometry settled -- safe to start apps that depend on it";
+      After = [ "xmonad-ready.service" "autorandr-settled.service" ];
+      Wants = [
+        "non-mixer-xt.service"
+        "midi-daemon.service"
+        "touchosc.service"
+        "midi-staff-trainer.service"
+        "guitarix.service"
+        "obsidian.service"
+        "qpwgraph.service"
+      ];
+    };
+  };
+
   # Dunst notification daemon
   systemd.user.services.discord = {
     Unit = {
@@ -958,7 +1056,10 @@ in {
   systemd.user.services.guitarix = {
     Unit = {
       Description = "Guitarix amp simulator";
-      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # its definition above), so its window doesn't map before the monitor
+      # layout settles.
+      After = [ "graphical-session.target" "display-ready.target" "pipewire.service" "wireplumber.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -972,7 +1073,6 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Moved from xmonad's startupHook (spawnOn "ADM"): kept running rather than
@@ -981,7 +1081,15 @@ in {
   systemd.user.services.obsidian = {
     Unit = {
       Description = "Obsidian markdown editor";
-      After = [ "graphical-session.target" ];
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # its definition above), so its window doesn't map before the monitor
+      # layout settles.
+      # The vault lives on the Dropbox FUSE mount (see obsidian.json); same
+      # reasoning as non-mixer-xt's rclone-dropbox.service dependency --
+      # without it Obsidian can start against a not-yet-mounted vault path
+      # and map a degraded window that doShift then pins to ADM.
+      After = [ "graphical-session.target" "display-ready.target" "rclone-dropbox.service" ];
+      Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -995,7 +1103,6 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Moved from xmonad's startupHook (spawnOn "U12"): kept running like
@@ -1005,7 +1112,10 @@ in {
   systemd.user.services.qpwgraph = {
     Unit = {
       Description = "QPWGraph PipeWire patchbay";
-      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # its definition above), so its window doesn't map before the monitor
+      # layout settles.
+      After = [ "graphical-session.target" "display-ready.target" "pipewire.service" "wireplumber.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -1019,7 +1129,6 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Kept running like Non-Mixer-XT/qpwgraph rather than launched via the "m"
@@ -1028,7 +1137,14 @@ in {
   systemd.user.services.midi-staff-trainer = {
     Unit = {
       Description = "MIDI Staff Trainer";
-      After = [ "graphical-session.target" ];
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # its definition above). This app reads display geometry once at
+      # startup and never re-checks it, so ordering alone (After=
+      # autorandr.service) wasn't enough: it could still start against a
+      # not-yet-corrected profile from the login race those commits fixed
+      # (37b1528, 0c7d079), landing wrong until something else forced
+      # XMonad to relayout it (e.g. switching desktops).
+      After = [ "graphical-session.target" "display-ready.target" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -1042,7 +1158,6 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   systemd.user.services.dunst = {

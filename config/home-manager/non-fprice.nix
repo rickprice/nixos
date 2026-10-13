@@ -176,7 +176,16 @@ in {
       # mount; rclone-dropbox is Type=notify, so After=/Requires= here
       # actually blocks until the mount is ready, not just until rclone has
       # been forked.
-      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" "rclone-dropbox.service" ];
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # home.nix) so its window doesn't map before the monitor layout
+      # settles.
+      After = [
+        "graphical-session.target"
+        "display-ready.target"
+        "pipewire.service"
+        "wireplumber.service"
+        "rclone-dropbox.service"
+      ];
       Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
@@ -200,16 +209,20 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Moved from a NixOS system service to here: midi-daemon routes Non-Mixer-XT
   # OSC traffic, so it needs to start after non-mixer-xt exists, and systemd's
   # system and user managers can't order units against each other.
+  # Not itself a window, but moved onto display-ready.target along with
+  # non-mixer-xt/touchosc: it has to start after non-mixer-xt (OSC routing)
+  # and before touchosc (OSC routes), both of which are now also gated on
+  # display-ready.target, so it needs to be on the same gate rather than
+  # racing ahead of them via its own graphical-session.target trigger.
   systemd.user.services.midi-daemon = {
     Unit = {
       Description = "MIDI Lua Routing Daemon";
-      After = [ "graphical-session.target" "non-mixer-xt.service" "pipewire.service" "wireplumber.service" ];
+      After = [ "graphical-session.target" "display-ready.target" "non-mixer-xt.service" "pipewire.service" "wireplumber.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -227,7 +240,6 @@ in {
       CacheDirectory = "midi-daemon";
       Environment = "RUST_LOG=midi_daemon=info";
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Moved from xmonad's startupHook: previously spawned on login via spawnOn
@@ -236,7 +248,18 @@ in {
   systemd.user.services.touchosc = {
     Unit = {
       Description = "TouchOSC (ComplexSetup project)";
-      After = [ "graphical-session.target" "midi-daemon.service" ];
+      # rclone-dropbox.service: same reasoning as non-mixer-xt above --
+      # without it TouchOSC can start before the Dropbox mount is ready and
+      # map a degraded window that doShift then pins to U13.
+      # Not WantedBy anything -- only started via display-ready.target (see
+      # home.nix). TouchOSC reads display geometry once at startup and never
+      # re-checks it, so ordering alone (After=autorandr.service) wasn't
+      # enough: it could still start against a not-yet-corrected profile
+      # from the login race those commits fixed (37b1528, 0c7d079), and
+      # unlike midi-staff-trainer this needs a full exit+relaunch to pick up
+      # the right geometry -- an XMonad relayout alone doesn't fix it.
+      After = [ "graphical-session.target" "display-ready.target" "midi-daemon.service" "rclone-dropbox.service" ];
+      Requires = [ "rclone-dropbox.service" ];
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
@@ -251,6 +274,5 @@ in {
       RestartMaxDelaySec = "32s";
       TimeoutStopSec = 10;
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
 }

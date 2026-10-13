@@ -87,6 +87,12 @@ myScreenLock = "xscreensaver-command -lock"
 -- coalesces a start request against an already-running unit instead of
 -- spawning a second concurrent autorandr process.
 myFixScreens = "systemctl --user start autorandr.service"
+-- One half of the AND-gate for display-ready.target (home.nix): marks
+-- "XMonad has reached its startup hook" and, only if the other half
+-- (autorandr-settled.service, set by autorandr's postswitch hook) is
+-- already active, starts the target. See display-ready.target's comment
+-- for why this needs to be an AND of both signals rather than either alone.
+myNotifyXmonadReady = "systemctl --user start xmonad-ready.service && systemctl --user is-active --quiet autorandr-settled.service && systemctl --user --no-block start display-ready.target; true"
 myFixLogitechMouse = "xinput --set-prop 'Logitech M325' 'libinput Accel Speed' -0.4"
 mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
 myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
@@ -574,6 +580,11 @@ myStartupHook hostname = do
             return ()
 
     setWMName "LG3D"
+
+    -- Last thing in this hook on purpose: every other startup action above
+    -- should at least have been issued before this fires, not race ahead
+    -- of any of it.
+    spawn myNotifyXmonadReady
 
 -- =============================================================================
 -- MAIN
