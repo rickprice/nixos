@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage {
   pname = "markdown_timesheet";
-  version = "0.8.0";
+  version = "0.9.0";
 
   src = fetchCrate {
     pname = "markdown_timesheet";
-    version = "0.8.0";
-    hash = "sha256-u26uUT8W62vJU7yf+eDFQDLOA/qIMZugy8tn6Eixpw4=";
+    version = "0.9.0";
+    hash = "sha256-6R4wHSJnwUrV9fONnpHp4oBwmL+PCIGlv8YDyI3Wq2E=";
   };
 
-  cargoHash = "sha256-wHjm6hiBvyEZSx12kvWZOn6myyouTp/gIAYitrDSS3o=";
+  cargoHash = "sha256-6rQzgs4sFjG5wSNAqsE7iL9E7bhx9CoD87GEqefX/jY=";
 
   meta = with lib; {
     description = "A tool for processing markdown files to extract and format timesheet data";
