@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "md-to-svg";
-  version = "0.2.3";
+  version = "0.2.4";
 
   src = fetchFromGitHub {
     owner = "noahprice-dev";
     repo = "md-to-svg";
-    rev = "v0.2.3";
-    hash = "sha256-y2a2KBjUOHOSfC2kSD7RZaLlJH92nNOY6L3pQhai/P0=";
+    rev = "v0.2.4";
+    hash = "sha256-vJS4JOX+dIXTq/5SCQ9jTWbLw1SXc35UjJf7wbD17GA=";
   };
 
-  cargoHash = "sha256-s0+r1+++jTFSVCj0Sm4UtE7KMNQrIb9FOcf4E2BvuVM=";
+  cargoHash = "sha256-II1ShtlZhadDK3y7kp+IUP172MZwbnLiyY25EOc2kdM=";
 
   meta = with lib; {
     description = "Highly configurable CLI tool to translate Markdown Documents into SVG files";
