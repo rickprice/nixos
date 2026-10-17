@@ -34,8 +34,10 @@ DIR_TO_COPY=/etc
 sudo rsync -aAXv $DIR_TO_COPY --delete $EXPORT_DIRECTORY
 
 # Home
+# Dropbox is an rclone fuse mount, not real local data — skip it so
+# rsync doesn't walk/copy the cloud-backed contents.
 DIR_TO_COPY=/home
-sudo rsync -aAXv $DIR_TO_COPY --delete $EXPORT_DIRECTORY
+sudo rsync -aAXv $DIR_TO_COPY --delete --exclude='fprice/Documents/Personal/Dropbox' $EXPORT_DIRECTORY
 
 # Start DropBox back up again
 dropbox &
