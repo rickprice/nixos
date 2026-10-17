@@ -46,6 +46,7 @@
             background-picker = prev.callPackage ./config/packages/background-picker.nix { };
             md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
             markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
+            darktable-import-xmp = prev.callPackage ./config/packages/darktable-import-xmp.nix { };
             csvargs = prev.callPackage ./config/packages/csvargs.nix { };
             midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
             inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
