@@ -116,19 +116,19 @@ farRightScreen = 2
 -- Work workspaces
 wWorkspaceDisplayPrefix = "W"
 wWorkspaceKeyPrefix = Nothing
-wDesktops = 2
+wDesktops = 3
 wDesktopPanes = 3
 
 -- Tamara workspaces
 tWorkspaceDisplayPrefix = "TP"
 tWorkspaceKeyPrefix = Just "t"
-tDesktops = 2
+tDesktops = 3
 tDesktopPanes = 3
 
 -- Frederick workspaces
 fWorkspaceDisplayPrefix = "FP"
 fWorkspaceKeyPrefix = Just "f"
-fDesktops = 3
+fDesktops = 6
 fDesktopPanes = 3
 
 -- Utility workspaces
