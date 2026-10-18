@@ -1,8 +1,5 @@
 #! /bin/bash
 
-# Keep DropBox out of our hair
-killall -q dropbox
-
 # Fail script if any command fails
 set -e
 set -x
@@ -38,6 +35,3 @@ sudo rsync -aAXv $DIR_TO_COPY --delete $EXPORT_DIRECTORY
 # rsync doesn't walk/copy the cloud-backed contents.
 DIR_TO_COPY=/home
 sudo rsync -aAXv $DIR_TO_COPY --delete --exclude='fprice/Documents/Personal/Dropbox' $EXPORT_DIRECTORY
-
-# Start DropBox back up again
-dropbox &
