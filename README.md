@@ -12,7 +12,7 @@ My NixOS configuration (flake-based)
 
 ## Structure
 
-```
+```text
 flake.nix                        # Flake entry point (nixpkgs, home-manager, plasma-manager, disko)
 etc/nixos/
   configuration.nix              # Shared system configuration (all machines)
@@ -57,9 +57,11 @@ Write the NixOS ISO to a USB drive and boot from it. Either the graphical or min
 ### 2. Connect to the internet
 
 Ethernet is detected automatically. For Wi-Fi:
-```
+```bash
 sudo systemctl start wpa_supplicant
 wpa_cli
+```
+```text
 > add_network
 > set_network 0 ssid "YourNetwork"
 > set_network 0 psk "YourPassword"
@@ -68,13 +70,13 @@ wpa_cli
 ```
 
 Verify connectivity:
-```
+```bash
 ping -c 3 nixos.org
 ```
 
 ### 3. Clone this repo
 
-```
+```bash
 nix-shell -p git
 git clone https://github.com/rickprice/nixos.git /tmp/nixos
 exit
@@ -83,12 +85,12 @@ exit
 ### 4. Partition and format the disk
 
 **For daw or fwork** (LUKS encryption — you will be prompted to set a passphrase):
-
+```bash
 sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
 ```
 
 **For tprice or eric** (no encryption):
-```
+```bash
 sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/plain.nix
 ```
 
@@ -99,17 +101,17 @@ Disko partitions, formats, and mounts everything under `/mnt` automatically. The
 Disko formats a 16 GB swap partition (or LVM logical volume for the encrypted layout) during step 4, but does not always activate it in the live installer environment. Activate it manually before installing:
 
 **For daw or fwork** (encrypted — LVM logical volume):
-```
+```bash
 sudo swapon /dev/vg/swap
 ```
 
 **For tprice or eric** (plain — partition):
-```
+```bash
 sudo swapon /dev/nvme0n1p2
 ```
 
 Verify it is active:
-```
+```bash
 swapon --show
 ```
 
@@ -120,7 +122,7 @@ Failing to completely (never) disable automatic suspend causes the machine to ha
 ### 7. Install NixOS
 
 Replace `<hostname>` with `daw`, `fwork`, `tprice`, or `eric`. The `--option` flags limit parallelism to match what the installed config enforces, preventing OOM kills during the build:
-```
+```bash
 sudo nixos-install --flake /tmp/nixos#<hostname>
 ```
 
@@ -128,7 +130,7 @@ You will be prompted to set a root password at the end.
 
 ### 8. Set user passwords
 
-```
+```bash
 sudo nixos-enter --root /mnt
 passwd fprice    # on daw or fwork
 # or:
@@ -139,7 +141,7 @@ exit
 
 ### 9. Reboot into the new system
 
-```
+```bash
 reboot
 ```
 
@@ -148,24 +150,24 @@ Remove the USB drive when prompted.
 ### 10. After first boot — put the repo in place
 
 Log in, then clone the repo and run the bootstrap script to symlink it to `/etc/nixos`:
-```
+```bash
 git clone https://github.com/rickprice/nixos.git ~/nixos
 ~/nixos/NukeAndInstall.sh
 ```
 
 ### 11. Rebuild to confirm everything is wired up
 
-```
+```bash
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
 ```
 
 If flakes are not yet enabled on the freshly booted system:
-```
+```bash
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname> --option extra-experimental-features 'nix-command flakes'
 ```
 
 After this first rebuild, flakes will be enabled and you can use the shell alias for future rebuilds:
-```
+```bash
 rebuild
 ```
 
@@ -178,7 +180,7 @@ To handle this, capture the real filesystem layout and remove disko from the mac
 ### 1. Generate a hardware configuration from the mounted system
 
 With the target partitions mounted under `/mnt`:
-```
+```bash
 nixos-generate-config --root /mnt --show-hardware-config > /tmp/nixos/etc/nixos/hardware-configuration.nix
 ```
 
@@ -190,7 +192,7 @@ Disko must not be included when it did not create the partitions, because it wou
 
 ### 3. Install as normal
 
-```
+```bash
 sudo nixos-install --flake /tmp/nixos#<hostname>
 ```
 
@@ -210,7 +212,7 @@ Dropbox is mounted via rclone as a FUSE filesystem and managed by a systemd user
 
 ### 1. Check if the remote is already configured
 
-```
+```bash
 rclone listremotes
 ```
 
@@ -218,7 +220,7 @@ If `Dropbox:` appears in the output, skip to step 3.
 
 ### 2. Configure the rclone Dropbox remote
 
-```
+```bash
 rclone config
 ```
 
@@ -230,7 +232,7 @@ In the interactive wizard:
 
 ### 3. Start the mount service
 
-```
+```bash
 systemctl --user start rclone-dropbox.service
 systemctl --user status rclone-dropbox.service
 ```
@@ -248,7 +250,7 @@ Tailscale is enabled on all machines (`services.tailscale.enable`). DNS is handl
 Without resolved, Tailscale's `resolvconf` hook overwrites `/etc/resolv.conf` with only its MagicDNS servers (100.100.100.100), completely displacing the local router DNS. Any hiccup in MagicDNS breaks all DNS resolution. With resolved running, `tailscaled` detects it and registers MagicDNS per-interface via D-Bus instead, leaving the local DNS and global fallbacks (1.1.1.1, 9.9.9.9) intact.
 
 To check DNS status after a rebuild:
-```
+```bash
 resolvectl status
 ```
 
@@ -293,7 +295,7 @@ After a rebuild that adds this for the first time, log out and back in (or `newg
 
 ## Updating inputs
 
-```
+```bash
 nix flake update          # update all inputs
 nix flake update nixpkgs  # update only nixpkgs
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
