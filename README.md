@@ -83,7 +83,7 @@ exit
 ### 4. Partition and format the disk
 
 **For daw or fwork** (LUKS encryption — you will be prompted to set a passphrase):
-```
+
 sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko /tmp/nixos/config/disko/encrypted.nix
 ```
 
@@ -113,16 +113,20 @@ Verify it is active:
 swapon --show
 ```
 
-### 6. Install NixOS
+### 6. Disable suspend and screensaver
+
+Failing to completely (never) disable automatic suspend causes the machine to hang and drop dead during the install.
+
+### 7. Install NixOS
 
 Replace `<hostname>` with `daw`, `fwork`, `tprice`, or `eric`. The `--option` flags limit parallelism to match what the installed config enforces, preventing OOM kills during the build:
 ```
-sudo nixos-install --flake /tmp/nixos#<hostname> --option max-jobs 2 --option cores 2
+sudo nixos-install --flake /tmp/nixos#<hostname>
 ```
 
 You will be prompted to set a root password at the end.
 
-### 7. Set user passwords
+### 8. Set user passwords
 
 ```
 sudo nixos-enter --root /mnt
@@ -133,7 +137,7 @@ passwd eric      # on eric
 exit
 ```
 
-### 8. Reboot into the new system
+### 9. Reboot into the new system
 
 ```
 reboot
@@ -141,7 +145,7 @@ reboot
 
 Remove the USB drive when prompted.
 
-### 9. After first boot — put the repo in place
+### 10. After first boot — put the repo in place
 
 Log in, then clone the repo and run the bootstrap script to symlink it to `/etc/nixos`:
 ```
@@ -149,7 +153,7 @@ git clone https://github.com/rickprice/nixos.git ~/nixos
 ~/nixos/NukeAndInstall.sh
 ```
 
-### 10. Rebuild to confirm everything is wired up
+### 11. Rebuild to confirm everything is wired up
 
 ```
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
