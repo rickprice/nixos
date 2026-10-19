@@ -171,6 +171,22 @@ After this first rebuild, flakes will be enabled and you can use the shell alias
 rebuild
 ```
 
+### 12. Connect to Tailscale
+
+`services.tailscale.enable` is already on from the first rebuild, but the node still needs to authenticate:
+```bash
+sudo tailscale up
+```
+Open the printed login link in a browser and sign in to add this machine to the tailnet. See [Tailscale and DNS](#tailscale-and-dns) for how DNS is wired up.
+
+### 13. Pair Syncthing (fwork only)
+
+`daw`, `tprice`, and `eric` don't run Syncthing (see [Syncthing](#syncthing)). On `fwork`, the service starts automatically but needs this machine's device ID added to the devices it should sync with:
+```bash
+syncthing cli config system status | grep myID
+```
+Add the ID to the other device's Syncthing config (declaratively, if it's also managed by this flake) and add that device's ID here in `config/home-manager/syncthing-fprice.nix`, then run `rebuild`. See [Adding a new device](#adding-a-new-device) for the full steps.
+
 ## Installing on a disk set up externally (e.g. by the NixOS installer)
 
 The normal install uses disko to partition and generate `fileSystems` entries. If the disk was partitioned by some other means (e.g. the NixOS graphical installer), the disko module will still try to generate `fileSystems` based on what it expects and may not match what is actually on disk.
