@@ -79,8 +79,6 @@ in {
     # Rust
     cargo
     rustc
-    rustfmt
-    clippy
     rust-analyzer
 
     # Python
@@ -88,9 +86,6 @@ in {
       ipython       # enhanced REPL
       requests      # HTTP client
       httpx         # async HTTP client
-      black         # formatter
-      mypy          # type checker
-      pylint        # linter
       rich          # terminal formatting
     ]))
 

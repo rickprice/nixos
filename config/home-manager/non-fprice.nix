@@ -63,6 +63,18 @@ in {
     })
     pkgs.midi-auto-connector
     pkgs.usbutils  # lsusb
+
+    # Lint/format tools for scripts and Rust bits written on this machine --
+    # kept off tprice/eric since that's not where this kind of dev work happens.
+    pkgs.shellcheck # Bash linter (no equivalent zsh checker exists in nixpkgs)
+    pkgs.rustfmt
+    pkgs.clippy
+    (pkgs.python3.withPackages (ps: with ps; [
+      black  # formatter
+      mypy   # type checker
+      pylint # linter
+      flake8 # PEP8 style checker
+    ]))
   ];
 
   # Routes the A-PRO controller and the midi-daemon-driven Metronome into
