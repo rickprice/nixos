@@ -702,6 +702,8 @@ in {
     ../claude/skills/python-best-practices/SKILL.md;
   home.file.".claude/skills/bash-best-practices/SKILL.md".source =
     ../claude/skills/bash-best-practices/SKILL.md;
+  home.file.".claude/skills/nix-best-practices/SKILL.md".source =
+    ../claude/skills/nix-best-practices/SKILL.md;
 
   xdg.configFile."gtk-3.0/gtk.css".text = ''
     calendar {
