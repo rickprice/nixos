@@ -99,7 +99,6 @@ setup_all({
   { "neogit" },
   { "telescope" },
   { "todo-comments" },
-  { "zen-mode" },
 })
 
 -- ── Colorscheme ───────────────────────────────────────────────────────────
@@ -226,8 +225,20 @@ vim.o.timeout    = true
 vim.o.timeoutlen = 500
 require("which-key").setup()
 
--- ── Toggleterm ────────────────────────────────────────────────────────────
-require("toggleterm").setup()
+-- ── Snacks ────────────────────────────────────────────────────────────────
+-- Only the terminal and zen modules are enabled -- every other snack
+-- (notifier, indent, dashboard, etc.) defaults to off and stays off, so
+-- this doesn't touch the existing noice/nvim-notify setup above.
+require("snacks").setup({
+  terminal = { enabled = true },
+  zen      = { enabled = true },
+})
+-- zen-mode.nvim used to provide this command; kept for muscle memory now
+-- that Snacks.zen() replaces it.
+vim.api.nvim_create_user_command("ZenMode", function() Snacks.zen() end, {})
+
+-- ── Claude Code ───────────────────────────────────────────────────────────
+require("claudecode").setup({ terminal = { provider = "snacks" } })
 
 -- ── DAP UI ────────────────────────────────────────────────────────────────
 require("dapui").setup()
@@ -348,8 +359,19 @@ map("n", "<leader>xt", ":Trouble todo toggle<CR>",                      { desc =
 map("n", "<leader>xh", ":lua vim.diagnostic.hide()<CR>",               { desc = "Hide diagnostics" })
 map("n", "<leader>xs", ":lua vim.diagnostic.show()<CR>",               { desc = "Show diagnostics" })
 
--- Toggleterm
-map("n", "<leader>T", "<cmd>ToggleTerm<cr>", { desc = "ToggleTerm" })
+-- Snacks terminal
+map("n", "<leader>T", function() Snacks.terminal.toggle() end, { desc = "Toggle terminal" })
+
+-- Claude Code
+map("n", "<leader>ac", "<cmd>ClaudeCode<cr>",            { desc = "Toggle Claude" })
+map("n", "<leader>af", "<cmd>ClaudeCodeFocus<cr>",       { desc = "Focus Claude" })
+map("n", "<leader>ar", "<cmd>ClaudeCode --resume<cr>",   { desc = "Resume Claude" })
+map("n", "<leader>aC", "<cmd>ClaudeCode --continue<cr>", { desc = "Continue Claude" })
+map("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", { desc = "Select Claude model" })
+map("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>",       { desc = "Add buffer to Claude" })
+map("v", "<leader>as", "<cmd>ClaudeCodeSend<cr>",        { desc = "Send selection to Claude" })
+map("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>",  { desc = "Accept Claude diff" })
+map("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>",    { desc = "Reject Claude diff" })
 
 -- Rename (LSP built-in)
 map({"n","v"}, "<leader>cn", vim.lsp.buf.rename, { desc = "Rename" })

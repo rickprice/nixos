@@ -11,20 +11,25 @@ Rust crate's dependencies, public surface, or cut a release.
 
 ## Cargo.lock
 
-- If the crate (or any crate in the workspace) produces a binary,
-  **commit `Cargo.lock`**. It's the only thing that makes CI, `cargo
-  install --locked`, and Nix builds (`buildRustPackage` with
-  `cargoLock.lockFile`) reproducible. Don't gitignore it.
-- For a workspace member that's a pure library with no binary anywhere
-  in the workspace, committing `Cargo.lock` is optional by convention
-  (downstream consumers resolve their own) — but committing it anyway
-  costs nothing and keeps your own CI/tests reproducible, so default to
-  committing unless there's a specific reason not to.
+- **Commit `Cargo.lock`** — for binaries and libraries alike. The Rust
+  team's older binary-only guidance was relaxed in 2023: the current
+  recommendation is "do what's best for your project," and committing
+  is the reasonable default either way. It's the only thing that makes
+  CI, `cargo install --locked`, and Nix builds (`buildRustPackage` with
+  `cargoLock.lockFile`) reproducible, and it means a new contributor or
+  CI run gets the exact dependency tree you tested against instead of
+  whatever resolves at that moment. Don't gitignore it.
 - Whenever you add, remove, or bump a dependency in `Cargo.toml`, run
   `cargo build` (or `cargo update -p <pkg>`) and commit the resulting
   `Cargo.lock` diff **in the same commit** as the `Cargo.toml` change —
   never let them drift apart across commits.
+- Build with `--locked` in CI and release builds (`cargo build --release
+  --locked`) so a drifted lockfile fails loudly instead of silently
+  resolving different versions than what's committed.
 - Never hand-edit `Cargo.lock`.
+- `cargo audit` checks `Cargo.lock` against the RustSec advisory
+  database — worth running before a release, and in CI if the project
+  has any exposure (network-facing, parses untrusted input, etc.).
 
 ## README
 
@@ -66,3 +71,14 @@ Rust crate's dependencies, public surface, or cut a release.
 - If publishing from CI, gate the publish job on the tag pattern (e.g.
   `v[0-9]+.*`) so it only runs on intentional release tags, not every
   push to main.
+- Prefer **Trusted Publishing (OIDC)** over a long-lived
+  `CARGO_REGISTRY_TOKEN` secret when publishing from GitHub Actions or
+  GitLab CI. Configure the trusted publisher on the crates.io crate
+  settings page (repo + workflow filename), give the publish job
+  `permissions: id-token: write`, and exchange the token via
+  `rust-lang/crates-io-auth-action` immediately before `cargo publish`.
+  The exchanged token is scoped to that one crate and expires in 30
+  minutes, so there's no standing secret to leak or rotate. Keep the
+  publish step in its own job gated by the tag pattern above, separate
+  from build/test, since it's the one step that needs the elevated
+  `id-token` permission.
