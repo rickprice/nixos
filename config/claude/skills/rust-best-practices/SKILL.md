@@ -1,13 +1,14 @@
 ---
 name: rust-best-practices
-description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock and the README in sync with the code, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release".
+description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock and the README in sync with the code, benchmarking/profiling before optimizing, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release", "benchmark", "criterion", "profile", "flamegraph", "optimize Rust".
 ---
 
 # Rust project hygiene
 
-Three things repeatedly go stale or get botched in Rust projects if
-nobody enforces them deliberately. Check all three whenever you touch a
-Rust crate's dependencies, public surface, or cut a release.
+Four things repeatedly go stale or get botched in Rust projects if
+nobody enforces them deliberately. Check all four whenever you touch a
+Rust crate's dependencies, public surface, performance-sensitive code,
+or cut a release.
 
 ## Cargo.lock
 
@@ -44,6 +45,42 @@ Rust crate's dependencies, public surface, or cut a release.
 - If the project is a workspace, keep the "project layout" section
   (crate names, paths, responsibilities) in sync whenever crates are
   added, renamed, split, or removed.
+
+## Performance
+
+- Don't optimize blind. Profile first — `cargo flamegraph` (wraps
+  `perf` on Linux) or `samply` — on a `--release` build, since debug
+  builds are 10-100x slower and have different hot spots entirely.
+  Fix what the profile actually shows, not what looks slow on
+  inspection; intuition about hot paths is wrong more often than not.
+- Benchmark with `criterion`, not `Instant::now()` wrapped around a
+  loop in `main`. Criterion's warmup phase accounts for one-off
+  JIT/cache effects, runs enough iterations to average out noise, and
+  will tell you outright when a result isn't statistically
+  distinguishable from the baseline — a hand-rolled timer loop does
+  none of that, so a single run from one risks being pure noise.
+- Treat a `cargo bench` regression like a test failure: investigate
+  before merging, not after. `cargo bench -- --save-baseline main` on
+  the base branch, then `--baseline main` on the PR branch, gives a
+  direct before/after comparison instead of eyeballing two separate
+  runs.
+- Avoid unnecessary allocation in hot paths: `Cow<str>` for a function
+  that sometimes borrows and sometimes needs to allocate; `&str`/`&[T]`
+  parameters instead of `String`/`Vec<T>` when the callee doesn't need
+  ownership; `Vec::with_capacity`/`.extend(...)` instead of a `push`
+  loop that reallocates repeatedly.
+- Prefer `Arc::clone(&x)` over `x.clone()` for a shared pointer. Both
+  do the same refcount bump, but the explicit form makes it obvious at
+  the call site that this isn't a deep copy — a bare `.clone()` on an
+  `Arc<BigStruct>` reads identically to cloning `BigStruct` itself
+  until you check the type.
+- Don't reach for `unsafe` to "make it fast" before a profile says
+  bounds-checking/allocation/etc. is the actual bottleneck — the
+  maintenance cost of unsafe code outlives whatever performance
+  problem it solved. If a flamegraph does point squarely at one of
+  those, check for an existing safe fast path first (`SmallVec` to
+  avoid heap allocation for small collections, `itertools` adaptors
+  that fuse iterator passes) before writing new unsafe code.
 
 ## GitHub releases that line up with crates.io
 
