@@ -56,6 +56,10 @@ you touch Python code, a project's dependencies, or cut a release.
   `poetry install --no-update`) so a drifted lock file fails the build
   instead of silently resolving different versions than what's
   committed.
+- `pip-audit` (or `safety`) checks the resolved dependency set against
+  known-vulnerability databases, the same role `cargo audit` plays for
+  Rust — worth running before a release, and in CI if the project has
+  any exposure (network-facing, parses untrusted input, etc.).
 
 ## README
 
@@ -90,3 +94,12 @@ you touch Python code, a project's dependencies, or cut a release.
 - Tag the repo at the exact commit you intend to publish, before any
   further changes — the GitHub Release's source archive and what gets
   uploaded to PyPI should be the same tree.
+- **If the package has type hints, ship a `py.typed` marker file** and
+  list it under the build backend's package-data/include config (e.g.
+  hatchling's `[tool.hatch.build]` `include`, or setuptools'
+  `package_data`). Without it, PEP 561 says type checkers must treat
+  the installed package as untyped — your hints work perfectly in the
+  source checkout and silently vanish for everyone who `pip install`s
+  the wheel. Check the built wheel's file list
+  (`unzip -l dist/*.whl` or `python -m zipfile -l dist/*.whl`) for
+  `py.typed` before publishing, not after a user reports it missing.

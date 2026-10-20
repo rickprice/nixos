@@ -1,12 +1,12 @@
 ---
 name: rust-best-practices
-description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock and the README in sync with the code, benchmarking/profiling before optimizing, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release", "benchmark", "criterion", "profile", "flamegraph", "optimize Rust".
+description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock, MSRV, and the README in sync with the code, benchmarking/profiling before optimizing, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release", "benchmark", "criterion", "profile", "flamegraph", "optimize Rust", "MSRV", "rust-version".
 ---
 
 # Rust project hygiene
 
-Four things repeatedly go stale or get botched in Rust projects if
-nobody enforces them deliberately. Check all four whenever you touch a
+Five things repeatedly go stale or get botched in Rust projects if
+nobody enforces them deliberately. Check all five whenever you touch a
 Rust crate's dependencies, public surface, performance-sensitive code,
 or cut a release.
 
@@ -31,6 +31,26 @@ or cut a release.
 - `cargo audit` checks `Cargo.lock` against the RustSec advisory
   database — worth running before a release, and in CI if the project
   has any exposure (network-facing, parses untrusted input, etc.).
+
+## Minimum Supported Rust Version (MSRV)
+
+- If the README or docs ever state a minimum Rust version ("works on
+  Rust 1.70+"), **set `rust-version` in `[package]`** (or
+  `[workspace.package]` for a workspace) so Cargo enforces it itself —
+  a stated-but-unenforced MSRV goes stale the first time a dependency
+  bump quietly raises the real minimum.
+- Whenever a dependency bump or a new language feature in your own
+  code raises the actual minimum compiler version needed, bump
+  `rust-version` **in the same commit** — same drift problem as
+  `Cargo.lock`, just for a different field. `cargo msrv verify` (or
+  trying a real build with `rustup run <msrv-version> cargo build`)
+  catches "accidentally depends on a newer feature" before a user on
+  an older toolchain hits it.
+- If MSRV is a real commitment (a library other crates depend on,
+  distro packaging, etc.), add a CI job that builds with the pinned
+  MSRV toolchain specifically, not just `stable`/`beta` — a
+  latest-stable-only matrix can't catch an MSRV regression at all,
+  since `stable` is always newer than or equal to the MSRV you claim.
 
 ## README
 

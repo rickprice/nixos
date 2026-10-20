@@ -1,6 +1,6 @@
 ---
 name: bash-best-practices
-description: Use whenever creating or modifying a Bash or ZSH script, or any shell snippet meant to be reused (not a one-off interactive command). Covers strict mode, quoting, ShellCheck, and the gap ShellCheck leaves for ZSH-specific scripts. Triggers on ".sh", ".zsh", "#!/bin/bash", "#!/usr/bin/env bash", "#!/usr/bin/env zsh", "shell script", "bash script", "zsh script".
+description: Use whenever creating or modifying a Bash or ZSH script, or any shell snippet meant to be reused (not a one-off interactive command) — including a script that will be packaged as a Nix derivation. Covers strict mode, quoting, ShellCheck, the gap ShellCheck leaves for ZSH-specific scripts, and PATH pitfalls once a script runs under writeShellApplication/systemd instead of an interactive shell. Triggers on ".sh", ".zsh", "#!/bin/bash", "#!/usr/bin/env bash", "#!/usr/bin/env zsh", "shell script", "bash script", "zsh script", "writeShellApplication", "writeShellScriptBin".
 ---
 
 # Shell script hygiene
@@ -97,3 +97,30 @@ cause real bugs when bash habits carry over:
   strict mode transfers directly — but `[[ ]]` has a few ZSH-only
   extensions (e.g. `=~` regex matching differences), so don't assume a
   `[[ ]]` conditional is 100% portable between the two without checking.
+
+## Nix packaging
+
+When a script becomes a Nix derivation (`writeShellApplication`,
+`writeShellScriptBin`, or wrapped in a package like this repo's
+`config/packages/*.nix`), its runtime environment stops being your
+interactive shell:
+
+- Don't call a bare command name (`jq`, `curl`, `ffmpeg`, ...) and
+  rely on `$PATH` to find it. Nothing guarantees the derivation's
+  runtime `$PATH` contains what your login shell's does — a script
+  that works fine run by hand can fail, or silently resolve to the
+  wrong binary, once it's packaged.
+- Prefer `writeShellApplication`'s `runtimeInputs` list over manual
+  `$PATH` wiring — it prepends exactly the packages you list to
+  `$PATH` for that script, and it runs the whole script through
+  ShellCheck as part of the build, so a ShellCheck failure becomes a
+  build failure instead of a runtime surprise. For a single binary
+  reference without pulling in a whole wrapper, substitute the exact
+  store path instead: `"${pkgs.jq}/bin/jq"` (or `${lib.getExe pkgs.jq}`)
+  interpolated into the script at Nix eval time.
+- This matters doubly for systemd units (`systemd.services.*`/
+  `systemd.user.services.*`) — `ExecStart` runs with none of the
+  environment a login shell sets up (no `.bashrc`/`.zshrc`, no
+  `profile.d` PATH extensions), so a script relying on ambient `$PATH`
+  can behave correctly when tested by hand and fail silently as a
+  service.
