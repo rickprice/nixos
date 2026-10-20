@@ -37,6 +37,7 @@ in {
     wget
     unzip
     tree
+    usbutils    # lsusb
 
     # Dev tools
     git

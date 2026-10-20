@@ -62,6 +62,7 @@ in {
       '';
     })
     pkgs.midi-auto-connector
+    pkgs.usbutils  # lsusb
   ];
 
   # Routes the A-PRO controller and the midi-daemon-driven Metronome into
