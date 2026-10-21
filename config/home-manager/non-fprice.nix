@@ -66,15 +66,23 @@ in {
 
     # Lint/format tools for scripts and Rust bits written on this machine --
     # kept off tprice/eric since that's not where this kind of dev work happens.
+    #
+    # Standalone top-level packages, not python3.withPackages: this module
+    # and home.nix both run on daw/fwork for the fprice user, and home.nix
+    # already has its own python3.withPackages (ipython/requests/httpx/rich).
+    # Two separate python3.withPackages envs can't coexist in home.packages
+    # -- buildEnv fails with "conflicting subpath" the moment both try to
+    # provide bin/pydoc, bin/python3, etc. from the wrapped interpreter.
+    # Standalone packages like these only expose their own entry points, so
+    # they don't collide with another python env the way a second
+    # withPackages call would.
     pkgs.shellcheck # Bash linter (no equivalent zsh checker exists in nixpkgs)
     pkgs.rustfmt
     pkgs.clippy
-    (pkgs.python3.withPackages (ps: with ps; [
-      black  # formatter
-      mypy   # type checker
-      pylint # linter
-      flake8 # PEP8 style checker
-    ]))
+    pkgs.black  # Python formatter
+    pkgs.mypy   # Python type checker
+    pkgs.pylint # Python linter
+    pkgs.ruff   # Python PEP8/style checker -- flake8 isn't packaged top-level
   ];
 
   # Routes the A-PRO controller and the midi-daemon-driven Metronome into
