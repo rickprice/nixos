@@ -1,13 +1,13 @@
-{ lib, rustPlatform, fetchFromGitHub, pkg-config, alsa-lib, pipewire }:
+{ lib, rustPlatform, fetchFromGitHub, pkg-config, alsa-lib, pipewire, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "midi-auto-connector";
   version = "0.3.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-auto-connector";
-    rev = "v0.3.0";
+    rev = "v${version}";
     hash = "sha256-rma3uhXRhOTmRofbkPXJ/8C+MW4LV1wQhrTJm6YrXvc=";
   };
 
@@ -15,6 +15,9 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [ pkg-config rustPlatform.bindgenHook ];
   buildInputs = [ alsa-lib pipewire ];
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "A daemon that auto-connects ALSA and PipeWire MIDI ports, and PipeWire audio ports, based on regex rules, with optional Lua hooks on connect/disconnect";

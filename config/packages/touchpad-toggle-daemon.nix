@@ -1,17 +1,17 @@
-{ lib, rustPlatform, fetchFromGitHub, pkg-config, makeWrapper, udev, xinput }:
+{ lib, rustPlatform, fetchFromGitHub, pkg-config, makeWrapper, udev, xinput, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "touchpad-toggle-daemon";
-  version = "0.2.5";
+  version = "0.2.6";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "touchpad-toggle-daemon";
-    rev = "v0.2.5";
-    hash = "sha256-tPMBrSDE98uNfpJu+LNpwrFacgoZHtoujEdYIGh7qhg=";
+    rev = "v${version}";
+    hash = "sha256-xZE4ovRPC2QUmU4KY+LPLL8hiIQ8cdOEI7EeiWKYnQE=";
   };
 
-  cargoHash = "sha256-j8MY8KkP6LXi3ydR7/laM22+uzEgsE1qvxz518oEcJY=";
+  cargoHash = "sha256-ld9CmccLkfIiEzXt6Ewsh9FxG+yI4ln57cs9EbX3K4Y=";
 
   nativeBuildInputs = [ pkg-config makeWrapper ];
   buildInputs = [ udev ];
@@ -20,6 +20,9 @@ rustPlatform.buildRustPackage {
     wrapProgram $out/bin/touchpad-toggle-daemon \
       --prefix PATH : ${lib.makeBinPath [ xinput ]}
   '';
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Disables the laptop touchpad while an external mouse is connected";

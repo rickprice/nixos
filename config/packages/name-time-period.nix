@@ -1,16 +1,18 @@
-{ lib, rustPlatform, fetchCrate }:
+{ lib, rustPlatform, fetchCrate, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "name_time_period";
-  version = "0.4.0";
+  version = "0.4.1";
 
   src = fetchCrate {
-    pname = "name_time_period";
-    version = "0.4.0";
-    hash = "sha256-Dk32hHiOGpX7zoFycEcqkJE948pMUxiMurW23//KG/U=";
+    inherit pname version;
+    hash = "sha256-br96Iffn+XPWhlD4qh0OF/K6clc2YV0D1KMJGXDlhR8=";
   };
 
-  cargoHash = "sha256-wbXcSeevRQT3cBxbV/ArzlZS43xfKA5FoiXZ6v0sogs=";
+  cargoHash = "sha256-iWLxkqrd7j3Imno5xOm9vHwS4VZq7D3h2deK6Smnmf8=";
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Name the time period a date is in, configuration is supported";

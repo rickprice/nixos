@@ -1,13 +1,13 @@
 { lib, stdenv, fetchFromGitHub, lv2, pkg-config }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "volumepanningstereo-lv2";
   version = "0.1.6";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "VolumePanningStereo.lv2";
-    rev = "v0.1.6";
+    rev = "v${version}";
     hash = "sha256-5kpTWIDYb1PMD5l5riMIcGDry2+i8b+uryCsdqnn7Tc=";
   };
 

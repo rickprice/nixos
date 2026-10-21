@@ -1,23 +1,26 @@
-{ lib, rustPlatform, fetchFromGitHub, alsa-lib, pkg-config }:
+{ lib, rustPlatform, fetchFromGitHub, alsa-lib, pkg-config, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "midi-daemon";
-  version = "0.9.6";
+  version = "0.9.7";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-daemon";
-    rev = "v0.9.6";
-    hash = "sha256-qC35we4EnkYJg+gt8BAJPhy8YtXHRI7bAQjQW0HBWUA=";
+    rev = "v${version}";
+    hash = "sha256-Moo++2HPk3pulcRsVl60oR+Ae8tVkCpjGcwCSVrTTfg=";
   };
 
-  cargoHash = "sha256-QACG7GBmIYSqa/QqDaKBFCFfaPOgmC7pKyXoZhepD8Y=";
+  cargoHash = "sha256-MAKmOEKVhYP4JgFXAM+jv7EOhzXvMYCQGaFpDtJ1Oy4=";
 
   # Timer tests spawn real-time threads that time out in the Nix sandbox
   doCheck = false;
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ alsa-lib ];
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   postInstall = ''
     install -Dm644 config.toml $out/share/doc/midi-daemon/config.toml

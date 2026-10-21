@@ -1,18 +1,18 @@
 { lib, rustPlatform, fetchFromGitHub, pkg-config, makeWrapper, alsa-lib, libGL, libxkbcommon, wayland,
-  libx11, libxcursor, libxrandr, libxi }:
+  libx11, libxcursor, libxrandr, libxi, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "midi-staff-trainer";
-  version = "0.4.12";
+  version = "0.4.13";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "midi-staff-trainer";
-    rev = "v0.4.12";
-    hash = "sha256-lZmDHBLtHeMzpiMX95KX60Cb3sjOLnYvArRrflSDBC8=";
+    rev = "v${version}";
+    hash = "sha256-NuU7/LZD4TPnHvRpTyxwt4VzB1IupJRB5W98bRGH7ME=";
   };
 
-  cargoHash = "sha256-slMQrbOQpSqln7TLHbc/BrZuhQNiIcpoubAsbrJVOFA=";
+  cargoHash = "sha256-MDemjCY3qLrU0i51Gs6GqitjBh4Y+AFj74dBd1/5qk8=";
 
   doCheck = false;
 
@@ -37,6 +37,9 @@ rustPlatform.buildRustPackage {
         wayland
       ]}
   '';
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Interactive MIDI keyboard to musical staff trainer";

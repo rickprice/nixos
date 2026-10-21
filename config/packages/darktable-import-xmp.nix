@@ -1,16 +1,18 @@
-{ lib, rustPlatform, fetchCrate }:
+{ lib, rustPlatform, fetchCrate, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "darktable-import-xmp";
-  version = "0.2.0";
+  version = "0.2.1";
 
   src = fetchCrate {
-    pname = "darktable-import-xmp";
-    version = "0.2.0";
-    hash = "sha256-qRDISxnLw4Ef8z3Y3a5J6FJ1qC4+58+N0RC3ZuiQcIc=";
+    inherit pname version;
+    hash = "sha256-BW22tnvjCKEqhmCEvD6x9agZbxkAz+yg/Z7NV830bUM=";
   };
 
-  cargoHash = "sha256-UtsGI4qzfj9tvEA0BBl+IUxs/OyInB6Y0xM0TcfXgwU=";
+  cargoHash = "sha256-rQF4DCNEdaNBWcdQ2XCeMmZ7qQ2TgEjfTAqzMQyToww=";
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Import loose XMP sidecar files into Darktable's library database";

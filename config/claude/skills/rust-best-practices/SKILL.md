@@ -1,12 +1,12 @@
 ---
 name: rust-best-practices
-description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock, MSRV, and the README in sync with the code, benchmarking/profiling before optimizing, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release", "benchmark", "criterion", "profile", "flamegraph", "optimize Rust", "MSRV", "rust-version".
+description: Use whenever creating, modifying, or releasing a Rust crate or workspace (a Cargo.toml is present or about to be created). Covers keeping Cargo.lock, MSRV, and the README in sync with the code, clap-based CLI argument parsing, benchmarking/profiling before optimizing, and making GitHub releases line up cleanly with crates.io publishing. Triggers on "cargo", "crate", "Cargo.toml", "Rust project", "cut a release", "publish to crates.io", "GitHub release", "benchmark", "criterion", "profile", "flamegraph", "optimize Rust", "MSRV", "rust-version", "clap", "CLI argument parsing", "command-line arguments".
 ---
 
 # Rust project hygiene
 
-Five things repeatedly go stale or get botched in Rust projects if
-nobody enforces them deliberately. Check all five whenever you touch a
+Six things repeatedly go stale or get botched in Rust projects if
+nobody enforces them deliberately. Check all six whenever you touch a
 Rust crate's dependencies, public surface, performance-sensitive code,
 or cut a release.
 
@@ -65,6 +65,33 @@ or cut a release.
 - If the project is a workspace, keep the "project layout" section
   (crate names, paths, responsibilities) in sync whenever crates are
   added, renamed, split, or removed.
+
+## CLI argument parsing
+
+- Use `clap` (the `derive` feature) for any binary that takes flags,
+  options, or subcommands — don't hand-roll an `env::args()` loop.
+  A hand-rolled parser drifts quietly: it's easy to add a new flag
+  without updating the `--help` text, and easier still to never wire
+  up `--version` at all. Found several real binaries with exactly
+  this gap — a hand-rolled arg loop with `--help` but no `--version`,
+  and one GUI binary with no argument handling whatsoever that just
+  launched straight into connecting real hardware regardless of what
+  flag it was given.
+- `#[derive(Parser)]` does **not** add `--version`/`-V` for free just
+  by deriving — it needs an explicit `#[command(version)]` (bare, no
+  `=`) on the struct. Without it, `--version` isn't a recognized flag
+  at all; clap rejects it as an unexpected argument rather than
+  quietly ignoring it or falling back to anything sensible.
+- Use the bare `#[command(version)]` form, not a hardcoded literal
+  (`#[command(version = "1.0")]`) — a literal is a second copy of the
+  version that can drift from `Cargo.toml`'s `version` field the same
+  way any other duplicated version string does. The bare form reads
+  `CARGO_PKG_VERSION` at compile time and always matches.
+- Even a GUI-only binary with no real flags is worth giving a minimal
+  `#[derive(Parser)] #[command(version)] struct Args {}` and an
+  `Args::parse();` call before launching the GUI — the cheapest way to
+  get `--version`/`--help` instead of the binary launching (or opening
+  hardware connections) in response to a flag it doesn't recognize.
 
 ## Performance
 

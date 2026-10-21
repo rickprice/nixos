@@ -1,10 +1,11 @@
 { lib
 , stdenv
 , fetchFromGitHub
+, versionCheckHook
 , cmake
 , pkg-config
 , fltk
-, jack2
+, libjack2
 , liblo
 , libsndfile
 , cairo
@@ -27,35 +28,22 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "Stazed";
     repo = "non-timeline-xt";
-    rev = "5b9e5c072c940251819baee0e9fef4009b6930ca"; # tag 2.0.9
-    hash = "sha256-w+BZ9SZ8G3r0wl7rO+vVq1TFt8yrgfX93243OP/3+tA=";
+    tag = version;
+    # Pulls in the nonlib/FL submodules this needs (same pinned commits as
+    # non-mixer-xt's copies) instead of hand-fetching and splicing them in.
+    fetchSubmodules = true;
+    hash = "sha256-D4zBaNtJxKR1GHOG1uJVto/3sViektg0v+LF/1UwpA4=";
   };
 
-  # Same submodules (and pinned commits) as non-mixer-xt.
-  nonlibSrc = fetchFromGitHub {
-    owner = "Stazed";
-    repo = "nonlib-xt";
-    rev = "33b704d638d1383826ea4c36e5607aefabf83371";
-    hash = "sha256-RNlKCTn4o2E9h0zXssdyrfretA90MM/aoE5ezG5wpDs=";
-  };
-
-  flSrc = fetchFromGitHub {
-    owner = "Stazed";
-    repo = "non-FL";
-    rev = "37158cd7b23d47ab150a82381d7cd3536c473854";
-    hash = "sha256-DoEdaQCaohZFQcoaK0HgICQy03IjStD/gPaMbk4rAKA=";
-  };
-
-  postUnpack = ''
-    rm -rf source/nonlib source/FL
-    cp -r --no-preserve=mode,ownership "$nonlibSrc" source/nonlib
-    cp -r --no-preserve=mode,ownership "$flSrc" source/FL
-  '';
-
-  nativeBuildInputs = [ cmake pkg-config ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    # provides the `fluid` binary that find_package(FLTK) looks for
+    fltk
+  ];
   buildInputs = [
     fltk
-    jack2
+    libjack2
     liblo
     libsndfile
     cairo
@@ -71,16 +59,22 @@ stdenv.mkDerivation rec {
     libxrender
   ];
 
-  # Built per-host, not distributed via a shared binary cache, so -march=native
-  # is safe here.
+  # NativeOptimizations flipped from nixpkgs' upstream default (OFF) for
+  # this personal build only -- bakes in -march=native, fine for a per-host
+  # build that's never redistributed via a shared binary cache. See
+  # config/claude/skills/nix-best-practices/SKILL.md.
   cmakeFlags = [ "-DNativeOptimizations=ON" ];
 
-  # Upstream installs timeline/doc/icon.png as a relative symlink to a path
-  # that doesn't exist in the install tree (icons go to share/icons, not
-  # share/doc/icons, and the filename differs: non-timeline vs non-timeline-xt).
+  # Upstream installs timeline/doc/icon.png as a relative symlink to a
+  # nonexistent share/doc/icons path -- it also still targets the
+  # pre-rebrand "non-timeline.png" filename, not non-timeline-xt.png.
   postInstall = ''
-    rm -f "$out/share/doc/non-timeline-xt/icon.png"
+    rm "$out/share/doc/non-timeline-xt/icon.png"
   '';
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+  versionCheckProgramArg = "--help";
 
   meta = with lib; {
     description = "Modular multitrack audio recorder/timeline for JACK (reboot of Non-Timeline/Non-DAW)";

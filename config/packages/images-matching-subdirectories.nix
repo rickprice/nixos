@@ -1,16 +1,18 @@
-{ lib, rustPlatform, fetchCrate }:
+{ lib, rustPlatform, fetchCrate, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "images_matching_subdirectories";
-  version = "0.2.0";
+  version = "0.2.1";
 
   src = fetchCrate {
-    pname = "images_matching_subdirectories";
-    version = "0.2.0";
-    hash = "sha256-ERtYiaLBpiuVSenF5mquCk981X4Y/tJ23q+OyYbDEVM=";
+    inherit pname version;
+    hash = "sha256-uLDoYYRTEbP3SFViQpZxxHcv/k6sY+E85fwfH8TlTjk=";
   };
 
-  cargoHash = "sha256-mmy68kC7BY2t8wtq+lKNWtmxPEq49psZm+t1Lb8wCP8=";
+  cargoHash = "sha256-+yptyttKyXjahSzP0EGHYtZuyjKaljjMhamVv6oeBaY=";
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Find images inside named subdirectories of a parent directory";

@@ -1,13 +1,13 @@
-{ lib, rustPlatform, fetchFromGitHub, pkg-config, libx11 }:
+{ lib, rustPlatform, fetchFromGitHub, pkg-config, libx11, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "inappropriate-video-handler";
   version = "0.5.0";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "InappropriateVideoHandler";
-    rev = "v0.5.0";
+    rev = "v${version}";
     hash = "sha256-5EWdG0b/s4VezNCFfJNyCu+fbpVJ35WPSbtMnfWh2Vo=";
   };
 
@@ -17,6 +17,9 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ libx11 ];
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Handles inappropriate video content";

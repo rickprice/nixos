@@ -1,17 +1,20 @@
-{ lib, rustPlatform, fetchFromGitHub }:
+{ lib, rustPlatform, fetchFromGitHub, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "csvargs";
-  version = "0.3.1";
+  version = "0.3.2";
 
   src = fetchFromGitHub {
     owner = "rickprice";
     repo = "csvargs";
-    rev = "v0.3.1";
-    hash = "sha256-hApLMVWIQTgNYlA+9c/9jtJxXIKS1XorXHkV79mkOpk=";
+    rev = "v${version}";
+    hash = "sha256-+ofM+nvmYyLTnwfDnDPTS/8/7ApKjLzhTCWZeQVF87I=";
   };
 
-  cargoHash = "sha256-Siz+BCm1RJhwxchcLPzAWq2txSqzfxfbJ4ePp/Ilroc=";
+  cargoHash = "sha256-u8yVOcw8eL7VnfB4s9AX2fMIuhY5zmZWTnUDdtS05Rw=";
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "A command-line tool for processing CSV files with Jinja2 templates and executing commands on each row";

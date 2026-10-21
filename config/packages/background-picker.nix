@@ -1,16 +1,15 @@
-{ lib, rustPlatform, fetchCrate, pkg-config, makeWrapper, libGL, libxkbcommon, wayland, libx11, libxcursor, libxi, libxrandr, fontconfig }:
+{ lib, rustPlatform, fetchCrate, pkg-config, makeWrapper, libGL, libxkbcommon, wayland, libx11, libxcursor, libxi, libxrandr, fontconfig, versionCheckHook }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "background-picker";
-  version = "0.3.0";
+  version = "0.3.1";
 
   src = fetchCrate {
-    pname = "background-picker";
-    version = "0.3.0";
-    hash = "sha256-cMGnvWiX8cvOxeYzrtWCPriR0HUcH6msFmraYMLwKhY=";
+    inherit pname version;
+    hash = "sha256-AeUAjVtG3DdQAjgRWsy95UlgnnPYsGrZjd3NhCNPQwA=";
   };
 
-  cargoHash = "sha256-Bs3Bn6V2wlBEXE/XTL0Q1n4+13sQrvpdm4ytZGTkvRU=";
+  cargoHash = "sha256-4ZlNgrZpn0fF4iRFWiDJHXNnXdW5rWw7Kr4RVHJz1fQ=";
 
   nativeBuildInputs = [ pkg-config makeWrapper ];
 
@@ -37,6 +36,9 @@ rustPlatform.buildRustPackage {
         wayland
       ]}
   '';
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   meta = with lib; {
     description = "Allow user to select a background from a directory hierarchy";
