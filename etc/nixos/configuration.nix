@@ -277,6 +277,8 @@ in
   flameshot
   alsa-utils
   numlockx
+  zip
+  unzip
   ];
 
 
