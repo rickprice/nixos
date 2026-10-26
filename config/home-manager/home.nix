@@ -222,6 +222,7 @@ in {
     dunst
     trayer
     xkb-switch
+    (pkgs.writeShellScriptBin "CopyQuarter" (builtins.readFile ../scripts/CopyQuarter.sh))
     networkmanagerapplet
     xscreensaver
     udiskie

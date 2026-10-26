@@ -8,7 +8,7 @@ Config { overrideRedirect = False
        , persistent = True
        , commands = [ Run Cpu [ "--template", "Cpu: <total>%" , "-L", "5" , "-H", "50" , "--high", "red" , "--low", "white" , "--normal", "white" ] 10
                     , Run Date "<fc=#FFB53A>%a %b</fc> %Y-%m-%d <fc=#FFB53A>%H:%M</fc>" "date" 10
-                    , Run Com "date" ["+Q%q"] "quarter" 3000
+                    , Run Com "date" ["+%y-Q%q"] "quarter" 3000
                     , Run XMonadLog
                     , Run Com "markdown_timesheet" ["/home/fprice/Documents/Personal/Dropbox/FrederickDocuments/MarkDownDocuments.personal/personal-vault/journal/daily", "--summarize"] "timesheet" 180
 --                    , Run Com "sprint" [] "sprint" 36000
@@ -16,6 +16,6 @@ Config { overrideRedirect = False
                     ]
        , sepChar  = "%"
        , alignSep = "}{"
-       , template = " %XMonadLog% | <action=`gsimplecal` button=1>%date%</action> | %quarter% | %timesheet% }{%cpu% | <action=`xkb-switch -n` button=1>%kbd%</action>"
+       , template = " %XMonadLog% | <action=`gsimplecal` button=1>%date%</action> | <action=`CopyQuarter` button=1>%quarter%</action> | %timesheet% }{%cpu% | <action=`xkb-switch -n` button=1>%kbd%</action>"
        }
 
