@@ -49,6 +49,7 @@
             darktable-import-xmp = prev.callPackage ./config/packages/darktable-import-xmp.nix { };
             csvargs = prev.callPackage ./config/packages/csvargs.nix { };
             midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
+            guitarix-wrapped = prev.callPackage ./config/packages/guitarix-wrapped.nix { };
             inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
             touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
             tone3000-plugin = prev.callPackage ./config/packages/tone3000-plugin.nix { };
