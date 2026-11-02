@@ -300,7 +300,7 @@ vim.lsp.config('eslint', {
   settings = { workingDirectory = { mode = "auto" } },
 })
 
-vim.lsp.enable({ 'tailwindcss', 'cssls', 'html', 'jsonls', 'eslint' })
+vim.lsp.enable({ 'tailwindcss', 'cssls', 'html', 'jsonls', 'eslint', 'rust_analyzer' })
 
 require("typescript-tools").setup({
   settings = {
