@@ -7,14 +7,14 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "markdown_timesheet";
-  version = "0.9.3";
+  version = "0.9.4";
 
   src = fetchCrate {
     inherit pname version;
-    hash = "sha256-LP094hl42d67SafBdW901srQTQGoRiL4IORkbB6yXHQ=";
+    hash = "sha256-l04jLMI2ZtDS/v+58QXsh1rv5LC0NcNElunOuf6efvk=";
   };
 
-  cargoHash = "sha256-mCKS8u7LiGEw0jF/PqvaKBpcNMohWNE9PRB4i1n/27g=";
+  cargoHash = "sha256-maYB0q4Lf6ozAMNel1Q9Z8BI8l6F1VgkZa6Zi2PHUew=";
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
