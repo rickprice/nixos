@@ -17,8 +17,7 @@ let
   # so it's tracked alongside the service that launches it. Non-Mixer-XT
   # rewrites files in here (lock, snapshot, plugin state) every session, so
   # expect this path to show up dirty in `git status` after normal use.
-  keyboardAndGuitarixProject =
-    "/home/fprice/Documents/Personal/personal_repo/nixos/config/non-mixer-xt/KeyboardAndGuitarix";
+  keyboardAndGuitarixProject = "/home/fprice/Documents/Personal/personal_repo/nixos/config/non-mixer-xt/KeyboardAndGuitarix";
   # TONE3000's Standalone app owns its own JACK device directly (same
   # reasoning as non-mixer-xt/non-timeline-xt below): point it at
   # PipeWire's JACK so it shares the UMC404HD instead of grabbing it
@@ -33,7 +32,8 @@ let
         --prefix LD_LIBRARY_PATH : "${pkgs.pipewire.jack}/lib"
     '';
   };
-in {
+in
+{
   # Wrap non-mixer-xt's, non-timeline-xt's, and new-session-manager's
   # binaries so they link against PipeWire's JACK library instead of the
   # real JACK, for the same reason Ardour/Carla/Guitarix are wrapped.
@@ -62,7 +62,7 @@ in {
       '';
     })
     pkgs.midi-auto-connector
-    pkgs.usbutils  # lsusb
+    pkgs.usbutils # lsusb
 
     # Lint/format tools for scripts and Rust bits written on this machine --
     # kept off tprice/eric since that's not where this kind of dev work happens.
@@ -79,10 +79,10 @@ in {
     pkgs.shellcheck # Bash linter (no equivalent zsh checker exists in nixpkgs)
     pkgs.rustfmt
     pkgs.clippy
-    pkgs.black  # Python formatter
-    pkgs.mypy   # Python type checker
+    pkgs.black # Python formatter
+    pkgs.mypy # Python type checker
     pkgs.pylint # Python linter
-    pkgs.ruff   # Python PEP8/style checker -- flake8 isn't packaged top-level
+    pkgs.ruff # Python PEP8/style checker -- flake8 isn't packaged top-level
   ];
 
   # Routes the A-PRO controller and the midi-daemon-driven Metronome into
@@ -170,96 +170,107 @@ in {
   # clears it once the underlying problem (missing device, bad project
   # file, etc.) is fixed. An explicit `systemctl --user stop` is never
   # overridden by any of this -- systemd always honors a manual stop.
-  systemd.user.services.midi-auto-connector = {
-    Unit = {
-      Description = "Auto-connects Non-Mixer-XT's MIDI/audio ports by regex rule";
-      After = [ "graphical-session.target" "pipewire.service" "wireplumber.service" ];
-      PartOf = [ "graphical-session.target" ];
-      StartLimitIntervalSec = 60;
-      StartLimitBurst = 5;
+  systemd.user.services = {
+    midi-auto-connector = {
+      Unit = {
+        Description = "Auto-connects Non-Mixer-XT's MIDI/audio ports by regex rule";
+        After = [
+          "graphical-session.target"
+          "pipewire.service"
+          "wireplumber.service"
+        ];
+        PartOf = [ "graphical-session.target" ];
+        StartLimitIntervalSec = 60;
+        StartLimitBurst = 5;
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.midi-auto-connector}/bin/midi-auto-connector run";
+        Restart = "always";
+        RestartSec = 2;
+        RestartSteps = 4;
+        RestartMaxDelaySec = "32s";
+        TimeoutStopSec = 10;
+      };
+      Install.WantedBy = [ "graphical-session.target" ];
     };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.midi-auto-connector}/bin/midi-auto-connector run";
-      Restart = "always";
-      RestartSec = 2;
-      RestartSteps = 4;
-      RestartMaxDelaySec = "32s";
-      TimeoutStopSec = 10;
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 
-  systemd.user.services.non-mixer-xt = {
-    Unit = {
-      Description = "Non-Mixer-XT (KeyboardAndGuitarix project)";
-      # The project's sfizz plugins load sample sets from the Dropbox FUSE
-      # mount; rclone-dropbox is Type=notify, so After=/Requires= here
-      # actually blocks until the mount is ready, not just until rclone has
-      # been forked.
-      # Not WantedBy anything -- only started via display-ready.target (see
-      # home.nix) so its window doesn't map before the monitor layout
-      # settles.
-      After = [
-        "graphical-session.target"
-        "display-ready.target"
-        "pipewire.service"
-        "wireplumber.service"
-        "rclone-dropbox.service"
-      ];
-      Requires = [ "rclone-dropbox.service" ];
-      PartOf = [ "graphical-session.target" ];
-      StartLimitIntervalSec = 60;
-      StartLimitBurst = 5;
+    non-mixer-xt = {
+      Unit = {
+        Description = "Non-Mixer-XT (KeyboardAndGuitarix project)";
+        # The project's sfizz plugins load sample sets from the Dropbox FUSE
+        # mount; rclone-dropbox is Type=notify, so After=/Requires= here
+        # actually blocks until the mount is ready, not just until rclone has
+        # been forked.
+        # Not WantedBy anything -- only started via display-ready.target (see
+        # home.nix) so its window doesn't map before the monitor layout
+        # settles.
+        After = [
+          "graphical-session.target"
+          "display-ready.target"
+          "pipewire.service"
+          "wireplumber.service"
+          "rclone-dropbox.service"
+        ];
+        Requires = [ "rclone-dropbox.service" ];
+        PartOf = [ "graphical-session.target" ];
+        StartLimitIntervalSec = 60;
+        StartLimitBurst = 5;
+      };
+      Service = {
+        Type = "simple";
+        # systemd --user units don't inherit the login shell's environment, so
+        # NixOS's environment.variables (LV2_PATH/LADSPA_PATH/VST3_PATH) never
+        # reach this unit on their own — without these, non-mixer-xt finds no
+        # plugins at all.
+        Environment = [
+          "LV2_PATH=${osConfig.environment.variables.LV2_PATH}"
+          "LADSPA_PATH=${osConfig.environment.variables.LADSPA_PATH}"
+          "VST3_PATH=${osConfig.environment.variables.VST3_PATH}"
+        ];
+        ExecStart = "${nonMixerXtWrapped}/bin/non-mixer-xt --osc-port 9500 ${keyboardAndGuitarixProject}";
+        Restart = "always";
+        RestartSec = 2;
+        RestartSteps = 4;
+        RestartMaxDelaySec = "32s";
+        TimeoutStopSec = 10;
+      };
     };
-    Service = {
-      Type = "simple";
-      # systemd --user units don't inherit the login shell's environment, so
-      # NixOS's environment.variables (LV2_PATH/LADSPA_PATH/VST3_PATH) never
-      # reach this unit on their own — without these, non-mixer-xt finds no
-      # plugins at all.
-      Environment = [
-        "LV2_PATH=${osConfig.environment.variables.LV2_PATH}"
-        "LADSPA_PATH=${osConfig.environment.variables.LADSPA_PATH}"
-        "VST3_PATH=${osConfig.environment.variables.VST3_PATH}"
-      ];
-      ExecStart = "${nonMixerXtWrapped}/bin/non-mixer-xt --osc-port 9500 ${keyboardAndGuitarixProject}";
-      Restart = "always";
-      RestartSec = 2;
-      RestartSteps = 4;
-      RestartMaxDelaySec = "32s";
-      TimeoutStopSec = 10;
-    };
-  };
 
-  # Moved from a NixOS system service to here: midi-daemon routes Non-Mixer-XT
-  # OSC traffic, so it needs to start after non-mixer-xt exists, and systemd's
-  # system and user managers can't order units against each other.
-  # Not itself a window, but moved onto display-ready.target along with
-  # non-mixer-xt/touchosc: it has to start after non-mixer-xt (OSC routing)
-  # and before touchosc (OSC routes), both of which are now also gated on
-  # display-ready.target, so it needs to be on the same gate rather than
-  # racing ahead of them via its own graphical-session.target trigger.
-  systemd.user.services.midi-daemon = {
-    Unit = {
-      Description = "MIDI Lua Routing Daemon";
-      After = [ "graphical-session.target" "display-ready.target" "non-mixer-xt.service" "pipewire.service" "wireplumber.service" ];
-      PartOf = [ "graphical-session.target" ];
-      StartLimitIntervalSec = 60;
-      StartLimitBurst = 5;
-    };
-    Service = {
-      Type = "simple";
-      ExecStart =
-        "${pkgs.midi-daemon}/bin/midi-daemon --config /etc/midi-daemon/config.toml --routes /etc/midi-daemon/routes.d";
-      Restart = "always";
-      RestartSec = 2;
-      RestartSteps = 4;
-      RestartMaxDelaySec = "32s";
-      TimeoutStopSec = 30;
-      RuntimeDirectory = "midi-daemon";
-      CacheDirectory = "midi-daemon";
-      Environment = "RUST_LOG=midi_daemon=info";
+    # Moved from a NixOS system service to here: midi-daemon routes Non-Mixer-XT
+    # OSC traffic, so it needs to start after non-mixer-xt exists, and systemd's
+    # system and user managers can't order units against each other.
+    # Not itself a window, but moved onto display-ready.target along with
+    # non-mixer-xt/touchosc: it has to start after non-mixer-xt (OSC routing)
+    # and before touchosc (OSC routes), both of which are now also gated on
+    # display-ready.target, so it needs to be on the same gate rather than
+    # racing ahead of them via its own graphical-session.target trigger.
+    midi-daemon = {
+      Unit = {
+        Description = "MIDI Lua Routing Daemon";
+        After = [
+          "graphical-session.target"
+          "display-ready.target"
+          "non-mixer-xt.service"
+          "pipewire.service"
+          "wireplumber.service"
+        ];
+        PartOf = [ "graphical-session.target" ];
+        StartLimitIntervalSec = 60;
+        StartLimitBurst = 5;
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.midi-daemon}/bin/midi-daemon --config /etc/midi-daemon/config.toml --routes /etc/midi-daemon/routes.d";
+        Restart = "always";
+        RestartSec = 2;
+        RestartSteps = 4;
+        RestartMaxDelaySec = "32s";
+        TimeoutStopSec = 30;
+        RuntimeDirectory = "midi-daemon";
+        CacheDirectory = "midi-daemon";
+        Environment = "RUST_LOG=midi_daemon=info";
+      };
     };
   };
 

@@ -5,11 +5,14 @@
 # Device IDs (for reference — declaratively set in home.nix):
 #   fwork:   6F6T2XV-QJMSBQP-5HHVWID-WOYQN7F-TA7MZKP-GF5ANAU-GP4TAKB-AWYQRAK
 #   android: SVKN2P3-74JHTNE-JY5XVLL-DGAXLM7-RZJYB5M-IC63VWP-32DNUJP-SQ2YNAC
-{ ... }:
+_:
 
 {
   networking.firewall = {
     allowedTCPPorts = [ 22000 ];
-    allowedUDPPorts = [ 22000 21027 ];
+    allowedUDPPorts = [
+      22000
+      21027
+    ];
   };
 }

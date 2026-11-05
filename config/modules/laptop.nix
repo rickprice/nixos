@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   # power-profiles-daemon conflicts with TLP; disable it so TLP owns the CPU.
   services.power-profiles-daemon.enable = false;
 

@@ -26,129 +26,158 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, plasma-manager, disko, musnix, ... }:
-  let
-    commonModules = [
-      ./etc/nixos/configuration.nix
-      home-manager.nixosModules.home-manager
-      {
-        nixpkgs.overlays = [
-          (final: prev: {
-            midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
-            non-mixer-xt = prev.callPackage ./config/packages/non-mixer-xt.nix { };
-            non-timeline-xt = prev.callPackage ./config/packages/non-timeline-xt.nix { };
-            protokol = prev.callPackage ./config/packages/protokol.nix { };
-            midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
-            midi-auto-connector = prev.callPackage ./config/packages/midi-auto-connector.nix { };
-            volumepanningstereo-lv2 = prev.callPackage ./config/packages/volumepanningstereo-lv2.nix { };
-            name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
-            images-matching-subdirectories = prev.callPackage ./config/packages/images-matching-subdirectories.nix { };
-            background-picker = prev.callPackage ./config/packages/background-picker.nix { };
-            md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
-            markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
-            darktable-import-xmp = prev.callPackage ./config/packages/darktable-import-xmp.nix { };
-            csvargs = prev.callPackage ./config/packages/csvargs.nix { };
-            midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
-            guitarix-wrapped = prev.callPackage ./config/packages/guitarix-wrapped.nix { };
-            inappropriate-video-handler = prev.callPackage ./config/packages/inappropriate-video-handler.nix { };
-            touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
-            tone3000-plugin = prev.callPackage ./config/packages/tone3000-plugin.nix { };
-            # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
-            # so "Document printed" notifications are sent for auto-discovered printers.
-            system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {
-              postPatch = (oldAttrs.postPatch or "") + ''
-                substituteInPlace jobviewer.py \
-                  --replace-fail "if scheme not in ['socket', 'ipp', 'http', 'smb']:" \
-                                 "if scheme not in ['socket', 'ipp', 'ipps', 'http', 'smb', 'implicitclass']:"
-              '';
-            });
-          })
-        ];
-      }
-      {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.users.fprice = import ./config/home-manager/home.nix;
-        home-manager.users.tprice = import ./config/home-manager/tprice.nix;
-        home-manager.users.eric = import ./config/home-manager/eric.nix;
-        home-manager.sharedModules = [
-          plasma-manager.homeModules.plasma-manager
-        ];
-      }
-    ];
-    mkHost = hostname: diskModule: extraModules: nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = commonModules ++ [
-        disko.nixosModules.disko
-        diskModule
-        ({ lib, ... }: {
-          networking.hostName = lib.mkForce hostname;
-          services.xserver.xkb.layout = lib.mkForce "us";
-          services.xserver.xkb.variant = lib.mkForce "";
-          console.keyMap = lib.mkForce "us";
-        })
-      ] ++ extraModules;
-    };
-    mkDvorakHost = hostname: diskModule: extraModules: nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = commonModules ++ [
-        disko.nixosModules.disko
-        diskModule
-        ({ lib, ... }: { networking.hostName = lib.mkForce hostname; })
-      ] ++ extraModules;
-    };
-  in
-  {
-    nixosConfigurations.daw    = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = commonModules ++ [
-        disko.nixosModules.disko
-        ./config/disko/encrypted.nix
-        ./config/modules/umc404hd-udev.nix
-        ./config/modules/umc404hd-pipewire.nix
-        (import ./config/modules/onepassword.nix "fprice")
-        musnix.nixosModules.musnix
-        ./config/modules/musnix-audio.nix
-        { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-        # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
-        # needed where that service actually runs.
-        { networking.firewall.allowedUDPPorts = [ 9000 ]; }
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      plasma-manager,
+      disko,
+      musnix,
+      ...
+    }:
+    let
+      commonModules = [
+        ./etc/nixos/configuration.nix
+        home-manager.nixosModules.home-manager
         {
-          # daw is physically a laptop, but it's used for field recording with
-          # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
-          # autosuspend that could drop the audio interface mid-session.
-          # (musnix.enable already sets cpuFreqGovernor = "performance".)
-          services.power-profiles-daemon.enable = false;
+          nixpkgs.overlays = [
+            (final: prev: {
+              midisnoop = prev.qt5.callPackage ./config/packages/midisnoop.nix { };
+              non-mixer-xt = prev.callPackage ./config/packages/non-mixer-xt.nix { };
+              non-timeline-xt = prev.callPackage ./config/packages/non-timeline-xt.nix { };
+              protokol = prev.callPackage ./config/packages/protokol.nix { };
+              midi-daemon = prev.callPackage ./config/packages/midi-daemon.nix { };
+              midi-auto-connector = prev.callPackage ./config/packages/midi-auto-connector.nix { };
+              volumepanningstereo-lv2 = prev.callPackage ./config/packages/volumepanningstereo-lv2.nix { };
+              name-time-period = prev.callPackage ./config/packages/name-time-period.nix { };
+              images-matching-subdirectories =
+                prev.callPackage ./config/packages/images-matching-subdirectories.nix
+                  { };
+              background-picker = prev.callPackage ./config/packages/background-picker.nix { };
+              md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
+              markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
+              darktable-import-xmp = prev.callPackage ./config/packages/darktable-import-xmp.nix { };
+              csvargs = prev.callPackage ./config/packages/csvargs.nix { };
+              midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
+              guitarix-wrapped = prev.callPackage ./config/packages/guitarix-wrapped.nix { };
+              inappropriate-video-handler =
+                prev.callPackage ./config/packages/inappropriate-video-handler.nix
+                  { };
+              touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
+              tone3000-plugin = prev.callPackage ./config/packages/tone3000-plugin.nix { };
+              # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
+              # so "Document printed" notifications are sent for auto-discovered printers.
+              system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {
+                postPatch = (oldAttrs.postPatch or "") + ''
+                  substituteInPlace jobviewer.py \
+                    --replace-fail "if scheme not in ['socket', 'ipp', 'http', 'smb']:" \
+                                   "if scheme not in ['socket', 'ipp', 'ipps', 'http', 'smb', 'implicitclass']:"
+                '';
+              });
+            })
+          ];
+        }
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            users = {
+              fprice = import ./config/home-manager/home.nix;
+              tprice = import ./config/home-manager/tprice.nix;
+              eric = import ./config/home-manager/eric.nix;
+            };
+            sharedModules = [
+              plasma-manager.homeModules.plasma-manager
+            ];
+          };
         }
       ];
+      mkHost =
+        hostname: diskModule: extraModules:
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules =
+            commonModules
+            ++ [
+              disko.nixosModules.disko
+              diskModule
+              ({ lib, ... }: {
+                networking.hostName = lib.mkForce hostname;
+                services.xserver.xkb.layout = lib.mkForce "us";
+                services.xserver.xkb.variant = lib.mkForce "";
+                console.keyMap = lib.mkForce "us";
+              })
+            ]
+            ++ extraModules;
+        };
+      mkDvorakHost =
+        hostname: diskModule: extraModules:
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules =
+            commonModules
+            ++ [
+              disko.nixosModules.disko
+              diskModule
+              ({ lib, ... }: { networking.hostName = lib.mkForce hostname; })
+            ]
+            ++ extraModules;
+        };
+    in
+    {
+      nixosConfigurations = {
+        daw = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = commonModules ++ [
+            disko.nixosModules.disko
+            ./config/disko/encrypted.nix
+            ./config/modules/umc404hd-udev.nix
+            ./config/modules/umc404hd-pipewire.nix
+            (import ./config/modules/onepassword.nix "fprice")
+            musnix.nixosModules.musnix
+            ./config/modules/musnix-audio.nix
+            { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
+            # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
+            # needed where that service actually runs.
+            { networking.firewall.allowedUDPPorts = [ 9000 ]; }
+            {
+              # daw is physically a laptop, but it's used for field recording with
+              # the UMC404HD, so it's treated like fwork's desktop: no TLP/USB
+              # autosuspend that could drop the audio interface mid-session.
+              # (musnix.enable already sets cpuFreqGovernor = "performance".)
+              services.power-profiles-daemon.enable = false;
+            }
+          ];
+        };
+        fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
+          ./config/modules/umc404hd-udev.nix
+          ./config/modules/umc404hd-pipewire.nix
+          ./config/modules/syncthing.nix
+          ./config/modules/virtualisation.nix
+          (import ./config/modules/onepassword.nix "fprice")
+          musnix.nixosModules.musnix
+          ./config/modules/musnix-audio.nix
+          { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
+          { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
+          # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
+          # needed where that service actually runs.
+          { networking.firewall.allowedUDPPorts = [ 9000 ]; }
+          {
+            # power-profiles-daemon fights musnix's static performance governor,
+            # continuously resetting it back to "balanced" after boot. fwork is
+            # a desktop with no battery, so there's no power-saving tradeoff to
+            # disabling it. (musnix.enable already sets cpuFreqGovernor.)
+            services.power-profiles-daemon.enable = false;
+          }
+        ];
+        tprice = mkHost "tprice" ./config/disko/plain.nix [
+          ./config/modules/laptop.nix
+          (import ./config/modules/onepassword.nix "tprice")
+        ];
+        eric = mkHost "eric" ./config/disko/plain.nix [
+          ./config/modules/laptop.nix
+        ];
+      };
     };
-    nixosConfigurations.fwork = mkDvorakHost "fwork" ./config/disko/encrypted.nix [
-      ./config/modules/umc404hd-udev.nix
-      ./config/modules/umc404hd-pipewire.nix
-      ./config/modules/syncthing.nix
-      ./config/modules/virtualisation.nix
-      (import ./config/modules/onepassword.nix "fprice")
-      musnix.nixosModules.musnix
-      ./config/modules/musnix-audio.nix
-      { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
-      { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
-      # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
-      # needed where that service actually runs.
-      { networking.firewall.allowedUDPPorts = [ 9000 ]; }
-      {
-        # power-profiles-daemon fights musnix's static performance governor,
-        # continuously resetting it back to "balanced" after boot. fwork is
-        # a desktop with no battery, so there's no power-saving tradeoff to
-        # disabling it. (musnix.enable already sets cpuFreqGovernor.)
-        services.power-profiles-daemon.enable = false;
-      }
-    ];
-    nixosConfigurations.tprice = mkHost "tprice" ./config/disko/plain.nix [
-      ./config/modules/laptop.nix
-      (import ./config/modules/onepassword.nix "tprice")
-    ];
-    nixosConfigurations.eric   = mkHost "eric"   ./config/disko/plain.nix [
-      ./config/modules/laptop.nix
-    ];
-  };
 }
