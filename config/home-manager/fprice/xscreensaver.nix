@@ -26,7 +26,7 @@
     text = ''
       timeout:       1:00:00
       lock:          True
-      lockTimeout:   0:00:00
+      lockTimeout:   0:01:00
       passwdTimeout: 0:00:30
       mode:          blank
       fade:          False
