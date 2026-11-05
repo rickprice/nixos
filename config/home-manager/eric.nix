@@ -729,7 +729,7 @@
   home.file.".xscreensaver" = {
     force = true;
     text = ''
-    timeout:       0:10:00
+    timeout:       1:00:00
     cycle:         0:10:00
     lock:          False
     passwdTimeout: 0:00:30
@@ -738,9 +738,9 @@
     fade:          False
     unfade:        False
     dpmsEnabled:   True
-    dpmsStandby:   0:30:00
-    dpmsSuspend:   0:30:00
-    dpmsOff:       0:30:00
+    dpmsStandby:   1:00:00
+    dpmsSuspend:   1:00:00
+    dpmsOff:       1:00:00
     programs: \
         maze --root \n\
       GL: superquadrics --root \n\
