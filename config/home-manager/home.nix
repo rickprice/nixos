@@ -28,13 +28,11 @@ _:
     ./fprice/qpwgraph.nix
     ./fprice/midi-staff-trainer.nix
     ./fprice/dunst.nix
-    ./fprice/xfce4-power-manager.nix
     ./fprice/picom.nix
     ./fprice/flameshot.nix
     ./fprice/tray-applets.nix
     ./fprice/rclone-dropbox.nix
     ./fprice/kwallet.nix
     ./fprice/xscreensaver.nix
-    ./fprice/plasma.nix
   ];
 }
