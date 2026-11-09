@@ -120,16 +120,16 @@ desktopMoveFocusedKeyFromTuple keyPrefix windowPrefix t =
 
 setupWorkspaceGroups :: X ()
 setupWorkspaceGroups = do
-    ADWG.addRawWSGroup "Tamara1"   [(leftScreen, "TP11"), (rightScreen, "TP13")]
-    ADWG.addRawWSGroup "Tamara2"   [(leftScreen, "TP21"), (rightScreen, "TP22")]
-    ADWG.addRawWSGroup "Messaging" [(leftScreen, "IM"),   (rightScreen, "MAIL")]
+    ADWG.addRawWSGroup "Tamara1"   [(leftScreen, "TP1"), (rightScreen, "IM")]
+    ADWG.addRawWSGroup "Tamara2"   [(leftScreen, "TP2"), (rightScreen, "TP3")]
+    ADWG.addRawWSGroup "Messaging" [(leftScreen, "IM"),  (rightScreen, "MAIL")]
 
 powerkeys :: Int -> X ()
 powerkeys key = do
     numScreens <- LIS.countScreens
     case (numScreens, key) of
-        -- Single monitor: group views split across (nonexistent) rightScreen, so
-        -- fall back to the group's primary workspace alone.
+        -- Single monitor: group views split across rightScreen, which doesn't
+        -- exist, so fall back to the group's primary (leftScreen) workspace alone.
         (1, 1) -> showDesktop "TP1"
         (1, 2) -> showDesktop "TP2"
         (1, 3) -> showDesktop "IM"
@@ -311,7 +311,7 @@ myStartupHook = do
     -- System defaults to Dvorak for fprice's login/console; override with two
     -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
     spawn "setxkbmap -layout us,us -variant ,dvorak"
-    spawnOnOnce "TP11" myBrowser
+    spawnOnOnce "TP1" myBrowser
     setWMName "LG3D"
 
 -- =============================================================================
