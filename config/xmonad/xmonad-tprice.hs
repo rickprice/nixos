@@ -23,6 +23,7 @@ import XMonad.Layout.Magnifier
 import XMonad.Layout.MultiColumns
 import XMonad.Layout.NoBorders (noBorders, smartBorders)
 import XMonad.Layout.ToggleLayouts
+import qualified XMonad.Layout.IndependentScreens as LIS
 import XMonad.Util.EZConfig
 import XMonad.Util.NamedActions
 import XMonad.Util.Loggers
@@ -124,12 +125,19 @@ setupWorkspaceGroups = do
     ADWG.addRawWSGroup "Messaging" [(leftScreen, "IM"),   (rightScreen, "MAIL")]
 
 powerkeys :: Int -> X ()
-powerkeys key = case key of
-    1 -> ADWG.viewWSGroup "Tamara1"
-    2 -> ADWG.viewWSGroup "Tamara2"
-    3 -> ADWG.viewWSGroup "Messaging"
-    4 -> showDesktop "SCRATCH"
-    _ -> return ()
+powerkeys key = do
+    numScreens <- LIS.countScreens
+    case (numScreens, key) of
+        -- Single monitor: group views split across (nonexistent) rightScreen, so
+        -- fall back to the group's primary workspace alone.
+        (1, 1) -> showDesktop "TP1"
+        (1, 2) -> showDesktop "TP2"
+        (1, 3) -> showDesktop "IM"
+        (_, 1) -> ADWG.viewWSGroup "Tamara1"
+        (_, 2) -> ADWG.viewWSGroup "Tamara2"
+        (_, 3) -> ADWG.viewWSGroup "Messaging"
+        (_, 4) -> showDesktop "SCRATCH"
+        _      -> return ()
 
 -- =============================================================================
 -- LAYOUTS
