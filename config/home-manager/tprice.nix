@@ -1010,7 +1010,11 @@
       };
       Service = {
         Type = "simple";
-        ExecStart = "${pkgs.discord}/bin/discord --start-minimized";
+        # --start-minimized races trayer.service -- "After" only guarantees
+        # trayer's unit is active, not that it's finished registering with the
+        # tray protocol yet, so Discord can exit before a tray exists to
+        # minimize into. fprice's working fwork config doesn't use this flag.
+        ExecStart = "${pkgs.discord}/bin/discord";
         Restart = "on-failure";
         RestartSec = 5;
         RestartSteps = 4;
