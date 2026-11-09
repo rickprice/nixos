@@ -127,9 +127,13 @@
 
     activation = {
       # ── Google Chrome ────────────────────────────────────────────────────────────
-      setChromeDownloadDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      setChromePreferences = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         prefFile="$HOME/.config/google-chrome/Default/Preferences"
         downloadDir="/home/tprice/Documents/Dropbox/TamaraDocuments/Downloads"
+        # webkit.webprefs.default_font_size values used by chrome://settings/fonts'
+        # "Font size" dropdown: Very Small=9, Small=12, Medium=16, Large=20, Very
+        # Large=24. 20 mirrors picking "Large" in the UI.
+        defaultFontSize=20
         # Chrome holds its own in-memory copy of this file and flushes it back to
         # disk on its own schedule (tab close, settings change, clean exit). An
         # external rewrite while it's running either goes unnoticed until Chrome
@@ -139,14 +143,18 @@
         if ${pkgs.procps}/bin/pgrep -x chrome >/dev/null || ${pkgs.procps}/bin/pgrep -f google-chrome >/dev/null; then
           echo "Chrome is running; skipping Preferences rewrite (will retry on the next switch)."
         elif [ -f "$prefFile" ]; then
-          if [ "$(${pkgs.jq}/bin/jq -r '.download.default_directory // ""' "$prefFile")" != "$downloadDir" ]; then
+          currentFontSize=$(${pkgs.jq}/bin/jq -r '.webkit.webprefs.default_font_size // 0' "$prefFile")
+          if [ "$(${pkgs.jq}/bin/jq -r '.download.default_directory // ""' "$prefFile")" != "$downloadDir" ] \
+            || [ "$currentFontSize" != "$defaultFontSize" ]; then
             tmp=$(${pkgs.coreutils}/bin/mktemp)
-            ${pkgs.jq}/bin/jq --arg dir "$downloadDir" '.download.default_directory = $dir' "$prefFile" > "$tmp" \
+            ${pkgs.jq}/bin/jq --arg dir "$downloadDir" --argjson size "$defaultFontSize" \
+              '.download.default_directory = $dir | .webkit.webprefs.default_font_size = $size' "$prefFile" > "$tmp" \
               && ${pkgs.coreutils}/bin/mv "$tmp" "$prefFile"
           fi
         else
           ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$prefFile")"
-          ${pkgs.jq}/bin/jq -n --arg dir "$downloadDir" '{"download":{"default_directory":$dir}}' > "$prefFile"
+          ${pkgs.jq}/bin/jq -n --arg dir "$downloadDir" --argjson size "$defaultFontSize" \
+            '{"download":{"default_directory":$dir},"webkit":{"webprefs":{"default_font_size":$size}}}' > "$prefFile"
         fi
       '';
 
