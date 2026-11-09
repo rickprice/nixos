@@ -1,6 +1,17 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
+  # background-picker (M-F5 in xmonad) doesn't create its own cache
+  # directory, and silently fails to save a selection without it.
+  home.activation.createBackgroundPickerCacheDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD mkdir -p "${config.home.homeDirectory}/.cache/background-picker"
+  '';
+
   programs.autorandr = {
     enable = true;
 

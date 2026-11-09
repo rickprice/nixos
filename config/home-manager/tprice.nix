@@ -167,6 +167,12 @@
         fi
       '';
 
+      # background-picker (M-F5 in xmonad) doesn't create its own cache
+      # directory, and silently fails to save a selection without it.
+      createBackgroundPickerCacheDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "${config.home.homeDirectory}/.cache/background-picker"
+      '';
+
       # ── XMonad ───────────────────────────────────────────────────────────────────
       forceXmonadRecompile = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         $DRY_RUN_CMD rm -f "${config.home.homeDirectory}/.config/xmonad/xmonad-x86_64-linux"
