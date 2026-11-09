@@ -691,6 +691,13 @@
     "Xft.dpi" = "144";
   };
 
+  # Default GTK font, matched to xmobar's "Sans-20" rather than left at
+  # GTK's own default (Sans 10 at this DPI/scale is too small to read).
+  gtk = {
+    enable = true;
+    font.name = "Sans 20";
+  };
+
   xdg = {
     dataFile."applications/mimeapps.list".force = true;
 
