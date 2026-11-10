@@ -665,6 +665,11 @@
         setxkbmap -layout us,us -variant ,dvorak
       '';
 
+      hooks.postswitch."07_numlock" = ''
+        #! /usr/bin/bash
+        numlockx on
+      '';
+
       # Decoupled from autorandr.service itself: setting the wallpaper needs
       # the Dropbox mount, but trayer/numlock/keyboard above don't, and
       # shouldn't fail just because Dropbox is unreachable. This hook only
