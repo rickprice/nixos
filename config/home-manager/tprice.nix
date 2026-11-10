@@ -665,6 +665,11 @@
         setxkbmap -layout us,us -variant ,dvorak
       '';
 
+      hooks.postswitch."05_restart_trayer" = ''
+        #! /usr/bin/bash
+        systemctl --user restart trayer.service
+      '';
+
       hooks.postswitch."07_numlock" = ''
         #! /usr/bin/bash
         numlockx on
