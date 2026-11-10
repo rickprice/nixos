@@ -685,6 +685,21 @@
         systemctl --user --no-block start autorandr-wallpaper.service
       '';
 
+      # Half of the AND-gate for display-ready.target (see its definition
+      # below): marks "autorandr has actually applied a profile this session"
+      # and, only once XMonad's startup half has also happened, starts the
+      # target. See xmonad-ready.service's comment for why it's an AND rather
+      # than either trigger alone. --no-block on the target start because this
+      # hook runs synchronously inside autorandr's own still-running process
+      # (autorandr.service hasn't exited yet) -- a blocking call here would
+      # wait on a job that can't finish until this hook returns.
+      hooks.postswitch."15_start_display_ready" = ''
+        #! /usr/bin/bash
+        systemctl --user start autorandr-settled.service
+        systemctl --user is-active --quiet xmonad-ready.service && systemctl --user --no-block start display-ready.target
+        true
+      '';
+
       # Add profiles here after running: autorandr --save <profile-name>
     };
 
@@ -991,6 +1006,35 @@
       Install.WantedBy = [ "graphical-session.target" ];
     };
 
+    # One half of the AND-gate for display-ready.target: marks "XMonad has
+    # reached its startup hook this session" and, only once the other half
+    # (autorandr-settled.service, set by the 15_start_display_ready postswitch
+    # hook above) has also happened, starts the target. See the comment there
+    # for why this needs to be an AND rather than either trigger alone.
+    xmonad-ready = {
+      Unit = {
+        Description = "Marker: XMonad has reached its startup hook this session";
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.coreutils}/bin/true";
+      };
+    };
+
+    autorandr-settled = {
+      Unit = {
+        Description = "Marker: autorandr has applied a profile this session";
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.coreutils}/bin/true";
+      };
+    };
+
     touchpad-toggle-daemon = {
       Unit = {
         Description = "Disable the touchpad while an external mouse is connected";
@@ -1010,8 +1054,12 @@
     discord = {
       Unit = {
         Description = "Discord messaging client";
+        # Not WantedBy anything -- only started via display-ready.target (see
+        # its definition below), since xmonad's manageHook shifts Discord to
+        # the "IM" workspace, whose screen mapping isn't settled until then.
         After = [
           "graphical-session.target"
+          "display-ready.target"
           "trayer.service"
         ];
         PartOf = [ "graphical-session.target" ];
@@ -1031,7 +1079,6 @@
         RestartMaxDelaySec = "32s";
         TimeoutStopSec = 10;
       };
-      Install.WantedBy = [ "graphical-session.target" ];
     };
 
     dunst = {
@@ -1363,6 +1410,31 @@
         TimeoutStopSec = 10;
       };
       Install.WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
+  # Single gate for every GUI app whose window placement/geometry depends on
+  # the monitor layout (currently just Discord -- see its Unit comment).
+  # Deliberately not WantedBy anything: if it started at the same time as
+  # autorandr.service via graphical-session.target like everything else, it'd
+  # race it exactly like before. Instead this only ever starts once both
+  # xmonad-ready.service and autorandr-settled.service above are active (see
+  # their comment for why it's an AND of the two, not either alone). Once
+  # started, it's left alone: per observation this race only happens at
+  # login, so there's no postswitch hook to restart it -- a later monitor
+  # change shouldn't bounce these apps. Any new app whose startup cares about
+  # the monitor layout should join this target's Wants= rather than growing
+  # its own graphical-session.target After=.
+  systemd.user.targets.display-ready = {
+    Unit = {
+      Description = "Display geometry settled -- safe to start apps that depend on it";
+      After = [
+        "xmonad-ready.service"
+        "autorandr-settled.service"
+      ];
+      Wants = [
+        "discord.service"
+      ];
     };
   };
 }

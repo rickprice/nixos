@@ -44,7 +44,13 @@ myFileManager = "pcmanfm"
 mySystemMonitor = "gnome-system-monitor"
 myCalculator    = "gnome-calculator"
 myScreenLock    = "xscreensaver-command -lock"
-myFixScreens    = "autorandr --change"
+myFixScreens    = "systemctl --user start autorandr.service"
+-- One half of the AND-gate for display-ready.target (tprice.nix): marks
+-- "XMonad has reached its startup hook" and, only if the other half
+-- (autorandr-settled.service, set by autorandr's postswitch hook) is
+-- already active, starts the target. See display-ready.target's comment
+-- for why this needs to be an AND of both signals rather than either alone.
+myNotifyXmonadReady = "systemctl --user start xmonad-ready.service && systemctl --user is-active --quiet autorandr-settled.service && systemctl --user --no-block start display-ready.target; true"
 mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
 myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
 myResetBackground = "rm -f \"" ++ mySelectedBackgroundFile ++ "\" && autorandr --change --force"
@@ -274,7 +280,6 @@ myCustomKeys =
     , ("M-<F4>",           addName "Reset background to random" $ spawn myResetBackground)
     , ("C-M-'",            addName "Screen lock"   $ spawn myScreenLock)
     , spawnKey "l" "Screen lock" myScreenLock
-    , spawnKey "z" "Fix screens" myFixScreens
     , ("<Print>",   addName "Screenshot (select region)" $ spawn "flameshot gui")
     , ("S-<Print>", addName "Screenshot (full screen)"   $ spawn "flameshot full")
 
@@ -307,12 +312,15 @@ myNewStyleKeys = tWorkspaceKeys ++ myCustomKeys ++ warpMouseKeys
 
 myStartupHook :: X ()
 myStartupHook = do
+    spawn myFixScreens
     setupWorkspaceGroups
     -- System defaults to Dvorak for fprice's login/console; override with two
     -- XKB groups so tprice's session starts on QWERTY with Dvorak available.
     spawn "setxkbmap -layout us,us -variant ,dvorak"
     spawnOnOnce "TP1" myBrowser
     setWMName "LG3D"
+
+    spawn myNotifyXmonadReady
 
 -- =============================================================================
 -- MAIN
