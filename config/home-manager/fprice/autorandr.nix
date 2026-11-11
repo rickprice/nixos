@@ -178,9 +178,10 @@
       output HDMI-1
       off
       output DP-2
-      crtc 2
+      crtc 0
       mode 1920x1080
       pos 320x0
+      primary
       rate 60.00
       x-prop-broadcast_rgb Automatic
       x-prop-colorspace Default
@@ -191,10 +192,9 @@
       x-prop-underscan_hborder 0
       x-prop-underscan_vborder 0
       output DP-3
-      crtc 0
+      crtc 1
       mode 2560x1080
       pos 0x1080
-      primary
       rate 59.98
       x-prop-broadcast_rgb Automatic
       x-prop-colorspace Default

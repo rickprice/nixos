@@ -230,7 +230,10 @@ setupWorkspaceGroups hostname | hostnameWork `isPrefixOf` hostname = do
     -- 2-screen variant of StandardWork4 (see viewStandardWork4): same two
     -- screen IDs StandardWork4 uses for the top/bottom pair in 4-screen mode,
     -- but that's all there is when only 2 screens are connected (TwoMonitors).
-    ADWG.addRawWSGroup "StandardWork4Two"  [(topMiddleScreen,"FP11"),(bottomMiddleScreen,"ADM")]
+    -- TwoMonitors now makes DP-2 (top) primary instead of DP-3 (bottom), which
+    -- flips which screen ID ends up first -- topMiddleScreen is screen 0, the
+    -- primary, so it's now the top screen; swap ADM/FP11 to match.
+    ADWG.addRawWSGroup "StandardWork4Two"  [(topMiddleScreen,"ADM"),(bottomMiddleScreen,"FP11")]
 
 setupWorkspaceGroups _ = do
     -- ADWG.addRawWSGroup "Work1"      [(bottomMiddleScreen, "W2"),(farRightScreen, "W1")]
