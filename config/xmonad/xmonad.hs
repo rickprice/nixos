@@ -227,6 +227,10 @@ setupWorkspaceGroups hostname | hostnameWork `isPrefixOf` hostname = do
 
     ADWG.addRawWSGroup "StandardWork3"  [(farLeftScreen, "IM"),(bottomMiddleScreen,"MAIL"),(farRightScreen,"W11")]
     ADWG.addRawWSGroup "StandardWork4"  [(farLeftScreen, "MAIL"),(bottomMiddleScreen, "U14"),(farRightScreen,"ADM"),(topMiddleScreen,"FP11")]
+    -- 2-screen variant of StandardWork4 (see viewStandardWork4): same two
+    -- screen IDs StandardWork4 uses for the top/bottom pair in 4-screen mode,
+    -- but that's all there is when only 2 screens are connected (TwoMonitors).
+    ADWG.addRawWSGroup "StandardWork4Two"  [(topMiddleScreen,"FP11"),(bottomMiddleScreen,"ADM")]
 
 setupWorkspaceGroups _ = do
     -- ADWG.addRawWSGroup "Work1"      [(bottomMiddleScreen, "W2"),(farRightScreen, "W1")]
@@ -282,6 +286,19 @@ powerkeys key hostname = do
         (_,6) -> showDesktop "ZM"
         (_,8) -> showDesktop "NSP"
         _ -> return ()
+
+-- M-s w w: StandardWork4 assumes 4 screens (farLeftScreen/topMiddleScreen/
+-- bottomMiddleScreen/farRightScreen all present). With only 2 screens
+-- connected (TwoMonitors), farRightScreen/farLeftScreen don't exist, so
+-- ADM/MAIL would silently never get placed -- fall back to the 2-screen
+-- StandardWork4Two group instead, which only references the two screen IDs
+-- that actually exist then.
+viewStandardWork4 :: X ()
+viewStandardWork4 = do
+    numScreens <- LIS.countScreens
+    case numScreens of
+        2 -> ADWG.viewWSGroup "StandardWork4Two"
+        _ -> ADWG.viewWSGroup "StandardWork4"
 
 -- powergroups key = do
 --     case key of
@@ -523,7 +540,7 @@ myCustomKeys hostname =
 
     ++ dynamicWorkspaceGroupKeys "/" "modslash"
 
-    ++ viewGroupKeys "w w" "StandardWork4"
+    ++ [("M-s w w", addName "View group StandardWork4" viewStandardWork4)]
     ++ viewGroupKeys "w 1" "Work1"
     ++ viewGroupKeys "w 2" "Work2"
     ++ viewGroupKeys "w 3" "Work3"
