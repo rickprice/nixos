@@ -449,9 +449,7 @@
         Wants = [
           "non-mixer-xt.service"
           "midi-daemon.service"
-          # touchosc.service: disabled in non-fprice.nix (pins a CPU core
-          # regardless of layout/backend/version), so left out here too --
-          # otherwise this Wants a unit that no longer exists.
+          "touchosc.service"
           "midi-staff-trainer.service"
           "guitarix.service"
           "obsidian.service"
