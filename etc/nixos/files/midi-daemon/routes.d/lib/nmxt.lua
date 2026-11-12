@@ -56,17 +56,30 @@ end
 --              osc_receive_port from config.toml (default 9000)
 --   has_pan    whether this strip has a Pan plugin inserted in Non-Mixer-XT
 --              (default false -- most strips don't have one by default)
+--   pan_module Non-Mixer-XT module name the Pan signal lives on (default
+--              "Mono Pan", the built-in module). Only matters if has_pan.
+--              Mono Pan sums a stereo input to mono before panning it, so a
+--              strip whose signal is already stereo at that point (e.g. a
+--              synth strip) should instead point this at a true stereo
+--              balance plugin inserted into the chain, such as
+--              "Volume Panning Stereo".
+--   pan_param  Non-Mixer-XT control name for the Pan signal (default "Pan",
+--              matching Mono Pan). LV2 plugins expose their lv2:symbol here
+--              instead of their display name -- e.g. Volume Panning Stereo's
+--              pan control is "pan" (lowercase), not "Pan".
 function M.new(opts)
     local addr  = opts.addr or "127.0.0.1:9500"
     local strip = assert(opts.strip, "nmxt.new: opts.strip is required")
     local route = assert(ROUTE_NAME, "nmxt.new: global ROUTE_NAME is not set")
     local hello_port = opts.hello_port or 9000
+    local pan_module = opts.pan_module or "Mono Pan"
+    local pan_param   = opts.pan_param or "Pan"
 
     local c = {
         addr = addr,
         volume_src = M.path(strip, "Gain", "Gain (dB)"),
         mute_src   = M.path(strip, "Gain", "Mute"),
-        pan_src    = opts.has_pan and M.path(strip, "Mono Pan", "Pan") or nil,
+        pan_src    = opts.has_pan and M.path(strip, pan_module, pan_param) or nil,
 
         volume_fb = "/" .. route .. "/nmxt/volume",
         mute_fb   = "/" .. route .. "/nmxt/mute",

@@ -156,8 +156,15 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
 
-# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua) — the Metronome strip's
+# sfizz output is already stereo, so Non-Mixer-XT's built-in Mono Pan module
+# would sum it to mono before panning. Pan is bound to the Volume Panning
+# Stereo plugin instead (a true L/R balance), which was inserted into this
+# strip's chain after the sfizz plugin for exactly this reason.
 nmxt_strip = "Metronome"
+nmxt_pan   = true
+nmxt_pan_module = "Volume Panning Stereo"
+nmxt_pan_param  = "pan"
 
 [VolumePanMuteControlVocals]
 # Shared MIDI channel for all three CCs (overridden by the per-param keys below)
@@ -211,8 +218,13 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
 
-# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua) — bound to the Volume
+# Panning Stereo plugin rather than Mono Pan; see the comment on
+# [Metronome]'s nmxt_pan_module above for why.
 nmxt_strip = "Guitar"
+nmxt_pan   = true
+nmxt_pan_module = "Volume Panning Stereo"
+nmxt_pan_param  = "pan"
 
 
 [VolumePanMuteControlPiano]
@@ -238,8 +250,13 @@ connect_midi-in = [".*A-PRO 2.*"]   # regex matched against "ClientName:PortName
 # osc_receive_port = 9000
 # osc_send_addr    = "127.0.0.1:9001"
 
-# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua)
+# Non-Mixer-XT bridge (see routes.d/lib/nmxt.lua) — bound to the Volume
+# Panning Stereo plugin rather than Mono Pan; see the comment on
+# [Metronome]'s nmxt_pan_module above for why.
 nmxt_strip = "Piano"
+nmxt_pan   = true
+nmxt_pan_module = "Volume Panning Stereo"
+nmxt_pan_param  = "pan"
 
 [timing-trainer]
 connect_keyboard-in = [".*A-PRO 1.*", ".*A-PRO 2.*"]   # regex matched against "ClientName:PortName"

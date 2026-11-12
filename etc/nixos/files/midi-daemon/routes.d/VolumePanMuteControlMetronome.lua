@@ -32,6 +32,10 @@
 -- config.nmxt_pan only matters if config.nmxt_strip is set, and must stay
 -- false unless this strip actually has a Pan plugin inserted in Non-Mixer-XT
 -- (most strips don't by default -- see the OSC.md link above).
+-- config.nmxt_pan_module/config.nmxt_pan_param override which module/control
+-- the Pan signal binds to (default "Mono Pan"/"Pan"); set these when the
+-- strip's Pan control lives on a different plugin instead, e.g.
+-- "Volume Panning Stereo"/"pan" for a strip whose signal is stereo already.
 
 -- ROUTES_DIR is set by the daemon to this install's actual routes
 -- directory, so this works unmodified regardless of routes_dir (see
@@ -69,6 +73,8 @@ local nmxt = config.nmxt_strip and nmxt_lib.new({
     addr       = config.nmxt_osc_addr,
     strip      = config.nmxt_strip,
     has_pan    = config.nmxt_pan or false,
+    pan_module = config.nmxt_pan_module,
+    pan_param  = config.nmxt_pan_param,
     -- Must match the daemon's actual OSC receive port (config.toml's
     -- top-level osc_receive_port, default 9000) so Non-Mixer-XT's feedback
     -- lands on a socket midi-daemon is really listening on. Per-route
