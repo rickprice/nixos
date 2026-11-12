@@ -152,6 +152,13 @@ in
     kind = "audio"
     output = '^alsa_input\.usb-BEHRINGER_UMC404HD_192k-00\.capture\.0\.0:capture_AUX0$'
     input = '^Non-Mixer-XT/Vocals:in-1$'
+
+    [[rule]]
+    name = "umc404hd-aux3-to-gx-head-amp"
+    backend = "pipewire"
+    kind = "audio"
+    output = '^alsa_input\.usb-BEHRINGER_UMC404HD_192k-00\.capture\.0\.0:capture_AUX3$'
+    input = '^gx_head_amp:in_0$'
   '';
 
   # Restart policy shared by the MIDI/audio service mesh below
