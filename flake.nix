@@ -66,6 +66,18 @@
                   { };
               touchpad-toggle-daemon = prev.callPackage ./config/packages/touchpad-toggle-daemon.nix { };
               tone3000-plugin = prev.callPackage ./config/packages/tone3000-plugin.nix { };
+              # Hexler's 1.5.4.269 release isn't in nixpkgs yet (nixos-26.05 is
+              # still pinned to 1.4.9.248); override straight to the new .deb.
+              # All hosts in this flake are x86_64-linux, so only that arch is
+              # fetched (see upstream pkgs/by-name/to/touchosc/package.nix for
+              # the aarch64/armv7l variants if that ever changes).
+              touchosc = prev.touchosc.overrideAttrs (_: rec {
+                version = "1.5.4.269";
+                src = prev.fetchurl {
+                  url = "https://hexler.net/pub/touchosc/touchosc-${version}-linux-x64.deb";
+                  hash = "sha256-H/8CL+6+HfDrAwc34D16tJG9uCQE5h9oTsF5qYsC3gc=";
+                };
+              });
               # Patch jobviewer.py to treat implicitclass:// as a remote printer scheme
               # so "Document printed" notifications are sent for auto-discovered printers.
               system-config-printer = prev.system-config-printer.overrideAttrs (oldAttrs: {
