@@ -1,4 +1,4 @@
-{ pkgs, osConfig, ... }:
+{ pkgs, osConfig, config, ... }:
 
 let
   nonMixerXtWrapped = pkgs.symlinkJoin {
@@ -189,6 +189,14 @@ in
         PartOf = [ "graphical-session.target" ];
         StartLimitIntervalSec = 60;
         StartLimitBurst = 5;
+        # midi-auto-connector takes no --config flag -- it reads its rules
+        # from the XDG default (~/.config/midi-auto-connector/config.toml),
+        # which xdg.configFile below provides as a Nix-store symlink. Same
+        # issue as midi-daemon's X-Restart-Triggers above: that symlink gets
+        # retargeted on every rebuild, but this already-running process only
+        # reads it once at startup, so without this trigger a rule change
+        # silently has no effect until a manual restart.
+        "X-Restart-Triggers" = [ config.xdg.configFile."midi-auto-connector/config.toml".source ];
       };
       Service = {
         Type = "simple";

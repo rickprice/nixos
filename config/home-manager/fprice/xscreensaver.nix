@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   systemd.user.services.xscreensaver = {
@@ -8,6 +8,14 @@
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
+      # xscreensaver only re-reads ~/.xscreensaver on an explicit
+      # `xscreensaver-command -restart` (or SIGHUP), not automatically -- and
+      # that file is home.file's Nix-store symlink below, retargeted on
+      # every rebuild. Same issue as midi-daemon's X-Restart-Triggers: this
+      # already-running process never notices, so without this trigger a
+      # timeout/lock setting change silently has no effect until a manual
+      # restart.
+      "X-Restart-Triggers" = [ config.home.file.".xscreensaver".source ];
     };
     Service = {
       Type = "simple";

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   xdg.configFile."meteo-qt/meteo-qt.conf".text = ''
@@ -35,6 +35,13 @@
       PartOf = [ "graphical-session.target" ];
       StartLimitIntervalSec = 60;
       StartLimitBurst = 5;
+      # meteo-qt.conf is read via Qt's QSettings once at startup, from the
+      # Nix-store symlink xdg.configFile below creates. Same issue as
+      # midi-daemon's X-Restart-Triggers: that symlink gets retargeted on
+      # every rebuild, but this already-running process never re-reads it,
+      # so without this trigger a settings change silently has no effect
+      # until a manual restart.
+      "X-Restart-Triggers" = [ config.xdg.configFile."meteo-qt/meteo-qt.conf".source ];
     };
     Service = {
       Type = "simple";
