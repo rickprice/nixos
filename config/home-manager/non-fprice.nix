@@ -265,6 +265,16 @@ in
         PartOf = [ "graphical-session.target" ];
         StartLimitIntervalSec = 60;
         StartLimitBurst = 5;
+        # midi-daemon reads --config/--routes from /etc/midi-daemon, a
+        # symlink (environment.etc."midi-daemon".source) that nixos-rebuild
+        # repoints atomically on every switch. Its own file-watcher doesn't
+        # survive that symlink retarget -- it keeps an inotify watch on the
+        # old, orphaned store path and never notices -- so without this, a
+        # rebuild silently leaves the already-running daemon on stale
+        # config/routes until it's manually restarted. X-Restart-Triggers
+        # makes home-manager's activation (via sd-switch) restart this unit
+        # automatically whenever the referenced path's store hash changes.
+        "X-Restart-Triggers" = [ "${../../etc/nixos/files/midi-daemon}" ];
       };
       Service = {
         Type = "simple";
