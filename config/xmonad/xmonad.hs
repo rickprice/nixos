@@ -303,6 +303,31 @@ viewStandardWork4 = do
         2 -> ADWG.viewWSGroup "StandardWork4Two"
         _ -> ADWG.viewWSGroup "StandardWork4"
 
+-- Tracks the screen count last seen by autoViewStandardWork4OnScreenChange,
+-- so it can tell "count just changed" from "count is still the same as last
+-- logHook tick" -- logHook runs on every X event, so without this it would
+-- re-trigger viewStandardWork4 constantly rather than once per actual
+-- monitor change. Nothing means "not observed yet" and deliberately
+-- suppresses the first tick after login/restart, so this never fights
+-- whatever workspace you're already on when XMonad starts.
+newtype LastScreenCount = LastScreenCount (Maybe Int) deriving (Read, Show)
+
+instance ExtensionClass LastScreenCount where
+    initialValue = LastScreenCount Nothing
+
+-- XMonad notices its own screen count changed (via logHook, which runs
+-- after every event) and reacts directly -- no autorandr postswitch hook or
+-- external xmonadctl call needed, and no dependency on autorandr profile
+-- names.
+autoViewStandardWork4OnScreenChange :: X ()
+autoViewStandardWork4OnScreenChange = do
+    numScreens <- LIS.countScreens
+    LastScreenCount lastCount <- XS.get
+    XS.put (LastScreenCount (Just numScreens))
+    case lastCount of
+        Just old | old /= numScreens && numScreens `elem` [2, 4] -> viewStandardWork4
+        _ -> return ()
+
 -- powergroups key = do
 --     case key of
 --         1 -> ADWG.viewWSGroup "Work1"
@@ -638,5 +663,5 @@ createMyConfig hostname =
             , normalBorderColor = myNormalBorderColor
             , focusedBorderColor = myFocusedBorderColor
             , workspaces = myWorkspaces hostname
-            , logHook = updatePointer (0.5, 0.5) (0, 0)
+            , logHook = updatePointer (0.5, 0.5) (0, 0) <+> autoViewStandardWork4OnScreenChange
             }
