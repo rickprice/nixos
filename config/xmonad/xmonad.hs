@@ -319,9 +319,17 @@ instance ExtensionClass LastScreenCount where
 -- after every event) and reacts directly -- no autorandr postswitch hook or
 -- external xmonadctl call needed, and no dependency on autorandr profile
 -- names.
+--
+-- Deliberately reads the screen count from XMonad's own StackSet
+-- (W.screens) rather than LIS.countScreens: countScreens opens a brand new,
+-- separate X connection to ask Xinerama directly, which can race a
+-- multi-step RandR transition and catch a stale/intermediate count with no
+-- later event to correct it. W.screens is whatever `rescreen` -- triggered
+-- by the very ConfigureEvent that's about to invoke this logHook -- just
+-- finished writing into the same StackSet, so there's no race to lose.
 autoViewStandardWork4OnScreenChange :: X ()
 autoViewStandardWork4OnScreenChange = do
-    numScreens <- LIS.countScreens
+    numScreens <- withWindowSet (return . length . W.screens)
     LastScreenCount lastCount <- XS.get
     XS.put (LastScreenCount (Just numScreens))
     case lastCount of
