@@ -226,7 +226,7 @@ setupWorkspaceGroups hostname | hostnameWork `isPrefixOf` hostname = do
     ADWG.addRawWSGroup "Messaging"  [(topMiddleScreen, "IM"), (bottomMiddleScreen, "MAIL")]
 
     ADWG.addRawWSGroup "StandardWork3"  [(farLeftScreen, "IM"),(bottomMiddleScreen,"MAIL"),(farRightScreen,"W11")]
-    ADWG.addRawWSGroup "StandardWork4"  [(farLeftScreen, "MAIL"),(bottomMiddleScreen, "U14"),(farRightScreen,"ADM"),(topMiddleScreen,"FP11")]
+    ADWG.addRawWSGroup "StandardWork4"  [(farLeftScreen, "MAIL"),(bottomMiddleScreen, "U14"),(farRightScreen,"FP11"),(topMiddleScreen,"ADM")]
     -- 2-screen variant of StandardWork4 (see viewStandardWork4): same two
     -- screen IDs StandardWork4 uses for the top/bottom pair in 4-screen mode,
     -- but that's all there is when only 2 screens are connected (TwoMonitors).
