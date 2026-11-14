@@ -3,6 +3,7 @@
 {-# OPTIONS_GHC -Wno-missing-signatures -Wno-type-defaults #-}
 
 -- Base imports
+import Control.Monad (when)
 import Data.List
 
 import Data.Ratio
@@ -329,6 +330,35 @@ instance ExtensionClass LastScreenLayout where
 currentScreenLayout :: X [(ScreenId, Rectangle)]
 currentScreenLayout =
     withWindowSet (return . sortOn fst . map (\s -> (W.screen s, screenRect (W.screenDetail s))) . W.screens)
+
+-- TEMPORARY diagnostic: two rect-signature-based fixes in a row didn't hold
+-- up live, so instead of guessing a third blind fix, log every screen ->
+-- workspace assignment XMonad passes through (whenever it differs from the
+-- last one logged) to stderr (visible via `journalctl --user -t xmonad`).
+-- This will show directly whether some *later* rescreen -- with the same
+-- rect signature as a prior one, so our change-detection doesn't react to
+-- it -- is silently reshuffling which workspace sits on which screen after
+-- our own correction already ran. Remove once the real cause is confirmed.
+newtype LastLoggedScreenAssignment
+    = LastLoggedScreenAssignment (Maybe [(ScreenId, Rectangle, WorkspaceId)])
+    deriving (Show)
+
+instance ExtensionClass LastLoggedScreenAssignment where
+    initialValue = LastLoggedScreenAssignment Nothing
+
+traceScreenAssignmentChanges :: X ()
+traceScreenAssignmentChanges = do
+    assignment <-
+        withWindowSet
+            ( return
+                . sortOn (\(sid, _, _) -> sid)
+                . map (\s -> (W.screen s, screenRect (W.screenDetail s), W.tag (W.workspace s)))
+                . W.screens
+            )
+    LastLoggedScreenAssignment lastLogged <- XS.get
+    when (Just assignment /= lastLogged) $
+        trace ("xmonad-autoview: screen assignment -> " ++ show assignment)
+    XS.put (LastLoggedScreenAssignment (Just assignment))
 
 -- XMonad notices its own screen layout changed (via logHook, which runs
 -- after every event) and reacts directly -- no autorandr postswitch hook or
@@ -678,5 +708,8 @@ createMyConfig hostname =
             , normalBorderColor = myNormalBorderColor
             , focusedBorderColor = myFocusedBorderColor
             , workspaces = myWorkspaces hostname
-            , logHook = updatePointer (0.5, 0.5) (0, 0) <+> autoViewStandardWork4OnScreenChange
+            , logHook =
+                updatePointer (0.5, 0.5) (0, 0)
+                    <+> traceScreenAssignmentChanges
+                    <+> autoViewStandardWork4OnScreenChange
             }
