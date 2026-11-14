@@ -5,6 +5,7 @@
 -- Base imports
 import Control.Monad (when)
 import Data.List
+import Data.Monoid (All (..))
 
 import Data.Ratio
 import Network.HostName (getHostName)
@@ -46,6 +47,7 @@ import XMonad.Util.EZConfig
 import XMonad.Util.NamedActions
 import XMonad.Util.Loggers
 import XMonad.Util.NamedScratchpad
+import XMonad.Util.Timer
 import qualified XMonad.Util.ExtensibleState as XS
 
 -- =============================================================================
@@ -331,47 +333,57 @@ currentScreenLayout :: X [(ScreenId, Rectangle)]
 currentScreenLayout =
     withWindowSet (return . sortOn fst . map (\s -> (W.screen s, screenRect (W.screenDetail s))) . W.screens)
 
--- TEMPORARY diagnostic: two rect-signature-based fixes in a row didn't hold
--- up live, so instead of guessing a third blind fix, log every screen ->
--- workspace assignment XMonad passes through (whenever it differs from the
--- last one logged) to stderr (visible via `journalctl --user -t xmonad`).
--- This will show directly whether some *later* rescreen -- with the same
--- rect signature as a prior one, so our change-detection doesn't react to
--- it -- is silently reshuffling which workspace sits on which screen after
--- our own correction already ran. Remove once the real cause is confirmed.
-newtype LastLoggedScreenAssignment
-    = LastLoggedScreenAssignment (Maybe [(ScreenId, Rectangle, WorkspaceId)])
-    deriving (Show)
+-- Confirmed live via temporary logging (now removed): a single physical
+-- monitor change doesn't always mean a single `rescreen`. XMonad's own
+-- ConfigureEvent handler re-fired more than once for the *same* final
+-- screen geometry, and each firing re-derives screen<->workspace placement
+-- from scratch (current workspace keeps screen 0, everything else
+-- redistributed in whatever order XMonad's internal screen list happens to
+-- hold them that time) -- confirmed by two consecutive firings with
+-- identical rects, one correct and the very next one not. Reacting
+-- synchronously to the first rect change (what this used to do) just gets
+-- silently overwritten by a later same-rect firing, with no further rect
+-- change left to react to. So instead: wait a couple of seconds after the
+-- *last* observed layout change, then apply once -- any repeat firings
+-- for the same transition should be done well within that window.
+standardWork4SettleDelay :: Rational
+standardWork4SettleDelay = 2
 
-instance ExtensionClass LastLoggedScreenAssignment where
-    initialValue = LastLoggedScreenAssignment Nothing
+newtype PendingStandardWork4Settle = PendingStandardWork4Settle (Maybe TimerId)
 
-traceScreenAssignmentChanges :: X ()
-traceScreenAssignmentChanges = do
-    assignment <-
-        withWindowSet
-            ( return
-                . sortOn (\(sid, _, _) -> sid)
-                . map (\s -> (W.screen s, screenRect (W.screenDetail s), W.tag (W.workspace s)))
-                . W.screens
-            )
-    LastLoggedScreenAssignment lastLogged <- XS.get
-    when (Just assignment /= lastLogged) $
-        trace ("xmonad-autoview: screen assignment -> " ++ show assignment)
-    XS.put (LastLoggedScreenAssignment (Just assignment))
+instance ExtensionClass PendingStandardWork4Settle where
+    initialValue = PendingStandardWork4Settle Nothing
 
 -- XMonad notices its own screen layout changed (via logHook, which runs
--- after every event) and reacts directly -- no autorandr postswitch hook or
--- external xmonadctl call needed, and no dependency on autorandr profile
--- names.
+-- after every event) and schedules a delayed re-check -- no autorandr
+-- postswitch hook or external xmonadctl call needed, and no dependency on
+-- autorandr profile names. Starting a fresh timer on every detected change
+-- (rather than only when none is pending) means a burst of repeat firings
+-- keeps pushing the deadline out, since only the most-recently-started
+-- TimerId is kept and compared against in handleStandardWork4SettleTimer.
 autoViewStandardWork4OnScreenChange :: X ()
 autoViewStandardWork4OnScreenChange = do
     layout <- currentScreenLayout
     LastScreenLayout lastLayout <- XS.get
     XS.put (LastScreenLayout (Just layout))
     case lastLayout of
-        Just old | old /= layout && length layout `elem` [2, 4] -> viewStandardWork4
+        Just old | old /= layout && length layout `elem` [2, 4] -> do
+            tid <- startTimer standardWork4SettleDelay
+            XS.put (PendingStandardWork4Settle (Just tid))
         _ -> return ()
+
+-- Fires viewStandardWork4 once the settle timer above actually elapses,
+-- re-checking the screen count live at that point rather than trusting
+-- whatever it was back when the timer was started.
+handleStandardWork4SettleTimer :: Event -> X All
+handleStandardWork4SettleTimer e = do
+    PendingStandardWork4Settle mtid <- XS.get
+    case mtid of
+        Just tid -> do
+            _ <- handleTimer tid e (viewStandardWork4 >> return (Just ()))
+            return ()
+        Nothing -> return ()
+    return (All True)
 
 -- powergroups key = do
 --     case key of
@@ -705,11 +717,9 @@ createMyConfig hostname =
             , layoutHook = avoidStruts $ smartBorders $ desktopLayoutModifiers myLayouts
             , manageHook = manageDocks <+> myManageHook
             , startupHook = myStartupHook hostname
+            , handleEventHook = handleStandardWork4SettleTimer
             , normalBorderColor = myNormalBorderColor
             , focusedBorderColor = myFocusedBorderColor
             , workspaces = myWorkspaces hostname
-            , logHook =
-                updatePointer (0.5, 0.5) (0, 0)
-                    <+> traceScreenAssignmentChanges
-                    <+> autoViewStandardWork4OnScreenChange
+            , logHook = updatePointer (0.5, 0.5) (0, 0) <+> autoViewStandardWork4OnScreenChange
             }
