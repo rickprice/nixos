@@ -303,37 +303,44 @@ viewStandardWork4 = do
         2 -> ADWG.viewWSGroup "StandardWork4Two"
         _ -> ADWG.viewWSGroup "StandardWork4"
 
--- Tracks the screen count last seen by autoViewStandardWork4OnScreenChange,
--- so it can tell "count just changed" from "count is still the same as last
--- logHook tick" -- logHook runs on every X event, so without this it would
--- re-trigger viewStandardWork4 constantly rather than once per actual
--- monitor change. Nothing means "not observed yet" and deliberately
--- suppresses the first tick after login/restart, so this never fights
--- whatever workspace you're already on when XMonad starts.
-newtype LastScreenCount = LastScreenCount (Maybe Int) deriving (Read, Show)
+-- Tracks the (ScreenId, Rectangle) pairing last seen by
+-- autoViewStandardWork4OnScreenChange. A plugging/unplugging transition can
+-- walk through several intermediate rescreens that all report the *same*
+-- final screen count but a different ScreenId<->physical-screen pairing
+-- along the way (confirmed live: two back-to-back 4-screen checks placed
+-- FP11/U14 on swapped screens between them) -- comparing only the count
+-- missed that, since the count alone didn't change on the settling events
+-- after the first one. Comparing the full pairing re-fires on every one of
+-- those intermediate steps, so whichever one turns out to be the last/final
+-- one still gets corrected. Nothing means "not observed yet" and
+-- deliberately suppresses the first tick after login/restart, so this
+-- never fights whatever workspace you're already on when XMonad starts.
+newtype LastScreenLayout = LastScreenLayout (Maybe [(ScreenId, Rectangle)]) deriving (Show)
 
-instance ExtensionClass LastScreenCount where
-    initialValue = LastScreenCount Nothing
+instance ExtensionClass LastScreenLayout where
+    initialValue = LastScreenLayout Nothing
 
--- XMonad notices its own screen count changed (via logHook, which runs
+-- Reads straight from XMonad's own StackSet (W.screens) rather than
+-- LIS.countScreens: countScreens opens a brand new, separate X connection
+-- to ask Xinerama directly, which can race a multi-step RandR transition.
+-- W.screens is whatever `rescreen` -- triggered by the very ConfigureEvent
+-- that's about to invoke this logHook -- just finished writing into the
+-- same StackSet, so there's no race to lose.
+currentScreenLayout :: X [(ScreenId, Rectangle)]
+currentScreenLayout =
+    withWindowSet (return . sortOn fst . map (\s -> (W.screen s, screenRect (W.screenDetail s))) . W.screens)
+
+-- XMonad notices its own screen layout changed (via logHook, which runs
 -- after every event) and reacts directly -- no autorandr postswitch hook or
 -- external xmonadctl call needed, and no dependency on autorandr profile
 -- names.
---
--- Deliberately reads the screen count from XMonad's own StackSet
--- (W.screens) rather than LIS.countScreens: countScreens opens a brand new,
--- separate X connection to ask Xinerama directly, which can race a
--- multi-step RandR transition and catch a stale/intermediate count with no
--- later event to correct it. W.screens is whatever `rescreen` -- triggered
--- by the very ConfigureEvent that's about to invoke this logHook -- just
--- finished writing into the same StackSet, so there's no race to lose.
 autoViewStandardWork4OnScreenChange :: X ()
 autoViewStandardWork4OnScreenChange = do
-    numScreens <- withWindowSet (return . length . W.screens)
-    LastScreenCount lastCount <- XS.get
-    XS.put (LastScreenCount (Just numScreens))
-    case lastCount of
-        Just old | old /= numScreens && numScreens `elem` [2, 4] -> viewStandardWork4
+    layout <- currentScreenLayout
+    LastScreenLayout lastLayout <- XS.get
+    XS.put (LastScreenLayout (Just layout))
+    case lastLayout of
+        Just old | old /= layout && length layout `elem` [2, 4] -> viewStandardWork4
         _ -> return ()
 
 -- powergroups key = do
