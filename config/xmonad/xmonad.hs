@@ -217,7 +217,7 @@ setupWorkspaceGroups hostname | hostnameWork `isPrefixOf` hostname = do
     ADWG.addRawWSGroup "Work2"      [(bottomMiddleScreen, "W4"),(farRightScreen, "W3")]
     ADWG.addRawWSGroup "Work3"      [(bottomMiddleScreen, "W6"),(farRightScreen, "W5")]
 
-    ADWG.addRawWSGroup "StandardUtility1"  [(farLeftScreen, "FP21"),(farRightScreen,"U12"),(bottomMiddleScreen,"U11"),(topMiddleScreen, "U13")]
+    ADWG.addRawWSGroup "StandardUtility1"  [(farLeftScreen, "U14"),(farRightScreen,"U12"),(bottomMiddleScreen,"U11"),(topMiddleScreen, "U13")]
 
     ADWG.addRawWSGroup "StandardFrederick1"  [(farLeftScreen, "FP21"),(topMiddleScreen, "FP11"),(farRightScreen,"FP13"),(bottomMiddleScreen,"FP12")]
     ADWG.addRawWSGroup "Frederick1"  [(farLeftScreen, "FP21"),(topMiddleScreen, "FP11"),(farRightScreen,"FP13"),(bottomMiddleScreen,"FP12")]
