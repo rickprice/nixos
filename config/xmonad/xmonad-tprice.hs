@@ -52,7 +52,7 @@ myFixScreens    = "systemctl --user start autorandr.service"
 -- for why this needs to be an AND of both signals rather than either alone.
 myNotifyXmonadReady = "systemctl --user start xmonad-ready.service && systemctl --user is-active --quiet autorandr-settled.service && systemctl --user --no-block start display-ready.target; true"
 mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
-myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
+myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds/${USER}Backgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
 myResetBackground = "rm -f \"" ++ mySelectedBackgroundFile ++ "\" && autorandr --change --force"
 
 myNormalBorderColor  = "#dddddd"

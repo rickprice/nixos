@@ -98,7 +98,7 @@ myFixScreens = "systemctl --user start autorandr.service"
 myNotifyXmonadReady = "systemctl --user start xmonad-ready.service && systemctl --user is-active --quiet autorandr-settled.service && systemctl --user --no-block start display-ready.target; true"
 myFixLogitechMouse = "xinput --set-prop 'Logitech M325' 'libinput Accel Speed' -0.4"
 mySelectedBackgroundFile = "$HOME/.cache/background-picker/selected-background.txt"
-myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
+myBackgroundPicker = "background-picker -d \"$(find ~/Documents -type d -name Dropbox -print -quit)/Pictures/SharedBackgrounds/${USER}Backgrounds\" -s \"" ++ mySelectedBackgroundFile ++ "\""
 myResetBackground = "rm -f \"" ++ mySelectedBackgroundFile ++ "\" && autorandr --change --force"
 
 -- Colors
