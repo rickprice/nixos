@@ -167,6 +167,7 @@
           ./config/modules/umc404hd-pipewire.nix
           ./config/modules/syncthing.nix
           ./config/modules/virtualisation.nix
+          ./config/modules/fan-control.nix
           (import ./config/modules/onepassword.nix "fprice")
           musnix.nixosModules.musnix
           ./config/modules/musnix-audio.nix
