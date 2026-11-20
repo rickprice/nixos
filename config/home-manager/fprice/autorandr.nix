@@ -361,7 +361,7 @@
                   ${pkgs.feh}/bin/feh --no-fehbg --bg-max "$(cat "$SELECTED_BACKGROUND_FILE")"
                 else
                   DROPBOX_LOCATION=$(find ~/Documents -type d -name Dropbox -print -quit)
-                  BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds"
+                  BACKGROUNDS_DIR="$DROPBOX_LOCATION/Pictures/SharedBackgrounds/''${USER}Backgrounds"
                   PERSON_SPECIFIC="''${USER}Specific"
                   THEME_DIRS="$PERSON_SPECIFIC Default $(${pkgs.name-time-period}/bin/name_time_period)"
                   ${pkgs.feh}/bin/feh --no-fehbg --bg-max $(${pkgs.images-matching-subdirectories}/bin/images_matching_subdirectories --names-only --limit 4 $BACKGROUNDS_DIR $THEME_DIRS)
