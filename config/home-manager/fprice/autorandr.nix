@@ -449,7 +449,7 @@
         Wants = [
           "non-mixer-xt.service"
           "midi-daemon.service"
-          "touchosc.service"
+          # touchosc.service: disabled 2026-11-20, see non-fprice.nix.
           "midi-staff-trainer.service"
           "guitarix.service"
           "obsidian.service"

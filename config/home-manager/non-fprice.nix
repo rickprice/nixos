@@ -312,34 +312,42 @@ in
   # overlay comment). Re-enabled 2026-11-12: Hexler shipped 1.5.4.269 (which
   # flake.nix already overlays in ahead of nixpkgs' 1.4.9.248 pin) and the
   # user confirmed the busy-loop is gone under it.
-  systemd.user.services.touchosc = {
-    Unit = {
-      Description = "TouchOSC (ComplexSetup project)";
-      # rclone-dropbox.service: same reasoning as non-mixer-xt above --
-      # without it TouchOSC can start before the Dropbox mount is ready and
-      # map a degraded window that doShift then pins to U13.
-      # Not WantedBy anything -- only started via display-ready.target (see
-      # home.nix). TouchOSC reads display geometry once at startup and never
-      # re-checks it, so ordering alone (After=autorandr.service) wasn't
-      # enough: it could still start against a not-yet-corrected profile
-      # from the login race those commits fixed (37b1528, 0c7d079), and
-      # unlike midi-staff-trainer this needs a full exit+relaunch to pick up
-      # the right geometry -- an XMonad relayout alone doesn't fix it.
-      After = [ "graphical-session.target" "display-ready.target" "midi-daemon.service" "rclone-dropbox.service" ];
-      Requires = [ "rclone-dropbox.service" ];
-      PartOf = [ "graphical-session.target" ];
-      StartLimitIntervalSec = 60;
-      StartLimitBurst = 5;
-    };
-    Service = {
-      Type = "simple";
-      ExecStart =
-        "${pkgs.touchosc}/bin/TouchOSC --general.ui.editor=false --general.ui.fullscreen=true /home/fprice/.config/touchosc/ComplexSetup.tosc";
-      Restart = "always";
-      RestartSec = 2;
-      RestartSteps = 4;
-      RestartMaxDelaySec = "32s";
-      TimeoutStopSec = 10;
-    };
-  };
+  # Disabled again 2026-11-20: the busy-loop recurred under the same
+  # 1.5.4.269 build, now 100% reproducible on every launch (not
+  # intermittent). Bisected against the nixpkgs update that landed between
+  # the 11-12 fix confirmation and now -- individually swapping in the
+  # pre-bump libxcb/libX11/glibc/mesa/libglvnd builds did not restore the
+  # clean behavior, so it's not a library regression. Most likely the
+  # 11-12 clean sample was a fluke and this was never actually fixed by
+  # Hexler. Re-enable once this is understood better.
+  # systemd.user.services.touchosc = {
+  #   Unit = {
+  #     Description = "TouchOSC (ComplexSetup project)";
+  #     # rclone-dropbox.service: same reasoning as non-mixer-xt above --
+  #     # without it TouchOSC can start before the Dropbox mount is ready and
+  #     # map a degraded window that doShift then pins to U13.
+  #     # Not WantedBy anything -- only started via display-ready.target (see
+  #     # home.nix). TouchOSC reads display geometry once at startup and never
+  #     # re-checks it, so ordering alone (After=autorandr.service) wasn't
+  #     # enough: it could still start against a not-yet-corrected profile
+  #     # from the login race those commits fixed (37b1528, 0c7d079), and
+  #     # unlike midi-staff-trainer this needs a full exit+relaunch to pick up
+  #     # the right geometry -- an XMonad relayout alone doesn't fix it.
+  #     After = [ "graphical-session.target" "display-ready.target" "midi-daemon.service" "rclone-dropbox.service" ];
+  #     Requires = [ "rclone-dropbox.service" ];
+  #     PartOf = [ "graphical-session.target" ];
+  #     StartLimitIntervalSec = 60;
+  #     StartLimitBurst = 5;
+  #   };
+  #   Service = {
+  #     Type = "simple";
+  #     ExecStart =
+  #       "${pkgs.touchosc}/bin/TouchOSC --general.ui.editor=false --general.ui.fullscreen=true /home/fprice/.config/touchosc/ComplexSetup.tosc";
+  #     Restart = "always";
+  #     RestartSec = 2;
+  #     RestartSteps = 4;
+  #     RestartMaxDelaySec = "32s";
+  #     TimeoutStopSec = 10;
+  #   };
+  # };
 }
