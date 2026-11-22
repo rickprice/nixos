@@ -450,7 +450,10 @@ in
     # Config/routes deployed system-wide; the daemon itself now runs as a
     # systemd --user service (see non-fprice.nix) so it can be ordered after
     # non-mixer-xt, which only exists once fprice's graphical session starts.
-    etc."midi-daemon".source = ./files/midi-daemon;
+    # daw/fwork only: tprice/eric never run midi-daemon.
+    etc = lib.mkIf isAudioHost {
+      "midi-daemon".source = ./files/midi-daemon;
+    };
   };
 
   programs = {
