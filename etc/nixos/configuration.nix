@@ -37,19 +37,31 @@ let
         }
     );
 
-  audioPlugins = [
-    (nativeOpt pkgs.calf)
-    (nativeOpt pkgs.caps)
-    (nativeOpt pkgs.guitarix)
-    (nativeOpt pkgs.ladspaPlugins) # Steve Harris SWH plugins (fast_lookahead_limiter, etc.)
-    (nativeOpt pkgs.lsp-plugins)
-    (nativeOpt pkgs.sfizz-ui)
-    (nativeOpt pkgs.x42-plugins)
-    (nativeOpt pkgs.dragonfly-reverb)
-    pkgs.volumepanningstereo-lv2 # already built per-host with -march=native in its own Makefile
-    (nativeOpt pkgs.zam-plugins) # ZamCompX2-ladspa
-    (nativeOpt pkgs.tone3000-plugin) # NAM-based amp/cab sim, LV2+VST3 (+CLAP, unused by this list)
+  # daw/fwork only: tprice/eric have no DAW use, so skip rebuilding (and
+  # losing the binary cache for) this whole plugin set on hosts that will
+  # never load them.
+  isAudioHost = builtins.elem config.networking.hostName [
+    "daw"
+    "fwork"
   ];
+
+  audioPlugins =
+    if isAudioHost then
+      [
+        (nativeOpt pkgs.calf)
+        (nativeOpt pkgs.caps)
+        (nativeOpt pkgs.guitarix)
+        (nativeOpt pkgs.ladspaPlugins) # Steve Harris SWH plugins (fast_lookahead_limiter, etc.)
+        (nativeOpt pkgs.lsp-plugins)
+        (nativeOpt pkgs.sfizz-ui)
+        (nativeOpt pkgs.x42-plugins)
+        (nativeOpt pkgs.dragonfly-reverb)
+        pkgs.volumepanningstereo-lv2 # already built per-host with -march=native in its own Makefile
+        (nativeOpt pkgs.zam-plugins) # ZamCompX2-ladspa
+        (nativeOpt pkgs.tone3000-plugin) # NAM-based amp/cab sim, LV2+VST3 (+CLAP, unused by this list)
+      ]
+    else
+      [ ];
 
   # This config is shared across every host (daw, fwork, tprice, eric), but
   # each host's graphical session belongs to a different primary user.
