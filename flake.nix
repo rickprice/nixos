@@ -91,14 +91,13 @@
           ];
         }
         {
+          # Only useGlobalPkgs/useUserPackages/sharedModules here -- `users`
+          # is set per-host below (daw/fwork, tprice, eric) so each host's
+          # closure only builds its own user's home-manager profile, not
+          # every other host's user as well.
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            users = {
-              fprice = import ./config/home-manager/home.nix;
-              tprice = import ./config/home-manager/tprice.nix;
-              eric = import ./config/home-manager/eric.nix;
-            };
             sharedModules = [
               plasma-manager.homeModules.plasma-manager
             ];
@@ -149,6 +148,7 @@
             (import ./config/modules/onepassword.nix "fprice")
             musnix.nixosModules.musnix
             ./config/modules/musnix-audio.nix
+            { home-manager.users.fprice = import ./config/home-manager/home.nix; }
             { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
             # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
             # needed where that service actually runs.
@@ -171,6 +171,7 @@
           (import ./config/modules/onepassword.nix "fprice")
           musnix.nixosModules.musnix
           ./config/modules/musnix-audio.nix
+          { home-manager.users.fprice = import ./config/home-manager/home.nix; }
           { home-manager.users.fprice = import ./config/home-manager/syncthing-fprice.nix; }
           { home-manager.users.fprice = import ./config/home-manager/non-fprice.nix; }
           # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
@@ -187,9 +188,11 @@
         tprice = mkHost "tprice" ./config/disko/plain.nix [
           ./config/modules/laptop.nix
           (import ./config/modules/onepassword.nix "tprice")
+          { home-manager.users.tprice = import ./config/home-manager/tprice.nix; }
         ];
         eric = mkHost "eric" ./config/disko/plain.nix [
           ./config/modules/laptop.nix
+          { home-manager.users.eric = import ./config/home-manager/eric.nix; }
         ];
       };
     };
