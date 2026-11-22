@@ -963,7 +963,11 @@
       };
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.autorandr}/bin/autorandr --change";
+        # --force: tprice has no external monitor, so the detected profile
+        # never changes across boots and a plain --change becomes a no-op,
+        # silently skipping the postswitch hooks (07_numlock, etc.) every
+        # login. --force re-applies and re-runs them unconditionally.
+        ExecStart = "${pkgs.autorandr}/bin/autorandr --change --force";
       };
       Install.WantedBy = [ "graphical-session.target" ];
     };
