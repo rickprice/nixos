@@ -660,45 +660,47 @@
     autorandr = {
       enable = true;
 
-      hooks.postswitch."05_set_keyboard" = ''
-        #! /usr/bin/bash
-        setxkbmap -layout us,us -variant ,dvorak
-      '';
+      hooks.postswitch = {
+        "05_set_keyboard" = ''
+          #! /usr/bin/bash
+          setxkbmap -layout us,us -variant ,dvorak
+        '';
 
-      hooks.postswitch."05_restart_trayer" = ''
-        #! /usr/bin/bash
-        systemctl --user restart trayer.service
-      '';
+        "05_restart_trayer" = ''
+          #! /usr/bin/bash
+          systemctl --user restart trayer.service
+        '';
 
-      hooks.postswitch."07_numlock" = ''
-        #! /usr/bin/bash
-        numlockx on
-      '';
+        "07_numlock" = ''
+          #! /usr/bin/bash
+          numlockx on
+        '';
 
-      # Decoupled from autorandr.service itself: setting the wallpaper needs
-      # the Dropbox mount, but trayer/numlock/keyboard above don't, and
-      # shouldn't fail just because Dropbox is unreachable. This hook only
-      # kicks off autorandr-wallpaper.service and doesn't wait on it or
-      # propagate its failure.
-      hooks.postswitch."10_setup_feh" = ''
-        #! /usr/bin/bash
-        systemctl --user --no-block start autorandr-wallpaper.service
-      '';
+        # Decoupled from autorandr.service itself: setting the wallpaper needs
+        # the Dropbox mount, but trayer/numlock/keyboard above don't, and
+        # shouldn't fail just because Dropbox is unreachable. This hook only
+        # kicks off autorandr-wallpaper.service and doesn't wait on it or
+        # propagate its failure.
+        "10_setup_feh" = ''
+          #! /usr/bin/bash
+          systemctl --user --no-block start autorandr-wallpaper.service
+        '';
 
-      # Half of the AND-gate for display-ready.target (see its definition
-      # below): marks "autorandr has actually applied a profile this session"
-      # and, only once XMonad's startup half has also happened, starts the
-      # target. See xmonad-ready.service's comment for why it's an AND rather
-      # than either trigger alone. --no-block on the target start because this
-      # hook runs synchronously inside autorandr's own still-running process
-      # (autorandr.service hasn't exited yet) -- a blocking call here would
-      # wait on a job that can't finish until this hook returns.
-      hooks.postswitch."15_start_display_ready" = ''
-        #! /usr/bin/bash
-        systemctl --user start autorandr-settled.service
-        systemctl --user is-active --quiet xmonad-ready.service && systemctl --user --no-block start display-ready.target
-        true
-      '';
+        # Half of the AND-gate for display-ready.target (see its definition
+        # below): marks "autorandr has actually applied a profile this session"
+        # and, only once XMonad's startup half has also happened, starts the
+        # target. See xmonad-ready.service's comment for why it's an AND rather
+        # than either trigger alone. --no-block on the target start because this
+        # hook runs synchronously inside autorandr's own still-running process
+        # (autorandr.service hasn't exited yet) -- a blocking call here would
+        # wait on a job that can't finish until this hook returns.
+        "15_start_display_ready" = ''
+          #! /usr/bin/bash
+          systemctl --user start autorandr-settled.service
+          systemctl --user is-active --quiet xmonad-ready.service && systemctl --user --no-block start display-ready.target
+          true
+        '';
+      };
 
       # Add profiles here after running: autorandr --save <profile-name>
     };
