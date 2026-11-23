@@ -34,5 +34,6 @@ _:
     ./fprice/rclone-dropbox.nix
     ./fprice/kwallet.nix
     ./fprice/xscreensaver.nix
+    ./fprice/onepassword.nix
   ];
 }
