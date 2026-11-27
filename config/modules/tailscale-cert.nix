@@ -35,12 +35,15 @@
       # root, then restart the webapp so a renewed cert actually gets used.
       # try-restart (not restart): a no-op if the webapp unit isn't active,
       # and `|| true` keeps a future removal of that unit from breaking this
-      # timer.
+      # timer. --no-block is load-bearing, not just a nicety: on a switch
+      # that activates both units for the first time together, a *blocking*
+      # try-restart here deadlocks against media-calendar-manager.service's
+      # own start job, which is ordered to wait on this unit finishing.
       ExecStartPost = pkgs.writeShellScript "tailscale-cert-post" ''
         set -euo pipefail
         chgrp tailscale-certs /var/lib/tailscale-certs/key.pem
         chmod 640 /var/lib/tailscale-certs/key.pem
-        ${pkgs.systemd}/bin/systemctl try-restart media-calendar-manager.service || true
+        ${pkgs.systemd}/bin/systemctl --no-block try-restart media-calendar-manager.service || true
       '';
     };
   };
