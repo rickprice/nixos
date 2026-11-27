@@ -9,6 +9,7 @@ _:
 
   imports = [
     ./fprice/packages.nix
+    ./fprice/photo-splitter.nix
     ./fprice/shell.nix
     ./fprice/git.nix
     ./fprice/neovim.nix

@@ -136,6 +136,9 @@
     markdown-timesheet
     csvargs
     darktable-import-xmp
+    label-qr-gui
+    photo-splitter
+    ltc-tools
     (pkgs.writeShellScriptBin "BackupComputer" (builtins.readFile ../../scripts/BackupComputer.sh))
     (pkgs.writeShellScriptBin "ProcessRawImages" (builtins.readFile ../../scripts/ProcessRawImages.sh))
 
