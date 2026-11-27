@@ -58,6 +58,8 @@
               md-to-svg = prev.callPackage ./config/packages/md-to-svg.nix { };
               markdown-timesheet = prev.callPackage ./config/packages/markdown-timesheet.nix { };
               darktable-import-xmp = prev.callPackage ./config/packages/darktable-import-xmp.nix { };
+              label-qr-gui = prev.callPackage ./config/packages/label-qr-gui.nix { };
+              photo-splitter = prev.callPackage ./config/packages/photo-splitter.nix { };
               csvargs = prev.callPackage ./config/packages/csvargs.nix { };
               midi-staff-trainer = prev.callPackage ./config/packages/midi-staff-trainer.nix { };
               guitarix-wrapped = prev.callPackage ./config/packages/guitarix-wrapped.nix { };
@@ -168,6 +170,8 @@
           ./config/modules/syncthing.nix
           ./config/modules/virtualisation.nix
           ./config/modules/fan-control.nix
+          ./config/modules/postgresql.nix
+          ./config/modules/tailscale-cert.nix
           (import ./config/modules/onepassword.nix "fprice")
           musnix.nixosModules.musnix
           ./config/modules/musnix-audio.nix
@@ -177,6 +181,10 @@
           # 9000: midi-daemon OSC (non-fprice.nix systemd --user service); only
           # needed where that service actually runs.
           { networking.firewall.allowedUDPPorts = [ 9000 ]; }
+          # 443: the Axum webapp, for plain-LAN devices that aren't on the
+          # tailnet. Tailscale access needs no rule here -- tailscale0 is
+          # already a trustedInterface (etc/nixos/configuration.nix).
+          { networking.firewall.allowedTCPPorts = [ 443 ]; }
           {
             # power-profiles-daemon fights musnix's static performance governor,
             # continuously resetting it back to "balanced" after boot. fwork is
