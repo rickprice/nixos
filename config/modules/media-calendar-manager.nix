@@ -30,8 +30,15 @@ in
   # into it to exec the built binary. This grants that one user execute-only
   # (traversal) access to that one directory -- everything below it is
   # already 0755, and this doesn't grant read/list on /home/fprice itself.
+  #
+  # The explicit mask entry is load-bearing: /home/fprice's group permission
+  # bits are `---`, so the ACL mask defaults to `---` too, which silently caps
+  # the named-user entry's effective permission to `---` regardless of what
+  # it says -- `getfacl` showed exactly this ("u:media_calendar_manager:--x
+  # #effective:---"). Raising the mask to `x` is what actually makes the
+  # entry effective.
   systemd.tmpfiles.rules = [
-    "A+ /home/fprice - - - - u:media_calendar_manager:X"
+    "A+ /home/fprice - - - - u:media_calendar_manager:X,m::x"
   ];
 
   services.postgresql = {
