@@ -6,13 +6,15 @@
 # https://login.tailscale.com/admin/dns (a one-time account setting, not
 # something this config can do).
 #
-# This only issues/renews the cert to disk at /var/lib/tailscale-certs. The
-# webapp that actually serves over it (Axum + rustls) should depend on
-# tailscale-cert.service and read cert.pem/key.pem from there once that
-# service exists -- not written here since there's no webapp unit yet to
-# wire a restart-on-renew hook into.
+# This issues/renews the cert to disk at /var/lib/tailscale-certs, group-reads
+# the key out to the "tailscale-certs" group (the key starts out root-only;
+# the webapp in media-calendar-manager.nix joins this group to read it without
+# running as root), and restarts the webapp after each renewal so it picks up
+# the new files.
 { pkgs, ... }:
 {
+  users.groups.tailscale-certs = { };
+
   systemd.services.tailscale-cert = {
     description = "Issue/renew this host's Tailscale HTTPS certificate";
     after = [ "tailscaled.service" ];
@@ -27,6 +29,18 @@
           --cert-file /var/lib/tailscale-certs/cert.pem \
           --key-file /var/lib/tailscale-certs/key.pem \
           "$dns_name"
+      '';
+      # The cert is public by nature, but the key defaults to root-only
+      # (0600). Group-read it so the webapp can load it without running as
+      # root, then restart the webapp so a renewed cert actually gets used.
+      # try-restart (not restart): a no-op if the webapp unit isn't active,
+      # and `|| true` keeps a future removal of that unit from breaking this
+      # timer.
+      ExecStartPost = pkgs.writeShellScript "tailscale-cert-post" ''
+        set -euo pipefail
+        chgrp tailscale-certs /var/lib/tailscale-certs/key.pem
+        chmod 640 /var/lib/tailscale-certs/key.pem
+        ${pkgs.systemd}/bin/systemctl try-restart media-calendar-manager.service || true
       '';
     };
   };

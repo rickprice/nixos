@@ -172,6 +172,7 @@
           ./config/modules/fan-control.nix
           ./config/modules/postgresql.nix
           ./config/modules/tailscale-cert.nix
+          ./config/modules/media-calendar-manager.nix
           # sqlx-cli: runs `sqlx migrate run` against the Axum webapp's
           # Postgres schema during development. fwork-only, alongside
           # postgresql.nix above.
