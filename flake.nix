@@ -172,6 +172,15 @@
           ./config/modules/fan-control.nix
           ./config/modules/postgresql.nix
           ./config/modules/tailscale-cert.nix
+          # sqlx-cli: runs `sqlx migrate run` against the Axum webapp's
+          # Postgres schema during development. fwork-only, alongside
+          # postgresql.nix above.
+          (
+            { pkgs, ... }:
+            {
+              environment.systemPackages = [ pkgs.sqlx-cli ];
+            }
+          )
           (import ./config/modules/onepassword.nix "fprice")
           musnix.nixosModules.musnix
           ./config/modules/musnix-audio.nix
